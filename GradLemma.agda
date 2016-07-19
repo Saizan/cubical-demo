@@ -28,13 +28,13 @@ lemIso {A} {B} f g s t y x0 x1 p0 p1 = \ i → (p ∙ i) , primPathPApply sq1 i
                      (\ i → g (p0 ∙ i)) rem0 (\ i → g y) (t x0)
    fill0 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → [ i ↦ r[ t x0 ∙ (j ∧ k) ] , (~ i ∨ ~ j) ↦ [
                                                                    ~ i ↦ r[ g y ] ,
-                                                                   ~ j  ↦ r[ g (p0 ∙ i) ] ] ])
+                                                                   ~ j ↦ r[ g (p0 ∙ i) ] ] ])
                                           (g (p0 ∙ i))
    fill1 : Square
                      (\ i → g (p1 ∙ i)) rem1 (\ i → g y) (t x1)
    fill1 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → [ i ↦ r[ t x1 ∙ (j ∧ k) ] , (~ i ∨ ~ j) ↦ [
                                                                    ~ i ↦ r[ g y ] ,
-                                                                   ~ j  ↦ r[ g (p1 ∙ i) ] ] ])
+                                                                   ~ j ↦ r[ g (p1 ∙ i) ] ] ])
                                           (g (p1 ∙ i))
 
    fill2 : Square {A = A} (\ k → g y) p rem0 rem1
@@ -45,16 +45,17 @@ lemIso {A} {B} f g s t y x0 x1 p0 p1 = \ i → (p ∙ i) , primPathPApply sq1 i
                                           (g y) in r
 
    sq : Square {A = A} (\ _ → g y) (\ i → g (f (p ∙ i))) (\ j → g (p0 ∙ j)) (\ j → g (p1 ∙ j))
-   sq = \ i → \ j → primComp (\ _ → A) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → [ (i ∨ ~ i) ↦ [ i ↦ r[ primPathPApply fill1 j ∙ ~ k  ]
+   sq = \ i → \ j → primComp (\ _ → A) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → [ (i ∨ ~ i) ↦ [ i   ↦ r[ primPathPApply fill1 j ∙ ~ k ]
                                                                                         , ~ i ↦ r[ primPathPApply fill0 j ∙ ~ k ] ]
-                                                                          , (j ∨ ~ j) ↦ [ j ↦ r[ t (p ∙ i) ∙ ~ k ] , ~ j ↦ r[ g y ] ] ])
-                                                                         ((primPathPApply fill2 i) ∙ j)
+                                                                          , (j ∨ ~ j) ↦ [ j   ↦ r[ t (p ∙ i) ∙ ~ k              ]
+                                                                                        , ~ j ↦ r[ g y                          ] ] ])
+                             (primPathPApply fill2 i ∙ j)
    sq1 : Square {A = B} (\ _ → y) (\ i → f (p ∙ i)) p0 p1
-   sq1 = \ i → \ j → primComp (\ _ → B) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → [ (i ∨ ~ i) ↦ [ i ↦ r[ s (p1 ∙ j) ∙ k  ]
-                                                                                        , ~ i ↦ r[ s (p0 ∙ j) ∙ k ] ]
-                                                                          , (j ∨ ~ j) ↦ [ j ↦ r[ s (f (p ∙ i)) ∙ k ]
-                                                                                        , ~ j ↦ r[ s y ∙ k ] ] ])
-                                                                         (f (primPathPApply sq i ∙ j))
+   sq1 = \ i → \ j → primComp (\ _ → B) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → [ (i ∨ ~ i) ↦ [ i   ↦ r[ s (p1 ∙ j) ∙ k    ]
+                                                                                         , ~ i ↦ r[ s (p0 ∙ j) ∙ k    ] ]
+                                                                           , (j ∨ ~ j) ↦ [ j   ↦ r[ s (f (p ∙ i)) ∙ k ]
+                                                                                         , ~ j ↦ r[ s y ∙ k           ] ] ])
+                              (f (primPathPApply sq i ∙ j))
 
 
 gradLemma : {A B : Set} (f : A -> B) (g : B -> A)
@@ -106,17 +107,18 @@ set A = (a b : A) → prop (Path a b)
 propSet : {A : Set} (h : prop A) → set A
 propSet {A} h =
  \(a b : A) (p q : Path a b) ->
-   \ j → \ i → primComp (\ k → A)  ((~ i ∨ i) ∨ (~ j ∨ j))
-                       (\ k → [ ~ i ∨ i ↦ [ ~ i ↦ r[ h a a ∙ k ] , i ↦ r[ h a b ∙ k ] ]
-                       , ~ j ∨ j ↦ [ ~ j ↦ r[ h a (p ∙ i) ∙ k ] , j ↦ r[ h a (q ∙ i) ∙ k ] ]  ])
-                 a
+   \ j → \ i → primComp (\ k → A)
+                        ((~ i ∨ i) ∨ (~ j ∨ j))
+                        (\ k → [ ~ i ∨ i ↦ [ ~ i ↦ r[ h a a ∙ k ]       , i ↦ r[ h a b ∙ k ]       ]
+                               , ~ j ∨ j ↦ [ ~ j ↦ r[ h a (p ∙ i) ∙ k ] , j ↦ r[ h a (q ∙ i) ∙ k ] ] ])
+                        a
+
 propIsContr : {A : Set} → prop (Contr.isContr A)
 propIsContr {A} = lemProp (\ t → propSig (λ a b → trans (sym (snd t a)) (snd t b))
                           (λ x → propPi (propSet ((λ a b → trans (sym (snd t a)) (snd t b))) x)))
 
 propIsEquiv : {A B : Set} (f : A -> B) → prop (Equiv.isEquiv A B f)
-propIsEquiv f =  \ u0 u1 ->
-     \ i → \ y -> propIsContr (u0 y) (u1 y) ∙ i -- propIsContr (fiber A B f y) (u0 y) (u1 y) @ i
+propIsEquiv f = \ u0 u1 -> \ i → \ y -> propIsContr (u0 y) (u1 y) ∙ i
 
 invEquiv-invol : {A B : Set} (f : Equiv.Equiv A B) → Path (invEquiv (invEquiv f)) f
 invEquiv-invol f = \ i → fst f , (propIsEquiv (fst f) (snd (invEquiv (invEquiv f))) (snd f) ∙ i)
