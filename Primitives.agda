@@ -1,3 +1,4 @@
+{-# OPTIONS --cubical #-}
 module Primitives where
 
 module Postulates where
