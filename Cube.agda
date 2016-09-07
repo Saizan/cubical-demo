@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
 module Cube where
 
-open import Primitives
+open import Primitives public
 open import Level
 
 record Σ {a b} (A : Set a) (B : A -> Set b) : Set (a ⊔ b) where
