@@ -274,7 +274,7 @@ module Equiv {l l'} (A : Set l)(B : Set l') where
            → a ≡ fst f (equiv1 f φ t a p)
   equiv2 f φ t a p = snd (equiv f φ t a p)
 
-open Equiv
+open Equiv public
 
 idEquiv : ∀ {a} {A : Set a} → Equiv A A
 idEquiv = (λ x → x) , (λ y → (y , refl) , (λ y₁ → contrSingl (snd y₁)))
