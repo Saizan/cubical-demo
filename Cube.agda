@@ -187,7 +187,8 @@ module RecordComp where
       b = \ i → snd (z i)
 
   compR-test : ∀ {a b} {A : I -> Set a}{B : ∀ i → A i → Set b}{C : ∀ i → (x : A i) → B i x → Set a} →
-              (let a = _; Z : I → Set a; Z = \ i → R (A i) (B i) (C i)) (φ : I) → (u : ∀ i → Partial (Z i) φ) → (a : Z i0) →
+              (let a = _; Z : I → Set a; Z = \ i → R (A i) (B i) (C i)) (φ : I) → (u : ∀ i → Partial (Z i) φ)
+              → (a : Z i0) →
               Path (fst (compR {A = A} {B} {C} φ u a)) (fst (unsafeComp Z φ u a))
   compR-test φ u a = refl
 
