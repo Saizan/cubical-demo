@@ -19,19 +19,17 @@ idtoeqv {A} p = coe (\ i → Equiv A (p i)) (idEquiv {A = A})
 
 [idtoeqv]refl=id : ∀ {A : Set} → idtoeqv {A} refl ≡ idEquiv
 [idtoeqv]refl=id {A} = lemSig propIsEquiv _ _ ( (fun-ext (\ z → trans (trans (trans (
-            let r = (unsafeComp (λ _ → A) i0 (λ _ → empty) (unsafeComp (λ _ → A) i0 (λ _ → empty) (unsafeComp (λ _ → A) i0 (λ _ → empty) z)))
+            let r = (unsafeComp (λ _ → A) i0 (λ _ → empty) (unsafeComp (λ _ → A) i0 (λ _ → empty)
+                                                           (unsafeComp (λ _ → A) i0 (λ _ → empty) z)))
             in   fl r       ) (fl _)) (fl _)) (fl z))) )
-   where
-     postulate
-       jj : I
 
 module UAEquiv
      (ua : ∀ {l} {A B : Set l} → Equiv A B → Path A B)
      (uaid=id : ∀ {A : Set} → Path (ua idEquiv) (λ i → A))
-     (uaβ : ∀ {A B : Set} → (e : Equiv A B) → coe (ua e) ≡ Σ.fst e)
+     (uaβ : ∀ {A B : Set} → (e : Equiv A B) → coe (ua e) ≡ fst e)
      where
 
-  lemma' : ∀ {A B : Set} (e : Equiv A B) → Path (Σ.fst e) (coe (λ i → A → ua e i) (λ x → x))
+  lemma' : ∀ {A B : Set} (e : Equiv A B) → Path (fst e) (coe (λ i → A → ua e i) (λ x → x))
   lemma' e = trans (sym (uaβ e)) (fun-ext \ z → let p : Path _ _; p = sym (trans (fl _) (fl _)) in \ i → coe (ua e) (p i))
 
 
@@ -51,8 +49,8 @@ ua = eqToPath'
 uaid=id : ∀ {A : Set} → Path (ua idEquiv) (λ i → A)
 uaid=id {A} =  \ j → \ i → Glue A ((~ i ∨ i) ∨ j) (λ _ → A) (\ _ → idEquiv)
 
-uaβ : ∀ {A B : Set} → (e : Equiv A B) → coe (ua e) ≡ Σ.fst e
-uaβ e = fun-ext (λ x → let p = _ in trans (fl _) (trans (fl _) (trans (fl _) (\ i → (Σ.fst e) (fl p i)))))
+uaβ : ∀ {A B : Set} → (e : Equiv A B) → coe (ua e) ≡ fst e
+uaβ e = fun-ext (λ x → let p = _ in trans (fl _) (trans (fl _) (trans (fl _) (\ i → (fst e) (fl p i)))))
 
 
 univalence : ∀ {A} {B : Set} → isEquiv (Path A B) (Equiv A B) idtoeqv

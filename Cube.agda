@@ -3,37 +3,26 @@ module Cube where
 
 open import Primitives public
 open import Level
-
-record Σ {a b} (A : Set a) (B : A -> Set b) : Set (a ⊔ b) where
-   constructor _,_
-   field
-     fst : A
-     snd : B fst
-
-open Σ public
-
--- We redefine Bool here because so far only datatypes define while
--- the right primitives have been bound get a comp that reduces.
-data Bool : Set where
-  true false : Bool
+open import Data.Product public using (Σ; _,_) renaming (proj₁ to fst; proj₂ to snd)
+open import Data.Bool using (Bool; true; false)
 
 refl : ∀ {a} {A : Set a} {x : A} → Path x x
 refl {x = x} = λ i → x
 
 sym : ∀ {a} {A : Set a} → {x y : A} → Path x y → Path y x
-sym p = \ i → p ∙ (~ i)
+sym p = \ i → p (~ i)
 
 test-sym : ∀ {a} {A : Set a} → {x y : A} → (p : Path x y) → sym (sym p) ≡ p
 test-sym p = refl
 
 trans : ∀ {a} {A : Set a} → {x y z : A} → Path x y → Path y z → Path x z
-trans {A = A} {x} {y} p q = \ i → primComp (λ j → A) _ {- (i ∨ ~ i) -}
-                                           (\ j → [ i     ↦ r[ q j ]
-                                                  , (~ i) ↦  r[ x ]  ])
-                                           (p ∙ i)
+trans {A = A} {x} {y} p q = \ i → primComp (λ j → A) (i ∨ ~ i)
+                                           (\ j → primPOr i (~ i)  r[ q j ]  r[ x ]
+                                                  )
+                                           (p i)
 
 testBool : (p : Path true false) → Bool
-testBool p = primComp (\ _ → Bool) i1 (\ j → r[ p j ]) true
+testBool p = primComp (\ _ → Bool) i1 (\ j →  r[ p j ] ) true
 -- cannot reduce to true, because it's already reducing to false.
 
 
@@ -211,7 +200,7 @@ contrSingl : ∀ {l} {A : Set l} {a b : A} (p : a ≡ b) → Path {A = singl a} 
 contrSingl p = \ i → ((p i) , \ j →  p (i ∧ j))
 
 pathJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → P x ((\ i -> x)) → ∀ {y} (p : Path x y) → P y p
-pathJ P d p = primComp (λ i → let x , y = contrSingl p ∙ i in P x y) i0 (\ _ → empty) d
+pathJ P d p = primComp (λ i → let x , y = contrSingl p i in P x y) i0 (\ _ → empty) d
 
 module Contr where
 
@@ -219,7 +208,7 @@ module Contr where
   isContr A = Σ A (\ x → ∀ y → x ≡ y)
 
   contr : ∀ {a} {A : Set a} → isContr A → (φ : I) → (u : Partial A φ) → A
-  contr {A = A} (c , p) φ u = primComp (\ _ → A) φ (λ i → \ o → p (u o) ∙ i) c
+  contr {A = A} (c , p) φ u = primComp (\ _ → A) φ (λ i → \ o → p (u o) i) c
 
   lemma : ∀ {a} {A : Set a}
           → (contr1 : ∀ φ → Partial A φ → A)
@@ -234,7 +223,7 @@ module Contr where
           v = contr1 φ u
 
   isContrProp : ∀ {a} {A : Set a} (h : isContr A) -> ∀ (x y : A) → x ≡ y
-  isContrProp {A = A} h a b = \ i → primComp (\ _ → A) _ (\ j → [ (~ i) ↦ r[ snd h a j ] , i ↦ r[ snd h b ∙ j ] ]) (fst h)
+  isContrProp {A = A} h a b = \ i → primComp (\ _ → A) _ (\ j → [ (~ i) ↦ r[ snd h a j ] , i ↦ r[ snd h b j ] ]) (fst h)
 
 module Pres {la lb : I → _} {T : (i : I) → Set (lb i)}{A : (i : I) → Set (la i)} (f : ∀ i → T i → A i) (φ : I) (t : ∀ i → Partial (T i) φ)
                 (t0 : T i0 {- [ φ ↦ t i0 ] -}) where
@@ -285,7 +274,7 @@ module Univ (c : ∀ {a} (A : Set a) → Contr.isContr (Σ _ \ T → Equiv T A))
 
 
   univ : ∀ {l} {A B : Set l} → Equiv A B → Path A B
-  univ {A = A} {B = B} eq = let ((T , ev) , p) = c B in \ i → fst (Contr.isContrProp (c B) (A , eq) (B , idEquiv) ∙ i)
+  univ {A = A} {B = B} eq = let ((T , ev) , p) = c B in \ i → fst (Contr.isContrProp (c B) (A , eq) (B , idEquiv) i)
 
 
 {-# BUILTIN ISEQUIV isEquiv #-}
@@ -312,10 +301,10 @@ pathToEquiv E = f
     prop-f-image : (y : B) → (a b : Σ _ \ x → y ≡ f x) → a ≡ b
     prop-f-image y (x0 , b0) (x1 , b1) = \ k → (w k) , (\ j → d j k)
        where
-         w0 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x0 ]  ])) (b0 ∙ j)
-         w1 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x1 ]  ])) (b1 ∙ j)
-         t0 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x0 ]  ])) (b0 ∙ j)
-         t1 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x1 ]  ])) (b1 ∙ j)
+         w0 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x0 ]  ])) (b0 j)
+         w1 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x1 ]  ])) (b1 j)
+         t0 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x0 ]  ])) (b0 j)
+         t1 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x1 ]  ])) (b1 j)
          w = \ (k : I) → primComp (λ _ → A) (~ k ∨ k) (\ j → [ ~ k ↦ r[ w0 j ] , k ↦ r[ w1 j ] ]) (g y)
          t = \ (j k : I) → fill (λ _ → A) (~ k ∨ k) (\ j → [ ~ k ↦ r[ w0 j ] , k ↦ r[ w1 j ] ]) (g y) j
          d = \ (j k : I) → primComp E ((~ k ∨ k) ∨ (~ j ∨ j)) ((\ i → [ ~ k ∨ k ↦ [ ~ k ↦  r[  t0 j (~ i)  ]  , k ↦  r[ t1 j (~ i) ]  ]
@@ -395,23 +384,23 @@ foo w b v = \ j → fst ((snd (snd (snd (w)) b)) v j)
 bar : ∀ {l} {A : Set l} → (w : Σ (Set l) \ T → Equiv T A) → (b : A) → (v : Σ (fst w) (λ x → b ≡ fst (snd w) x)) -> (j k : I) -> A
 bar w b v = \ j → \ k → (snd (snd (snd (snd w) b) v j) k )
 
+{-# TERMINATING #-}
 unglue-equiv : ∀ {a} (A : Set a) → (φ : I) → (T : Partial (Set a) φ) (f : PartialP φ \ o → Equiv (T o) A)  → Equiv (Glue A φ T f) A
-fst (unglue-equiv A φ T f) = unglue {φ = φ}
-snd (unglue-equiv {a} A φ T f) = (λ b → ((glue {φ = φ} (r[ fst (fst (snd (snd (w itIsOne)) b)) ])
-                                                               (primComp (\ _ → A) φ (\ j → r[ snd (fst (snd (snd (w itIsOne)) b)) ∙ j ]) b))
-                                                           , (\ k → fill (λ v → A) φ (\ j → r[ snd (fst (snd (snd (w itIsOne)) b)) ∙ j ]) b k))
+unglue-equiv A φ T f = unglue {φ = φ} , (λ b → ((glue {φ = φ} (r[ fst (fst (snd (snd (w itIsOne)) b)) ])
+                                                               (primComp (\ _ → A) φ (\ j → r[ snd (fst (snd (snd (w itIsOne)) b)) j ]) b))
+                                                           , (\ k → fill (λ v → A) φ (\ j → r[ snd (fst (snd (snd (w itIsOne)) b)) j ]) b k))
                                                   , (λ v → \ j →
-                                                      (glue {φ = φ} r[ fst ((snd (snd (snd (w itIsOne)) b)) v ∙ j) ]
-                                                        (primComp (λ _ → A) _ (\ k → [ φ   ↦ r[ (snd (snd (snd (snd (w itIsOne)) b) v ∙ j) ∙ k ) ] , _ ↦
+                                                      (glue {φ = φ} r[ fst ((snd (snd (snd (w itIsOne)) b)) v j) ]
+                                                        (primComp (λ _ → A) _ (\ k → [ φ   ↦ r[ (snd (snd (snd (snd (w itIsOne)) b) v j) k ) ] , _ ↦
                                                                                      [ ~ j ↦ r[ fill (λ _ → A) φ (\ j →
-                                                                                                     r[ snd (fst (snd (snd (w itIsOne)) b)) ∙ j ]) b k ]
-                                                                                     , j   ↦ r[ _∙_ {y = unglue {φ = φ} (fst v)} (snd v) k ] ] ])
+                                                                                                     r[ snd (fst (snd (snd (w itIsOne)) b)) j ]) b k ]
+                                                                                     , j   ↦ r[ snd v k ] ] ])
                                                                               b))
                                                       , ( (\ z -> fill (\ _ → A) _ (\ k →
-                                                                       [ φ   ↦ r[ (snd (snd (snd (snd (w itIsOne)) b) v ∙ j) ∙ k ) ] , _ ↦
+                                                                       [ φ   ↦ r[ (snd (snd (snd (snd (w itIsOne)) b) v j) k ) ] , _ ↦
                                                                        [ ~ j ↦ r[ fill (λ _ → A) φ (\ j →
-                                                                                       r[ snd (fst (snd (snd (w itIsOne)) b)) ∙ j ]) b k ]
-                                                                       , j   ↦ r[ _∙_ {x = b} {y = unglue {φ = φ} (fst v)} (snd v)  k ] ] ])
+                                                                                       r[ snd (fst (snd (snd (w itIsOne)) b)) j ]) b k ]
+                                                                       , j   ↦ r[ (snd v)  k ] ] ])
                                                                        b
                                                                        z) )))
    where w : PartialP φ \ _ → Σ _ \ T → Equiv T A
@@ -471,7 +460,7 @@ module CompGlue {la lb : I → _} (A : (i : I) → Set (la i)) (φ : I -> I) (T 
        a₁'' = unsafeComp (\ _ → A i1) (δ ∨ ψ) (\ j → unsafePOr δ ψ (\ o → w o ∙ j) (a i1)) a₁'
        g : PartialP (φ i1) _
        g o = (equiv (T i1 _) (A i1) (f i1 o) (δ ∨ ψ) (unsafePOr δ ψ t₁' (\ o' → GlueIso.going {φ = φ i1} o (b i1 o'))) a₁''
-                        (unsafePOr δ ψ r[ refl ]  r[ GlueIso.lemma {φ = φ i1} (\ _ → b i1 itIsOne) o ]))
+                        (unsafePOr δ ψ r[ refl ]  r[ GlueIso.lemma {φ = φ i1} (\ _ → b i1 itIsOne) o ] ))
        t₁ : PartialP (φ i1) _
        t₁ o = fst (g o)
        α : PartialP (φ i1) _
