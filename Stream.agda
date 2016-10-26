@@ -7,6 +7,7 @@ open import Cube hiding (Σ)
 
 record Stream (A : Set) : Set where
   coinductive
+  constructor _,_
   field
     head : A
     tail : Stream A
@@ -21,6 +22,15 @@ tail (mapS f xs) = mapS f (tail xs)
 mapS-id : ∀ {A} {xs : Stream A} → mapS (\ x → x) xs ≡ xs
 head (mapS-id {xs = xs} i) = head xs
 tail (mapS-id {xs = xs} i) = mapS-id {xs = tail xs} i
+
+
+Stream-η : ∀ {A} {xs : Stream A} → xs ≡ (head xs , tail xs)
+head (Stream-η {A} {xs} i) = head xs
+tail (Stream-η {A} {xs} i) = tail xs
+
+
+elimS : ∀ {A} (P : Stream A → Set) → (∀ x xs → P (x , xs)) → (xs : Stream A) → P xs
+elimS P c xs = primComp (\ i → P (Stream-η {xs = xs} (~ i))) i0 (\ _ → empty) (c (head xs) (tail xs))
 
 
 module Equality≅Bisimulation where
