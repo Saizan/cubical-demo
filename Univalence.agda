@@ -6,7 +6,7 @@ open import GradLemma
 
 
 transpP : ∀ {a b}{A : Set a}{B : A → Set b} {x y : A} → x ≡ y → B x → B y
-transpP {B = B} p = pathJ (λ y _ → B _ → B y) (\ x → x) p
+transpP {B = B} p = pathJ (λ y _ → B _ → B y) (\ x → x) _ p
 
 coe : ∀ {A B : Set} → Path A B → A → B
 coe {A} = transpP {B = \ X → X}
@@ -40,7 +40,7 @@ module UAEquiv
   univ-equiv {A} {B} = let P = λ y z → Path (ua (coe (λ i → Equiv A (z i)) idEquiv)) z in
                        gradLemma (λ z → coe (λ i → Equiv A (z i)) idEquiv) ua
                                    (\ y → lemSig propIsEquiv _ _ (sym (lemma' y)))
-                                 (pathJ P [ua∘idtoeqv]refl≡refl)
+                                 (pathJ P [ua∘idtoeqv]refl≡refl _)
 
 
 ua : ∀ {l} {A B : Set l} → Equiv A B → Path A B

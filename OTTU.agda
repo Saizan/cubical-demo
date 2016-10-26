@@ -3,6 +3,9 @@ module OTTU where
 
 open import Cube
 
+data Bool : Set where
+  true false : Bool
+
 data ⊥ : Set where
 record ⊤ : Set where
 
@@ -21,7 +24,6 @@ mutual
   El `⊥ = ⊥
   El `⊤ = ⊤
   El `2 = Bool
-
 
 -- "one-step" reduction of composition of Π.
 test-Π : ∀ φ (A : I → Partial U φ) (B : (i : I) → PartialP φ \ o → (x : El (A i o)) → U)

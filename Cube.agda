@@ -199,8 +199,8 @@ singl {A = A} a = Σ A (\ x → a ≡ x)
 contrSingl : ∀ {l} {A : Set l} {a b : A} (p : a ≡ b) → Path {A = singl a} (a , refl) (b , p)
 contrSingl p = \ i → ((p i) , \ j →  p (i ∧ j))
 
-pathJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → P x ((\ i -> x)) → ∀ {y} (p : Path x y) → P y p
-pathJ P d p = primComp (λ i → let x , y = contrSingl p i in P x y) i0 (\ _ → empty) d
+pathJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → P x ((\ i -> x)) → ∀ y (p : Path x y) → P y p
+pathJ P d _ p = primComp (λ i → let x , y = contrSingl p i in P x y) i0 (\ _ → empty) d
 
 module Contr where
 
@@ -496,8 +496,8 @@ notnot false = refl
 
 nothelp : ∀ y (y₁ : Σ Bool (λ x → Path y (not x))) →
           Path (not y , notnot y) y₁
-nothelp y (true , eq) = pathJ (λ y₁ eq' → Path (not y₁ , notnot y₁) (true , sym eq')) refl (sym eq)
-nothelp y (false , eq) = pathJ (λ y₁ eq' → Path (not y₁ , notnot y₁) (false , sym eq')) refl (sym eq)
+nothelp y (true , eq) = pathJ (λ y₁ eq' → Path (not y₁ , notnot y₁) (true , sym eq')) refl _ (sym eq)
+nothelp y (false , eq) = pathJ (λ y₁ eq' → Path (not y₁ , notnot y₁) (false , sym eq')) refl _ (sym eq)
 
 notEquiv : Equiv Bool Bool
 notEquiv = not , (\ { y → (not y , notnot y) , nothelp y })
