@@ -23,11 +23,21 @@ module Postulates where
   primitive
     primIdJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Id x y → Set p) → P x (conid i1 (\ i -> x)) → ∀ {y} (p : Id x y) → P y p
 
+  {-# BUILTIN SUB Sub #-}
+
+  postulate
+    inc : ∀ {a} {A : Set a} {φ} (x : A) → Sub {A = A} φ (\ _ → x)
+
+  {-# BUILTIN SUBIN inc #-}
+
+  primitive
+    primSubOut : {a : Level} {A : Set a} {φ : I} {u : Partial A φ} → Sub φ u → A
 
 
 open Postulates public renaming (primPathApply to _∙_; primIMin to _∧_; primIMax to _∨_; primINeg to ~_
                                 ; primPFrom1 to p[_]
                                 ; primIdJ to J
+                                ; primSubOut to ouc
                                 )
 
 module Unsafe' (dummy : Set₁) = Postulates
