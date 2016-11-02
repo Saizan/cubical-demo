@@ -4,7 +4,7 @@ module Primitives where
 
 
 module Postulates where
-  open import Agda.Primitive public
+  open import Agda.Primitive public renaming (isOneEmpty to empty)
 
   primitive
     primPathApply : ∀ {a} {A : Set a} {x y : A} → Path x y → I → A
