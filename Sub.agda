@@ -8,7 +8,7 @@ open import Cube
 ouc-φ : ∀ {a} {A : Set a} (let φ = i1) {t : Partial A φ} → (s : Sub φ t) → (ouc s) ≡ t itIsOne
 ouc-φ s = refl
 
-ouc-beta : ∀ {a} {A : Set a} {φ} → (a : A) → ouc {φ = φ} {u = r[ a ]} (inc {φ = φ} a) ≡ a
+ouc-beta : ∀ {a} {A : Set a} {φ} → (a : A) → ouc {φ = φ} {u = \ { _ → a }} (inc {φ = φ} a) ≡ a
 ouc-beta a = refl
 
 

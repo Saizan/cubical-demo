@@ -29,7 +29,7 @@ module S¹Elim {i} {P : S¹ → Set i} (base* : P base)
     comp3 : ∀ {φ u u0} → Rewrite (S¹-elim (unsafeComp (\ i → S¹) φ u u0))
                                  (unsafeComp (\ i → P (fill (\ i → S¹) φ u u0 i))
                                              φ
-                                             (\ i → r[ S¹-elim (u i itIsOne) ])
+                                             (\ i → \ { _ → S¹-elim (u i itIsOne) })
                                              (S¹-elim u0))
 
 open S¹Elim public

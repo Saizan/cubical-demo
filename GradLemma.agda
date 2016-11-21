@@ -26,41 +26,41 @@ module _ {l l' : _}  where
   lemIso {A} {B} f g s t y x0 x1 p0 p1 = \ i → (p i) , sq1 i
    where
      rem0 : g y ≡ x0
-     rem0 = \ i → primComp (\ _ → A) _ (\ k → [ i ↦ r[ t x0 k ] , ~ i ↦ r[ g y ] ]) (g (p0 i))
+     rem0 = \ i → primComp (\ _ → A) _ (\ k → \ { (i = i1) → t x0 k; (i = i0) → g y }) (g (p0 i))
      rem1 : g y ≡ x1
-     rem1 = \ i → primComp (\ _ → A) (i ∨ ~ i) (\ k → [ i ↦ r[ t x1 k ] , ~ i ↦ r[ g y ] ])  (g (p1 i))
+     rem1 = \ i → primComp (\ _ → A) (i ∨ ~ i) (\ k → \ {(i = i1) → t x1 k; (i = i0) → g y})  (g (p1 i))
      p : Path x0 x1
-     p = \ i → primComp (\ _ → A) (i ∨ ~ i) (\ k → [ i ↦ r[ rem1 k ] , ~ i ↦ r[ rem0 k ] ])  (g y)
+     p = \ i → primComp (\ _ → A) (i ∨ ~ i) (\ k → \{ (i = i1) → rem1 k; (i = i0) → rem0 k })  (g y)
      fill0 : Square
                        (\ i → g (p0 i)) rem0 (\ i → g y) (t x0)
-     fill0 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → [ i ↦ r[ t x0 (j ∧ k) ] , (~ i ∨ ~ j) ↦ [
-                                                                     ~ i ↦ r[ g y ] ,
-                                                                     ~ j ↦ r[ g (p0 i) ] ] ])
+     fill0 = \ i → \ j → primComp (λ _ → A) _                 (\ k → \ { (i = i1) → t x0 (j ∧ k)
+                                                                       ; (i = i0) → g y
+                                                                       ; (j = i0) → g (p0 i) })
                                             (g (p0 i))
      fill1 : Square
                        (\ i → g (p1 i)) rem1 (\ i → g y) (t x1)
-     fill1 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → [ i ↦ r[ t x1 (j ∧ k) ] , (~ i ∨ ~ j) ↦ [
-                                                                     ~ i ↦ r[ g y ] ,
-                                                                     ~ j ↦ r[ g (p1 i) ] ] ])
+     fill1 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → \ { (i = i1) → t x1 (j ∧ k)
+                                                                       ; (i = i0) → g y
+                                                                       ; (j = i0) → g (p1 i) })
                                             (g (p1 i))
 
      fill2 : Square {A = A} (\ k → g y) p rem0 rem1
-     fill2 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → [ i   ↦ r[ rem1 (j ∧ k) ] , (~ i ∨ ~ j) ↦ [
-                                                                               ~ i ↦ r[ rem0 (j ∧ k) ] ,
-                                                                               ~ j ↦ r[ g y            ] ] ])
+     fill2 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → \ { (i = i1) → rem1 (j ∧ k)
+                                                                       ; (i = i0) → rem0 (j ∧ k)
+                                                                       ; (j = i0) → g y })
                                             (g y)
 
      sq : Square {A = A} (\ _ → g y) (\ i → g (f (p i))) (\ j → g (p0 j)) (\ j → g (p1 j))
-     sq = \ i → \ j → primComp (\ _ → A) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → [ (i ∨ ~ i) ↦ [ i   ↦ r[ fill1 j (~ k) ]
-                                                                                          , ~ i ↦ r[ fill0 j (~ k) ] ]
-                                                                            , (j ∨ ~ j) ↦ [ j   ↦ r[ t (p i) (~ k)              ]
-                                                                                          , ~ j ↦ r[ g y                          ] ] ] )
+     sq = \ i → \ j → primComp (\ _ → A) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → \ { (i = i1) → fill1 j (~ k)
+                                                                              ; (i = i0) → fill0 j (~ k)
+                                                                              ; (j = i1) → t (p i) (~ k)
+                                                                              ; (j = i0) → g y           })
                                (fill2 i j)
      sq1 : Square {A = B} (\ _ → y) (\ i → f (p i)) p0 p1
-     sq1 = \ i → \ j → primComp (\ _ → B) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → [ (i ∨ ~ i) ↦ [ i   ↦ r[ s (p1 j) k    ]
-                                                                                           , ~ i ↦ r[ s (p0 j) k    ] ]
-                                                                             , (j ∨ ~ j) ↦ [ j   ↦ r[ s (f (p i)) k ]
-                                                                                           , ~ j ↦ r[ s y k           ] ] ])
+     sq1 = \ i → \ j → primComp (\ _ → B) ((i ∨ (~ i)) ∨ (j ∨ (~ j))) (\ k → \ { (i = i1) → s (p1 j) k
+                                                                               ; (i = i0) → s (p0 j) k
+                                                                               ; (j = i1) → s (f (p i)) k
+                                                                               ; (j = i0) → s y k })
                                 (f (sq i j))
 
 
@@ -102,8 +102,8 @@ module _ {l l' : _}  where
 
   lemPropF : {A : U} {P : A -> V} (pP : (x : A) -> prop (P x)) {a0 a1 : A}
            (p : Path a0 a1) {b0 : P a0} {b1 : P a1} → PathP (\ i → P (p i)) b0 b1
-  lemPropF {P = P} pP p {b0} {b1} = \ i → pP (p i) (primComp (\ j → P (p (i ∧ j)) ) (~ i) (\ _ →  r[ b0 ]) b0)
-                                                     ((primComp (\ j → P (p (i ∨ ~ j)) ) (i) (\ _ →  r[ b1 ]) b1)) i
+  lemPropF {P = P} pP p {b0} {b1} = \ i → pP (p i) (primComp (\ j → P (p (i ∧ j)) ) (~ i) (\ _ →  \ { _ → b0 }) b0)
+                                                     ((primComp (\ j → P (p (i ∨ ~ j)) ) (i) (\ _ → \{ _ → b1 }) b1)) i
 
   lemSig : {A : U} {B : A -> V} (pB : (x : A) -> prop (B x))
          (u v : Σ A B) (p : Path (fst u) (fst v))
@@ -127,8 +127,8 @@ module _ {l : _}  where
    \(a b : A) (p q : Path a b) ->
      \ j → \ i → primComp (\ k → A)
                           ((~ i ∨ i) ∨ (~ j ∨ j))
-                          (\ k → [ ~ i ∨ i ↦ [ ~ i ↦ r[ h a a k ]     , i ↦ r[ h a b k ]       ]
-                                 , ~ j ∨ j ↦ [ ~ j ↦ r[ h a (p i) k ] , j ↦ r[ h a (q i) k ] ] ])
+                          (\ k → \ { (i = i0) → h a a k; (i = i1) → h a b k
+                                   ; (j = i0) → h a (p i) k; (j = i1) → h a (q i) k })
                           a
 
   propIsContr : {A : U} → prop (Contr.isContr A)

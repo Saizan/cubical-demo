@@ -1,6 +1,7 @@
 {-# OPTIONS --cubical #-}
 module Cube where
 
+
 open import Primitives public
 open import Level
 open import Data.Product public using (Σ; _,_) renaming (proj₁ to fst; proj₂ to snd)
@@ -17,12 +18,14 @@ test-sym p = refl
 
 trans : ∀ {a} {A : Set a} → {x y z : A} → Path x y → Path y z → Path x z
 trans {A = A} {x} {y} p q = \ i → primComp (λ j → A) (i ∨ ~ i)
-                                           (\ j → primPOr i (~ i)  r[ q j ]  r[ x ]
+                                           (\ j → \ { (i = i1) -> q j
+                                                    ; (i = i0) -> x
+                                                    }
                                                   )
                                            (p i)
 
 testBool : (p : Path true false) → Bool
-testBool p = primComp (\ _ → Bool) i1 (\ j →  r[ p j ] ) true
+testBool p = primComp (\ _ → Bool) i1 (\ j → \ _ → p j) true
 -- cannot reduce to true, because it's already reducing to false.
 
 
@@ -54,11 +57,11 @@ module IntervalEquations where
   test5 : ∀ {i} → P (_∧_ i0 i) ≡ P i0
   test5 = refl
 
-  -- test52 : ∀ {i} → P (_∧_ i i) ≡ P i
-  -- test52 = refl
+  test52 : ∀ {i} → P (_∧_ i i) ≡ P i
+  test52 = refl
 
-  -- test53 : ∀ {i j} → P (i ∧ j) ≡ P (j ∧ i)
-  -- test53 = refl
+  test53 : ∀ {i j} → P (i ∧ j) ≡ P (j ∧ i)
+  test53 = refl
 
   testn6 : ∀ {i} → P (i1 ∧ i) ≡ P i
   testn6 = refl
@@ -99,7 +102,7 @@ inPartial a = \ _ → a
 
 
 fill : ∀ {a : I -> Level} (A : (i : I) → Set (a i)) (φ : I) → ((i : I) → Partial (A i) φ) → A i0 → (i : I) → A i
-fill A φ u a0 i = unsafeComp (\ j → A (i ∧ j)) (φ ∨ ~ i) (\ j → unsafePOr φ (~ i) (u (i ∧ j)) r[ a0 ]) a0
+fill A φ u a0 i = unsafeComp (\ j → A (i ∧ j)) (φ ∨ ~ i) (\ j → unsafePOr φ (~ i) (u (i ∧ j)) \ { _ → a0 }) a0
 
 
 compPi : ∀ {a b} {A : I -> Set a}{B : ∀ i → A i → Set b} →
@@ -109,7 +112,7 @@ compPi {A = A} {B = B} φ u a x1 = unsafeComp (\ i → B i (v i)) φ (λ i → \
     v : (i : I) → A i
     v = λ i → unsafeComp (λ j → A (i ∨ (~ j))) i (λ j → p[_] {A = A} x1 _ (~ j) ) x1
     f : ∀ i → (a : A i) → Partial (B i a) φ
-    f i a = r[ u i itIsOne a  ]
+    f i a = \ { _ → u i itIsOne a  }
 
 
 compPi' : ∀ {a b} → ∀ {A : I -> Set a}{B : ∀ i → A i → Set b} →
@@ -157,11 +160,11 @@ module RecordComp where
   {-# TERMINATING #-}
   compR : ∀ {a b} {A : I -> Set a}{B : ∀ i → A i → Set b}{C : ∀ i → (x : A i) → B i x → Set a} →
               (let a = _; Z : I → Set a; Z = \ i → R (A i) (B i) (C i)) (φ : I) → (∀ i → Partial (Z i) φ) → (a : Z i0) → Z i1
-  fst (compR {A = A} {B} φ w w0) = unsafeComp A φ (λ i → r[ fst (w i itIsOne) ]) (fst w0)
-  snd (compR {A = A} {B} φ w w0) = unsafeComp (\ i → B i (a i)) φ (λ i → r[ snd (w i itIsOne) ] ) (snd w0) --
+  fst (compR {A = A} {B} φ w w0) = unsafeComp A φ (λ i →  r[ fst (w i itIsOne) ] ) (fst w0)
+  snd (compR {A = A} {B} φ w w0) = unsafeComp (\ i → B i (a i)) φ (λ i →  r[ snd (w i itIsOne) ]  ) (snd w0)
     where
-      a = fill (λ z → A z) φ (\ i → r[ fst (w i itIsOne) ]) (fst w0)
-  trd (compR {A = A} {B} {C} φ w w0) = unsafeComp (\ i → C i (a i) (b i)) φ ((λ i → r[ trd (w i itIsOne) ] )) (trd w0)
+      a = fill (λ z → A z) φ (\ i →  r[ fst (w i itIsOne) ] ) (fst w0)
+  trd (compR {A = A} {B} {C} φ w w0) = unsafeComp (\ i → C i (a i) (b i)) φ ((λ i →  r[ trd (w i itIsOne) ]  )) (trd w0)
 
     where
       Z : I → Set _
