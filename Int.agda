@@ -1,7 +1,7 @@
 module Int where
 
-
-open import Cube
+open import Data.Product
+open import PathPrelude
 open import GradLemma
 
 data Nat : Set where

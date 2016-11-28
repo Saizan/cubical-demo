@@ -2,10 +2,11 @@
 module Sub where
 
 open import Level
-open import Cube
+open import PathPrelude
 
+-- "Sub {A = A} φ t" is our notation for "A[φ ↦ t]" as a type.
 
-ouc-φ : ∀ {a} {A : Set a} (let φ = i1) {t : Partial A φ} → (s : Sub φ t) → (ouc s) ≡ t itIsOne
+ouc-φ : ∀ {a} {A : Set a} (let φ = i1) {t : Partial A φ} → (s : Sub {A = A} φ t) → (ouc s) ≡ t itIsOne
 ouc-φ s = refl
 
 ouc-beta : ∀ {a} {A : Set a} {φ} → (a : A) → ouc {φ = φ} {u = \ { _ → a }} (inc {φ = φ} a) ≡ a

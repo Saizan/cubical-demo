@@ -1,7 +1,9 @@
 {-# OPTIONS --cubical #-}
 module Univalence where
 
-open import Cube hiding (coe)
+open import Data.Product renaming (proj₁ to fst; proj₂ to snd)
+
+open import PathPrelude
 open import GradLemma
 
 
@@ -53,5 +55,5 @@ uaβ : ∀ {A B : Set} → (e : Equiv A B) → coe (ua e) ≡ fst e
 uaβ e = fun-ext (λ x → let p = _ in trans (fl _) (trans (fl _) (trans (fl _) (\ i → (fst e) (fl p i)))))
 
 
-univalence : ∀ {A} {B : Set} → isEquiv (Path A B) (Equiv A B) idtoeqv
+univalence : ∀ {A : Set} {B : Set} → isEquiv (Path A B) (Equiv A B) idtoeqv
 univalence = UAEquiv.univ-equiv ua uaid=id uaβ

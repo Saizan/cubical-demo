@@ -2,7 +2,7 @@
 
 module Stream where
 open import Data.Product using (_×_)
-open import Cube hiding (Σ)
+open import PathPrelude
 
 
 record Stream (A : Set) : Set where
@@ -57,7 +57,6 @@ module Equality≅Bisimulation where
   iso2 : {A : Set} → {x y : Stream A} → (p : x ≈ y) → misib (bisim p) ≡ p
   head (iso2 p i) = head p
   tail (iso2 p i) = iso2 (tail p) i
-
 
 
   -- misib can be implemented by transport as well.

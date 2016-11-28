@@ -1,9 +1,9 @@
 {-# OPTIONS --cubical #-}
 module GradLemma where
 
-open import Cube
+open import PathPrelude
 
-open Σ
+open import Data.Product renaming (proj₁ to fst; proj₂ to snd)
 
 module _ {l l' : _}  where
   private
@@ -47,7 +47,7 @@ module _ {l l' : _}  where
      fill2 : Square {A = A} (\ k → g y) p rem0 rem1
      fill2 = \ i → \ j → primComp (λ _ → A) (i ∨ (~ i ∨ ~ j)) (\ k → \ { (i = i1) → rem1 (j ∧ k)
                                                                        ; (i = i0) → rem0 (j ∧ k)
-                                                                       ; (j = i0) → g y })
+                                                                       ; (j = i0) →  g y  })
                                             (g y)
 
      sq : Square {A = A} (\ _ → g y) (\ i → g (f (p i))) (\ j → g (p0 j)) (\ j → g (p1 j))

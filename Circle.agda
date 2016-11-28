@@ -1,16 +1,9 @@
 {-# OPTIONS --cubical --rewriting #-}
 
-
-open import Cube
+open import PathPrelude
 open import Univalence
 open import Int
-
-
-postulate
-  Rewrite : ∀ {l} {A : Set l} → A → A → Set
-
-{-# BUILTIN REWRITE Rewrite #-}
-
+open import Rewrite
 
 
 
