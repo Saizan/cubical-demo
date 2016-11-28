@@ -37,32 +37,32 @@ module Equality≅Bisimulation where
   record _≈_ {A : Set} (x y : Stream A) : Set where
     coinductive
     field
-      head : head x ≡ head y
-      tail : tail x ≈ tail y
+      ≈head : head x ≡ head y
+      ≈tail : tail x ≈ tail y
 
   open _≈_
 
   bisim : {A : Set} → {x y : Stream A} → x ≈ y → x ≡ y
-  head (bisim x≈y i) = head x≈y i
-  tail (bisim x≈y i) = bisim (tail x≈y) i
+  head (bisim x≈y i) = ≈head x≈y i
+  tail (bisim x≈y i) = bisim (≈tail x≈y) i
 
   misib : {A : Set} → {x y : Stream A} → x ≡ y → x ≈ y
-  head (misib p) = \ i → head (p i)
-  tail (misib p) = misib (\ i → tail (p i))
+  ≈head (misib p) = \ i → head (p i)
+  ≈tail (misib p) = misib (\ i → tail (p i))
 
   iso1 : {A : Set} → {x y : Stream A} → (p : x ≡ y) → bisim (misib p) ≡ p
   head (iso1 p i j) = head (p j)
   tail (iso1 p i j) = iso1 (\ i → tail (p i)) i j
 
   iso2 : {A : Set} → {x y : Stream A} → (p : x ≈ y) → misib (bisim p) ≡ p
-  head (iso2 p i) = head p
-  tail (iso2 p i) = iso2 (tail p) i
+  ≈head (iso2 p i) = ≈head p
+  ≈tail (iso2 p i) = iso2 (≈tail p) i
 
 
   -- misib can be implemented by transport as well.
   refl≈ : {A : Set} {x : Stream A} → x ≈ x
-  head refl≈ = refl
-  tail refl≈ = refl≈
+  ≈head refl≈ = refl
+  ≈tail refl≈ = refl≈
 
   cast : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → x ≈ y
   cast {A} {x} {y} p = primComp (\ i → x ≈ p i) i0 (\ i → empty) refl≈
@@ -71,5 +71,5 @@ module Equality≅Bisimulation where
   fill-id {A} {x} = pathJ _ (\ j → \ i →  fill (\ _ → A) (i ∨ ~ i) (\ _ → \ _ → x) x (~ j))
 
   misib-transp : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → cast p ≡ misib p
-  head (misib-transp p i) = fill-id _ (\ i → head (p i)) i
-  tail (misib-transp p i) = misib-transp (\ i → tail (p i)) i
+  ≈head (misib-transp p i) = fill-id _ (\ i → head (p i)) i
+  ≈tail (misib-transp p i) = misib-transp (\ i → tail (p i)) i
