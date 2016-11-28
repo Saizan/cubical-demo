@@ -73,3 +73,27 @@ module Equality≅Bisimulation where
   misib-transp : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → cast p ≡ misib p
   ≈head (misib-transp p i) = fill-id _ (\ i → head (p i)) i
   ≈tail (misib-transp p i) = misib-transp (\ i → tail (p i)) i
+
+
+
+module Stream≅Nat→ {A : Set} where
+
+  open import Data.Nat
+
+  lookup : Stream A → ℕ → A
+  lookup xs zero = head xs
+  lookup xs (suc n) = lookup (tail xs) n
+
+  tabulate : (ℕ → A) → Stream A
+  head (tabulate f) = f 0
+  tail (tabulate f) = tabulate (\ n → f (suc n))
+
+
+  lookup∘tabulate : (\ (x : _ → _) → lookup (tabulate x)) ≡ (\ x → x)
+  lookup∘tabulate i f zero = f zero
+  lookup∘tabulate i f (suc n) = lookup∘tabulate i (\ n → f (suc n)) n
+
+
+  tabulate∘lookup : (\ (x : Stream _) → tabulate (lookup x)) ≡ (\ x → x)
+  head (tabulate∘lookup i xs) = head xs
+  tail (tabulate∘lookup i xs) = tabulate∘lookup i (tail xs)
