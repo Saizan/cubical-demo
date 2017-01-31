@@ -6,6 +6,13 @@ module Primitives where
 module Postulates where
   open import Agda.Primitive public renaming (isOneEmpty to empty)
 
+  postulate
+    Path : ∀ {a} {A : Set a} → A → A → Set a
+    PathP : ∀ {a} → (A : I → Set a) → A i0 → A i1 → Set a
+
+  {-# BUILTIN PATH         Path     #-}
+  {-# BUILTIN PATHP        PathP     #-}
+
   primitive
     primPathApply : ∀ {a} {A : Set a} {x y : A} → Path x y → I → A
     primPathPApply : ∀ {a} → {A : I → Set a} → ∀ {x y} → PathP A x y → (i : I) → A i
