@@ -17,10 +17,6 @@ module Postulates where
     primPathApply : ∀ {a} {A : Set a} {x y : A} → Path x y → I → A
     primPathPApply : ∀ {a} → {A : I → Set a} → ∀ {x y} → PathP A x y → (i : I) → A i
 
-  {-# BUILTIN RESTRICT    Restrict #-}
-  {-# BUILTIN PSINGL      r[_]     #-}
-
-
   postulate
     Id : ∀ {a} {A : Set a} → A → A → Set a
 

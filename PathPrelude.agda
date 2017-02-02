@@ -1,5 +1,6 @@
 {-# OPTIONS --cubical #-}
 module PathPrelude where
+
   open import Primitives public
   open import Level
   open import Data.Product using (Σ; _,_) renaming (proj₁ to fst; proj₂ to snd)
@@ -58,30 +59,30 @@ module PathPrelude where
 
     lemma : ∀ {a} {A : Set a}
             → (contr1 : ∀ φ → Partial A φ → A)
-            → (contr2 : ∀ u → u ≡ (contr1 i1 r[ u ]))
+            → (contr2 : ∀ u → u ≡ (contr1 i1 \{_ → u}))
             → isContr A
     lemma {A = A} contr1 contr2 = x , (λ y → let module M = R y in trans (contr2 x) (trans (\ i → M.v i) (sym (contr2 y)))) where
           x = contr1 i0 empty
           module R (y : A) (i : I) where
             φ = ~ i ∨ i
             u : Partial A φ
-            u = primPOr (~ i) i r[ x ] r[ y ]
+            u = primPOr (~ i) i (\{_ → x}) (\{_ → y})
             v = contr1 φ u
 
     isContrProp : ∀ {a} {A : Set a} (h : isContr A) -> ∀ (x y : A) → x ≡ y
-    isContrProp {A = A} h a b = \ i → primComp (\ _ → A) _ (\ j → [ (~ i) ↦ r[ snd h a j ] , i ↦ r[ snd h b j ] ]) (fst h)
+    isContrProp {A = A} h a b = \ i → primComp (\ _ → A) _ (\ j → [ (~ i) ↦ (\{_ → snd h a j}) , i ↦ (\{_ → snd h b j}) ]) (fst h)
 
   module Pres {la lb : I → _} {T : (i : I) → Set (lb i)}{A : (i : I) → Set (la i)} (f : ∀ i → T i → A i) (φ : I) (t : ∀ i → Partial (T i) φ)
                   (t0 : T i0 {- [ φ ↦ t i0 ] -}) where
 
    c1 c2 : A i1
-   c1 = unsafeComp A φ (λ i → r[ f i (t i itIsOne) ]) (f i0 t0)
+   c1 = unsafeComp A φ (λ i → (\{_ → f i (t i itIsOne) })) (f i0 t0)
    c2 = f i1 (unsafeComp T φ t t0)
 
    a0 = f i0 t0
 
    a : ∀ i → Partial (A i) φ
-   a i = r[ f i ((t i) itIsOne) ]
+   a i = (\{_ → f i ((t i) itIsOne) })
 
    u : ∀ i → A i
    u = fill A φ a a0
@@ -90,7 +91,7 @@ module PathPrelude where
    v = fill T φ t t0
 
    pres : Path c1 c2
-   pres = \ j → unsafeComp A (φ ∨ (j ∨ ~ j)) (λ i → primPOr φ ((j ∨ ~ j)) (a i) (primPOr j (~ j)  r[  f i (v i)  ] r[  u i  ])) a0
+   pres = \ j → unsafeComp A (φ ∨ (j ∨ ~ j)) (λ i → primPOr φ ((j ∨ ~ j)) (a i) (primPOr j (~ j)  (\{_ →  f i (v i)  }) (\{_ →  u i  }))) a0
 
   module Equiv {l l'} (A : Set l)(B : Set l') where
     isEquiv : (A -> B) → Set (l' ⊔ l)
@@ -120,7 +121,7 @@ module PathPrelude where
   pathToEquiv : ∀ {l : I → _} (E : (i : I) → Set (l i)) → Equiv (E i0) (E i1)
   pathToEquiv E = f
                 , (λ y → (g y
-                         , (\ j → primComp E (~ j ∨ j) (\ i → [ ~ j ↦  r[ v i y ]  , j ↦  r[ u i (g y) ]  ]) (g y))) ,
+                         , (\ j → primComp E (~ j ∨ j) (\ i → [ ~ j ↦  (\{_ → v i y })  , j ↦  (\{_ → u i (g y) })  ]) (g y))) ,
                                           prop-f-image y _ )
     where
       A = E i0
@@ -138,14 +139,14 @@ module PathPrelude where
       prop-f-image : (y : B) → (a b : Σ _ \ x → y ≡ f x) → a ≡ b
       prop-f-image y (x0 , b0) (x1 , b1) = \ k → (w k) , (\ j → d j k)
          where
-           w0 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x0 ]  ])) (b0 j)
-           w1 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x1 ]  ])) (b1 j)
-           t0 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x0 ]  ])) (b0 j)
-           t1 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  r[ v (~ i) y ]  , j ↦  r[ u (~ i) x1 ]  ])) (b1 j)
-           w = \ (k : I) → primComp (λ _ → A) (~ k ∨ k) (\ j → [ ~ k ↦ r[ w0 j ] , k ↦ r[ w1 j ] ]) (g y)
-           t = \ (j k : I) → fill (λ _ → A) (~ k ∨ k) (\ j → [ ~ k ↦ r[ w0 j ] , k ↦ r[ w1 j ] ]) (g y) j
-           d = \ (j k : I) → primComp E ((~ k ∨ k) ∨ (~ j ∨ j)) ((\ i → [ ~ k ∨ k ↦ [ ~ k ↦  r[  t0 j (~ i)  ]  , k ↦  r[ t1 j (~ i) ]  ]
-                                                     , ~ j ∨ j ↦ [ ~ j ↦  r[ v (i) y ]  , j ↦  r[ u (i) (w k) ]  ] ])) (t j k)
+           w0 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  (\{_ → v (~ i) y })  , j ↦  (\{_ → u (~ i) x0 })  ])) (b0 j)
+           w1 = \ (j : I) → primComp (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  (\{_ → v (~ i) y })  , j ↦  (\{_ → u (~ i) x1 })  ])) (b1 j)
+           t0 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  (\{_ → v (~ i) y })  , j ↦  (\{_ → u (~ i) x0 })  ])) (b0 j)
+           t1 = \ (j : I) → fill (\ i → E (~ i)) (~ j ∨ j) ((\ i → [ ~ j ↦  (\{_ → v (~ i) y })  , j ↦  (\{_ → u (~ i) x1 })  ])) (b1 j)
+           w = \ (k : I) → primComp (λ _ → A) (~ k ∨ k) (\ j → [ ~ k ↦ (\{_ → w0 j }) , k ↦ (\{_ → w1 j }) ]) (g y)
+           t = \ (j k : I) → fill (λ _ → A) (~ k ∨ k) (\ j → [ ~ k ↦ (\{_ → w0 j }) , k ↦ (\{_ → w1 j }) ]) (g y) j
+           d = \ (j k : I) → primComp E ((~ k ∨ k) ∨ (~ j ∨ j)) ((\ i → [ ~ k ∨ k ↦ [ ~ k ↦  (\{_ →  t0 j (~ i)  })  , k ↦  (\{_ → t1 j (~ i) })  ]
+                                                     , ~ j ∨ j ↦ [ ~ j ↦  (\{_ → v (i) y })  , j ↦  (\{_ → u (i) (w k) })  ] ])) (t j k)
 
   pathToEquiv2 : ∀ {l : I → _} (E : (i : I) → Set (l i)) → _
   pathToEquiv2 {l} E = snd (pathToEquiv E)
@@ -175,7 +176,7 @@ module PathPrelude where
   Glue A φ T f = primGlue A φ T (\ o → fst (f o)) (\ o → snd (f o))
 
   eqToPath' : ∀ {l} {A B : Set l} → Equiv A B → Path A B
-  eqToPath' {l} {A} {B} f = \ i → Glue B (~ i ∨ i) ([ ~ i ↦ (\ _ → A) , i ↦ (\ _ → B) ]) ([ ~ i ↦ r[ f ] , i ↦ r[ idEquiv ] ])
+  eqToPath' {l} {A} {B} f = \ i → Glue B (~ i ∨ i) ([ ~ i ↦ (\ _ → A) , i ↦ (\ _ → B) ]) ([ ~ i ↦ (\{_ → f }) , i ↦ (\{_ → idEquiv }) ])
 
   primitive
     primFaceForall : (I → I) → I
@@ -188,12 +189,12 @@ module PathPrelude where
 
   module GlueIso {a b} {A : Set a} {φ : I} {T : Partial (Set b) φ} {f : (PartialP φ \ o → Equiv (T o) A)} where
     going : PartialP φ (\ o → Glue A φ T f → T o)
-    going = r[ (\ x → x) ]
+    going = (\{_ → (\ x → x) })
     back : PartialP φ (\ o → T o → Glue A φ T f)
-    back = r[ (\ x → x) ]
+    back = (\{_ → (\ x → x) })
 
     lemma : ∀ (b : PartialP φ (\ _ → Glue A φ T f)) → PartialP φ \ o → Path (unglue {φ = φ} (b o)) (fst (f o) (going o (b o)))
-    lemma b = r[ refl ]
+    lemma b = (\{_ → refl })
 
   module CompGlue {la lb : I → _} (A : (i : I) → Set (la i)) (φ : I -> I) (T : ∀ i → Partial (Set (lb i)) (φ i))
                            (f : ∀ i → PartialP (φ i) \ o → Equiv (T i o) (A i)) where
@@ -213,7 +214,8 @@ module PathPrelude where
          a₁'' = unsafeComp (\ _ → A i1) (δ ∨ ψ) (\ j → unsafePOr δ ψ (\ o → w o ∙ j) (a i1)) a₁'
          g : PartialP (φ i1) _
          g o = (equiv (T i1 _) (A i1) (f i1 o) (δ ∨ ψ) (unsafePOr δ ψ t₁' (\ o' → GlueIso.going {φ = φ i1} o (b i1 o'))) a₁''
-                          (unsafePOr δ ψ r[ refl ]  r[ GlueIso.lemma {φ = φ i1} (\ _ → b i1 itIsOne) o ] ))
+                          ( (unsafePOr δ ψ (\{ (δ = i1) → refl })  ((\{ (ψ = i1) → GlueIso.lemma {φ = φ i1} (\ _ → b i1 itIsOne) o })  ) ) ))
+                          -- TODO figure out why we need (δ = i1) and (ψ = i1) here
          t₁ : PartialP (φ i1) _
          t₁ o = fst (g o)
          α : PartialP (φ i1) _
