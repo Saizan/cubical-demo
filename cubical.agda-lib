@@ -1,0 +1,3 @@
+name: cubical
+depend: standard-library
+include: .
