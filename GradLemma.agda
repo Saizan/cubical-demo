@@ -80,11 +80,17 @@ module _ {l l' : _}  where
   retEq : {A : U} {B : V} (w : Equiv.Equiv A B) (y : B) → Path (fst w (invEq w y)) y
   retEq w y = \ i → snd (fst (snd w y)) (~ i)
 
+isoToPath : ∀ {l} {A B : Set l} (f : A -> B) (g : B -> A)
+         (s : (y : B) -> Path (f (g y)) y)
+         (t : (x : A) -> Path (g (f x)) x) → Path A B
+isoToPath f g s t = eqToPath' (_ , gradLemma f g s t)
+
 prop : ∀ {a} → (A : Set a) → Set a
 prop A = (a b : A) -> Path a b
 
 lemProp : ∀ {a} {A : Set a} (h : A -> prop A) → prop A
 lemProp h = \ a  -> h a a
+
 
 module _ {l l' : _}  where
   private

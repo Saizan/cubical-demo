@@ -97,3 +97,9 @@ module Stream≅Nat→ {A : Set} where
   tabulate∘lookup : (\ (x : Stream _) → tabulate (lookup x)) ≡ (\ x → x)
   head (tabulate∘lookup i xs) = head xs
   tail (tabulate∘lookup i xs) = tabulate∘lookup i (tail xs)
+
+  open import GradLemma
+
+  Stream≡Nat→ : Stream A ≡ (ℕ → A)
+  Stream≡Nat→ = isoToPath lookup tabulate
+                          (\ f i → lookup∘tabulate i f) (\ xs i → tabulate∘lookup i xs)
