@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical --rewriting #-}
-
+module Circle where
 open import PathPrelude
 open import Univalence
 open import Int
