@@ -49,13 +49,11 @@ intLoop : Int → base ≡ base
 intLoop (pos n) = natLoop n
 intLoop (negsuc n) = sym (natLoop (suc n))
 
-one two three four five : Nat
-one = suc zero
 
-two = suc one
-three = suc two
-four = suc three
-five = suc four
+
+
+-- a test case.
+five = suc (suc (suc (suc (suc zero))))
 
 
 test-winding-pos : winding (intLoop (pos five)) ≡ pos five

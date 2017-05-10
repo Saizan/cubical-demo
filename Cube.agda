@@ -231,7 +231,6 @@ foo w b v = \ j → fst ((snd (snd (snd (w)) b)) v j)
 bar : ∀ {l} {A : Set l} → (w : Σ (Set l) \ T → Equiv T A) → (b : A) → (v : Σ (fst w) (λ x → b ≡ fst (snd w) x)) -> (j k : I) -> A
 bar w b v = \ j → \ k → (snd (snd (snd (snd w) b) v j) k )
 
-{-# TERMINATING #-}
 unglue-equiv : ∀ {a} (A : Set a) → (φ : I) → (T : Partial (Set a) φ) (f : PartialP φ \ o → Equiv (T o) A)  → Equiv (Glue A φ T f) A
 unglue-equiv A φ T f = unglue {φ = φ} , (λ b → ((glue {φ = φ} ((\{_ → fst (fst (snd (snd (w itIsOne)) b)) }))
                                                                (primComp (\ _ → A) φ (\ j → (\{_ → snd (fst (snd (snd (w itIsOne)) b)) j })) b))

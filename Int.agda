@@ -3,11 +3,11 @@ module Int where
 open import Data.Product
 open import PathPrelude
 open import GradLemma
+-- open import Data.Nat renaming (ℕ to Nat) public
 
 data Nat : Set where
   zero : Nat
   suc : Nat -> Nat
-
 data Int : Set where
   pos    : (n : Nat) → Int
   negsuc : (n : Nat) → Int

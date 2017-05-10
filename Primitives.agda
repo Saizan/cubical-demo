@@ -50,9 +50,7 @@ open Postulates public renaming (primPathApply to _∙_; primIMin to _∧_; prim
 
 module Unsafe' (dummy : Set₁) = Postulates
 
-open Unsafe' Set public using () renaming (conid to unsafeConId; primComp to unsafeComp)
-
-
+unsafeComp = Unsafe'.primComp Set
 unsafePOr = Unsafe'.primPOr Set
 
 _≡_ = Path

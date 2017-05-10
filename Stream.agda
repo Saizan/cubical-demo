@@ -14,7 +14,6 @@ record Stream (A : Set) : Set where
 
 open Stream
 
--- simple (map id) example
 mapS : ∀ {A B} → (A → B) → Stream A → Stream B
 head (mapS f xs) = f (head xs)
 tail (mapS f xs) = mapS f (tail xs)

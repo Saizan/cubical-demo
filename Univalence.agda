@@ -14,15 +14,15 @@ coe : ∀ {l}{A B : Set l} → Path A B → A → B
 coe {A = A} = transpP {B = \ X → X}
 
 fl : ∀ {l} {A : Set l} → (z : A) → Path (primComp (\ _ → A) i0 (\ _ → empty) z)  z
-fl {l} {A} = \ z → (\ i → fill (\ i → A) i0 (\ i → empty) z (~ i))
+fl {l} {A} = \ z → (\ i → primComp (\ i → A) i (\ { i _ → z }) z)
 
 idtoeqv : ∀ {l}{A B : Set l} → Path A B → Equiv A B
 idtoeqv {A = A} p = coe (\ i → Equiv A (p i)) (idEquiv {A = A})
 
 [idtoeqv]refl=id : ∀ {l} {A : Set l} → idtoeqv {A = A} refl ≡ idEquiv
 [idtoeqv]refl=id {A = A} = lemSig propIsEquiv _ _ ( (fun-ext (\ z → trans (trans (trans (
-            let r = (unsafeComp (λ _ → A) i0 (λ _ → empty) (unsafeComp (λ _ → A) i0 (λ _ → empty)
-                                                           (unsafeComp (λ _ → A) i0 (λ _ → empty) z)))
+            let r = (primComp (λ _ → A) i0 (λ _ → empty) (primComp (λ _ → A) i0 (λ _ → empty)
+                                                           (primComp (λ _ → A) i0 (λ _ → empty) z)))
             in   fl r       ) (fl _)) (fl _)) (fl z))) )
 
 module UAEquiv

@@ -4,7 +4,6 @@ module PathPrelude where
   open import Primitives public
   open import Level
   open import Data.Product using (Σ; _,_) renaming (proj₁ to fst; proj₂ to snd)
-  open import Data.Bool using (Bool; true; false)
 
   refl : ∀ {a} {A : Set a} {x : A} → Path x x
   refl {x = x} = λ i → x
@@ -12,20 +11,33 @@ module PathPrelude where
   sym : ∀ {a} {A : Set a} → {x y : A} → Path x y → Path y x
   sym p = \ i → p (~ i)
 
+  pathJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → P x ((\ i -> x)) → ∀ y (p : Path x y) → P y p
+  pathJ P d _ p = primComp (λ i → P (p i) (\ j → p (i ∧ j))) i0 (\ _ → empty) d
+
+
+  pathJprop : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → (d : P x ((\ i -> x))) → pathJ P d _ refl ≡ d
+  pathJprop {x = x} P d i = primComp (λ _ → P x refl) i (\ { j (i = i1) → d }) d
+
+
   trans : ∀ {a} {A : Set a} → {x y z : A} → Path x y → Path y z → Path x z
-  trans {A = A} {x} {y} p q = \ i → primComp (λ j → A) _ -- (i ∨ ~ i)
-                                           (\ j → \ { (i = i1) -> q j
-                                                    ; (i = i0) -> x
-                                                    }
-                                                  )
-                                           (p i)
+  trans {A = A} {x} {y} p q = \ i → primComp (λ j → A) (i ∨ ~ i)
+                                             (\ j → \ { (i = i1) → q j
+                                                      ; (i = i0) → x
+                                                      }
+                                             )
+                                             (p i)
 
   fun-ext : ∀ {a b} {A : Set a} {B : A → Set b} → {f g : (x : A) → B x}
             → (∀ x → Path (f x) (g x)) → Path f g
   fun-ext p = λ i x → p x i
 
+
+
   reflId : ∀ {a} {A : Set a}{x : A} → Id x x
   reflId {x = x} = conid i1 (λ _ → x)
+
+  Jdef : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Id x y → Set p) → (d : P x reflId) → J P d reflId ≡ d
+  Jdef P d = refl
 
   fromPath : ∀ {A : Set}{x y : A} → Path x y -> Id x y
   fromPath p = conid i0 p
@@ -37,6 +49,21 @@ module PathPrelude where
   congId f {x} {y} = J (λ y _ → Id (f x) (f y)) reflId
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   fill : ∀ {a : I -> Level} (A : (i : I) → Set (a i)) (φ : I) → ((i : I) → Partial (A i) φ) → A i0 → (i : I) → A i
   fill A φ u a0 i = unsafeComp (\ j → A (i ∧ j)) (φ ∨ ~ i) (\ j → unsafePOr φ (~ i) (u (i ∧ j)) \ { _ → a0 }) a0
 
@@ -46,8 +73,6 @@ module PathPrelude where
   contrSingl : ∀ {l} {A : Set l} {a b : A} (p : a ≡ b) → Path {A = singl a} (a , refl) (b , p)
   contrSingl p = \ i → ((p i) , \ j →  p (i ∧ j))
 
-  pathJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → P x ((\ i -> x)) → ∀ y (p : Path x y) → P y p
-  pathJ P d _ p = primComp (λ i → let x , y = contrSingl p i in P x y) i0 (\ _ → empty) d
 
   module Contr where
 
