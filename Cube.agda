@@ -368,8 +368,14 @@ trues = true ∷ true ∷ []
 falses : List Bool
 falses = primComp (\ i → ListNot ∙ i) i0 (\ _ → empty) trues
 
+test-falses : falses ≡ (false ∷ false ∷ [])
+test-falses = refl
+
 trues2 : List Bool
 trues2 = primComp (\ i → trans ListNot ListNot ∙ i) i0 (\ _ → empty) trues
+
+test-trues2 : trues2 ≡ trues
+test-trues2 = refl
 
 trues3 : List Bool
 trues3 = primComp (\ i → let p = trans ListNot ListNot in
@@ -377,3 +383,6 @@ trues3 = primComp (\ i → let p = trans ListNot ListNot in
                   i0
                   (\ _ → empty)
                   trues
+
+test-trues3 : trues3 ≡ trues
+test-trues3 = refl
