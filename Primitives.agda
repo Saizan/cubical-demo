@@ -4,7 +4,8 @@ module Primitives where
 
 
 module Postulates where
-  open import Agda.Primitive public renaming (isOneEmpty to empty)
+  open import Agda.Primitive public
+  open CubicalPrimitives public renaming (isOneEmpty to empty)
 
   postulate
     Path : ∀ {a} {A : Set a} → A → A → Set a
