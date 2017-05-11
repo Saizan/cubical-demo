@@ -47,11 +47,15 @@ open Postulates public renaming (primPathApply to _∙_; primIMin to _∧_; prim
                                 ; primPFrom1 to p[_]
                                 ; primIdJ to J
                                 ; primSubOut to ouc
+                                ; Path to Path'
                                 )
 
 module Unsafe' (dummy : Set₁) = Postulates
 
 unsafeComp = Unsafe'.primComp Set
 unsafePOr = Unsafe'.primPOr Set
+
+Path : ∀ {a} {A : Set a} → A → A → Set a
+Path {A = A} = PathP (\ _ → A)
 
 _≡_ = Path
