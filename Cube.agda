@@ -117,6 +117,24 @@ test-compPath : ∀ {a} → {A : I → Set a} → (u v : ∀ i → A i) (φ : I)
 test-compPath = λ u v φ p p0 → refl
 
 
+module TestPathP {a} {A : I → I → Set a} (u : ∀ i → A i i0)(v : ∀ i → A i i1)
+                  (φ : I) (let C = \ (i : I) → PathP (A i) (u i) (v i))
+                  (p : ∀ i → Partial (C i) φ) (p0 : C i0) where
+
+ compPathP : C i1
+ compPathP = \ j → unsafeComp (\ i → A i j) (φ ∨ (~ j ∨ j))
+                                                (λ i → [ φ   ↦ (\ o → (p i o) j) , (~ j ∨ j) ↦
+                                                       [ ~ j ↦ (\ { _ → u i } )
+                                                       , j   ↦ (\ { _ → v i } ) ]
+                                                       ])
+                                                (p0 j)
+
+ compPathP' : C i1
+ compPathP' = unsafeComp C φ p p0
+
+ test-compPathP : compPathP ≡ compPathP'
+ test-compPathP = refl
+
 module RecordComp where
   record R {a b} (A : Set a) (B : A -> Set b) (C : (x : A) → B x → Set a) : Set (a ⊔ b) where
      coinductive
