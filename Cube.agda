@@ -294,9 +294,9 @@ notnot : ∀ y → y ≡ not (not y)
 notnot true = refl
 notnot false = refl
 
-Σ-path : ∀ {a b} {A : Set a} {B : A → Set b} → {x y : A} → (p : Path x y) → {bx : B x} {by : B y} → PathP (\ i → B (p ∙ i)) bx by
+Σ-path : ∀ {a b} {A : Set a} {B : A → Set b} → {x y : A} → (p : Path x y) → {bx : B x} {by : B y} → PathP (\ i → B (p i)) bx by
            → Path {A = Σ A B} (x , bx) (y , by)
-Σ-path pa pb = \ i → (pa ∙ i) , primPathPApply pb i
+Σ-path pa pb = \ i → (pa i) , primPathPApply pb i
 
 nothelp : ∀ y (y₁ : Σ Bool (λ x → Path y (not x))) →
           Path (not y , notnot y) y₁
@@ -307,7 +307,7 @@ notEquiv : Equiv Bool Bool
 notEquiv = not , (\ { y → (not y , notnot y) , nothelp y })
 
 test : Bool
-test = primComp (\ i → univ {A = Bool} {B = Bool} notEquiv ∙ i)
+test = primComp (\ i → univ {A = Bool} {B = Bool} notEquiv i)
                 i0 (\ _ → empty) true
 
 
@@ -328,7 +328,7 @@ test-test2 : test ≡ false
 test-test2 = refl
 
 test2 : Bool
-test2 = primComp (\ i → eqToPath {A = Bool} {B = Bool} notEquiv ∙ i)
+test2 = primComp (\ i → eqToPath {A = Bool} {B = Bool} notEquiv i)
                  i0
                  (\ _ → empty)
                  true
@@ -342,7 +342,7 @@ test2-test : test2 ≡ unsafeComp (λ _ → Bool) i0 (\ _ _ → false)
 test2-test = refl
 
 test3 : Bool
-test3 = primComp (\ i → eqToPath' {A = Bool} {B = Bool} notEquiv ∙ i)
+test3 = primComp (\ i → eqToPath' {A = Bool} {B = Bool} notEquiv i)
                  i0
                  (\ _ → empty)
                  true
@@ -378,19 +378,19 @@ data List (A : Set) : Set where
 infixr 20 _∷_
 
 ListNot : List Bool ≡ List Bool
-ListNot = \ i → List (univ {A = Bool} {B = Bool} notEquiv ∙ i)
+ListNot = \ i → List (univ {A = Bool} {B = Bool} notEquiv i)
 
 trues : List Bool
 trues = true ∷ true ∷ []
 
 falses : List Bool
-falses = primComp (\ i → ListNot ∙ i) i0 (\ _ → empty) trues
+falses = primComp (\ i → ListNot i) i0 (\ _ → empty) trues
 
 test-falses : falses ≡ (false ∷ false ∷ [])
 test-falses = refl
 
 trues2 : List Bool
-trues2 = primComp (\ i → trans ListNot ListNot ∙ i) i0 (\ _ → empty) trues
+trues2 = primComp (\ i → trans ListNot ListNot i) i0 (\ _ → empty) trues
 
 test-trues2 : trues2 ≡ trues
 test-trues2 = refl

@@ -40,7 +40,7 @@ module PathPrelude where
   Jdef P d = refl
 
   fromPath : ∀ {A : Set}{x y : A} → Path x y -> Id x y
-  fromPath p = conid i0 p
+  fromPath p = conid i0 (\ i → p i)
 
   transId : ∀ {a} {A : Set a} → {x y z : A} → Id x y → Id y z → Id x z
   transId {A = A} {x} {y} p = J (λ y _ → Id x y) p
@@ -236,7 +236,7 @@ module PathPrelude where
          t₁' = \ o → unsafeComp (λ i → T i (∀e o i)) ψ (\ i o' → GlueIso.going {φ = φ i} (∀e o i) (b i o')) (GlueIso.going {φ = φ i0} (∀e o i0) b0)
          w : PartialP δ _
          w = \ o → Pres.pres (\ i → fst (f i (∀e o i))) ψ (λ i x → GlueIso.going {φ = φ i} (∀e o i) (b i x)) (GlueIso.going {φ = φ i0} (∀e o i0) b0)
-         a₁'' = unsafeComp (\ _ → A i1) (δ ∨ ψ) (\ j → unsafePOr δ ψ (\ o → w o ∙ j) (a i1)) a₁'
+         a₁'' = unsafeComp (\ _ → A i1) (δ ∨ ψ) (\ j → unsafePOr δ ψ (\ o → w o j) (a i1)) a₁'
          g : PartialP (φ i1) _
          g o = (equiv (T i1 _) (A i1) (f i1 o) (δ ∨ ψ) (unsafePOr δ ψ t₁' (\ o' → GlueIso.going {φ = φ i1} o (b i1 o'))) a₁''
                           ( (unsafePOr δ ψ (\{ (δ = i1) → refl })  ((\{ (ψ = i1) → GlueIso.lemma {φ = φ i1} (\ _ → b i1 itIsOne) o })  ) ) ))
@@ -245,7 +245,7 @@ module PathPrelude where
          t₁ o = fst (g o)
          α : PartialP (φ i1) _
          α o = snd (g o)
-         a₁ = unsafeComp (\ j → A i1) (φ i1 ∨ ψ) (\ j → unsafePOr (φ i1) ψ (\ o → α o ∙ j) (a i1)) a₁''
+         a₁ = unsafeComp (\ j → A i1) (φ i1 ∨ ψ) (\ j → unsafePOr (φ i1) ψ (\ o → α o j) (a i1)) a₁''
          b₁ : Glue _ (φ i1) (T i1) (f i1)
          b₁ = unsafeGlue {φ = φ i1} t₁ a₁
        b1 = Forall.b₁ (FR.δ φ) (FR.∀e φ)
