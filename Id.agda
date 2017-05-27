@@ -9,10 +9,10 @@ open import Primitives
 
 conid' : ∀ {a} {A : Set a} {x : A} φ {y : Sub {A = A} φ (\ {_ → x})}
          → (w : Sub {A = Path x (ouc y)} φ \ { _ → (\ _ → x) }) → Id x (ouc y)
-conid' φ {y} w = conid φ (ouc w)
+conid' φ {y} w = conid φ (\ i → ouc w i)
 
 primitive
- primIdElim : ∀ {a p} {A : Set a}{x : A}
+  primIdElim : ∀ {a p} {A : Set a}{x : A}
           (P : ∀ y → Id x y → Set p) →
           (∀ φ (y : Sub {A = A} φ (\{_ → x})) --- y : A [ φ ↦ x ]
               → (w : Sub φ (\ { _ → (\ i → x)})) → P (ouc y) (conid φ (ouc w)))

@@ -26,8 +26,8 @@ module Postulates where
 
   primitive
     primDepIMin : _
-    primIdFace : _
-    primIdPath : _
+    primIdFace : {a : Level} {A : Set a} {x y : A} → Id x y → I
+    primIdPath : {a : Level} {A : Set a} {x y : A} → Id x y → Path x y
 
   primitive
     primIdJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Id x y → Set p) → P x (conid i1 (\ i -> x)) → ∀ {y} (p : Id x y) → P y p
