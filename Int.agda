@@ -3,41 +3,36 @@ module Int where
 open import Data.Product
 open import PathPrelude
 open import GradLemma
--- open import Data.Nat renaming (ℕ to Nat) public
 
 data Nat : Set where
   zero : Nat
-  suc : Nat -> Nat
+  suc  : Nat → Nat
+
 data Int : Set where
   pos    : (n : Nat) → Int
   negsuc : (n : Nat) → Int
 
+sucℤ : Int → Int
+sucℤ (pos n)          = pos (suc n)
+sucℤ (negsuc zero)    = pos zero
+sucℤ (negsuc (suc n)) = negsuc n
 
-sucZ : Int → Int
-sucZ (pos n) = pos (suc n)
-sucZ (negsuc zero) = pos zero
-sucZ (negsuc (suc n)) = negsuc n
+predℤ : Int → Int
+predℤ (pos zero)      = negsuc zero
+predℤ (pos (suc n))   = pos n
+predℤ (negsuc n)      = negsuc (suc n)
 
-predZ : Int → Int
-predZ (pos zero) = negsuc zero
-predZ (pos (suc n)) = pos n
-predZ (negsuc n) = negsuc (suc n)
+sucPred : ∀ i → sucℤ (predℤ i) ≡ i
+sucPred (pos zero)       = refl
+sucPred (pos (suc n))    = refl
+sucPred (negsuc zero)    = refl
+sucPred (negsuc (suc n)) = refl
 
+predSuc : ∀ i → predℤ (sucℤ i) ≡ i
+predSuc (pos zero)       = refl
+predSuc (pos (suc n))    = refl
+predSuc (negsuc zero)    = refl
+predSuc (negsuc (suc n)) = refl
 
-suc-pred : ∀ i → sucZ (predZ i) ≡ i
-suc-pred (pos zero) = refl
-suc-pred (pos (suc n)) = refl
-suc-pred (negsuc zero) = refl
-suc-pred (negsuc (suc n)) = refl
-
-pred-suc : ∀ i → predZ (sucZ i) ≡ i
-pred-suc (pos zero) = refl
-pred-suc (pos (suc n)) = refl
-pred-suc (negsuc zero) = refl
-pred-suc (negsuc (suc n)) = refl
-
-open import Univalence
-open import GradLemma
-
-sucPathZ : Int ≡ Int
-sucPathZ = ua (sucZ , gradLemma sucZ predZ suc-pred pred-suc)
+sucPathℤ : Int ≡ Int
+sucPathℤ = equivToPath (sucℤ , gradLemma sucℤ predℤ sucPred predSuc)

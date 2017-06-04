@@ -18,7 +18,7 @@ mapS : ∀ {A B} → (A → B) → Stream A → Stream B
 head (mapS f xs) = f (head xs)
 tail (mapS f xs) = mapS f (tail xs)
 
-mapS-id : ∀ {A} {xs : Stream A} → mapS (\ x → x) xs ≡ xs
+mapS-id : ∀ {A} {xs : Stream A} → mapS (λ x → x) xs ≡ xs
 head (mapS-id {xs = xs} i) = head xs
 tail (mapS-id {xs = xs} i) = mapS-id {xs = tail xs} i
 
@@ -28,8 +28,9 @@ head (Stream-η {A} {xs} i) = head xs
 tail (Stream-η {A} {xs} i) = tail xs
 
 
-elimS : ∀ {A} (P : Stream A → Set) → (∀ x xs → P (x , xs)) → (xs : Stream A) → P xs
-elimS P c xs = primComp (\ i → P (Stream-η {xs = xs} (~ i))) i0 (\ _ → empty) (c (head xs) (tail xs))
+elimS : ∀{A} (P : Stream A → Set)(c : ∀ x xs → P (x , xs))(xs : Stream A) → P xs
+elimS P c xs = primComp (λ i → P (Stream-η {xs = xs} (~ i)))
+                 i0 (λ _ → empty) (c (head xs) (tail xs))
 
 
 module Equality≅Bisimulation where
@@ -46,12 +47,12 @@ module Equality≅Bisimulation where
   tail (bisim x≈y i) = bisim (≈tail x≈y) i
 
   misib : {A : Set} → {x y : Stream A} → x ≡ y → x ≈ y
-  ≈head (misib p) = \ i → head (p i)
-  ≈tail (misib p) = misib (\ i → tail (p i))
+  ≈head (misib p) = λ i → head (p i)
+  ≈tail (misib p) = misib (λ i → tail (p i))
 
   iso1 : {A : Set} → {x y : Stream A} → (p : x ≡ y) → bisim (misib p) ≡ p
   head (iso1 p i j) = head (p j)
-  tail (iso1 p i j) = iso1 (\ i → tail (p i)) i j
+  tail (iso1 p i j) = iso1 (λ i → tail (p i)) i j
 
   iso2 : {A : Set} → {x y : Stream A} → (p : x ≈ y) → misib (bisim p) ≡ p
   ≈head (iso2 p i) = ≈head p
@@ -64,14 +65,15 @@ module Equality≅Bisimulation where
   ≈tail refl≈ = refl≈
 
   cast : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → x ≈ y
-  cast {A} {x} {y} p = primComp (\ i → x ≈ p i) i0 (\ i → empty) refl≈
+  cast {A} {x} {y} p = primComp (λ i → x ≈ p i) i0 (λ i → empty) refl≈
 
-  fill-id : ∀ {A : Set} {x} (y : A) (q : x ≡ y) → (\ i → fill (\ i → A) i (\ i' → (λ _ → q i')) x i) ≡ q
-  fill-id {A} {x} = pathJ _ (\ j → \ i →  fill (\ _ → A) (i ∨ ~ i) (\ _ → \ _ → x) x (~ j))
+  fillId : ∀ {A : Set} ({x} y : A) (q : x ≡ y) →
+    (λ i → fill (λ i → A) i (λ i' → (λ _ → q i')) x i) ≡ q
+  fillId {A}{x} = pathJ _ (λ j i → fill (λ _ → A) (i ∨ ~ i) (λ _ _ → x) x (~ j))
 
-  misib-transp : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → cast p ≡ misib p
-  ≈head (misib-transp p i) = fill-id _ (\ i → head (p i)) i
-  ≈tail (misib-transp p i) = misib-transp (\ i → tail (p i)) i
+  misibTransp : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → cast p ≡ misib p
+  ≈head (misibTransp p i) = fillId _ (λ i → head (p i)) i
+  ≈tail (misibTransp p i) = misibTransp (λ i → tail (p i)) i
 
 
 
@@ -85,15 +87,15 @@ module Stream≅Nat→ {A : Set} where
 
   tabulate : (ℕ → A) → Stream A
   head (tabulate f) = f 0
-  tail (tabulate f) = tabulate (\ n → f (suc n))
+  tail (tabulate f) = tabulate (λ n → f (suc n))
 
 
-  lookup∘tabulate : (\ (x : _ → _) → lookup (tabulate x)) ≡ (\ x → x)
+  lookup∘tabulate : (λ (x : _ → _) → lookup (tabulate x)) ≡ (λ x → x)
   lookup∘tabulate i f zero = f zero
-  lookup∘tabulate i f (suc n) = lookup∘tabulate i (\ n → f (suc n)) n
+  lookup∘tabulate i f (suc n) = lookup∘tabulate i (λ n → f (suc n)) n
 
 
-  tabulate∘lookup : (\ (x : Stream _) → tabulate (lookup x)) ≡ (\ x → x)
+  tabulate∘lookup : (λ (x : Stream _) → tabulate (lookup x)) ≡ (λ x → x)
   head (tabulate∘lookup i xs) = head xs
   tail (tabulate∘lookup i xs) = tabulate∘lookup i (tail xs)
 
@@ -101,4 +103,4 @@ module Stream≅Nat→ {A : Set} where
 
   Stream≡Nat→ : Stream A ≡ (ℕ → A)
   Stream≡Nat→ = isoToPath lookup tabulate
-                          (\ f i → lookup∘tabulate i f) (\ xs i → tabulate∘lookup i xs)
+    (λ f i → lookup∘tabulate i f) (λ xs i → tabulate∘lookup i xs)

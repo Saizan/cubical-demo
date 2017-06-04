@@ -1,9 +1,7 @@
 {-# OPTIONS --rewriting #-}
 module Rewrite where
 
-
-
 postulate
-  Rewrite : ∀ {l} {A : Set l} → A → A → Set
+  Rewrite : ∀ {ℓ} {A : Set ℓ} → A → A → Set
 
 {-# BUILTIN REWRITE Rewrite #-}
