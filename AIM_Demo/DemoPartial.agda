@@ -1,4 +1,6 @@
 {-# OPTIONS --cubical #-}
+module AIM_Demo.DemoPartial where
+
 open import PathPrelude hiding (trans)
 
 open import Data.Bool hiding (_∨_; _∧_)

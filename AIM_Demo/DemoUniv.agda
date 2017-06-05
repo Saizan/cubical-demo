@@ -1,4 +1,6 @@
-{-# OPTIONS --cubical -vtc.data.proj:20 #-}
+{-# OPTIONS --cubical #-}
+module AIM_Demo.DemoUniv where
+
 open import PathPrelude
 open import Data.Bool
 open import Data.Product

@@ -1,4 +1,5 @@
 {-# OPTIONS --cubical #-}
+module AIM_Demo.DemoGlue where
 
 open import PathPrelude hiding (eqToPath')
 

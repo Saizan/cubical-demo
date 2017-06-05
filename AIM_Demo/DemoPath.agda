@@ -1,4 +1,5 @@
 {-# OPTIONS --cubical #-}
+module AIM_Demo.DemoPath where
 
 open import Primitives
 
@@ -82,4 +83,4 @@ Jdef : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Id x y → Set p) → (d : P x
 Jdef P d = refl
 
 fromPath : ∀ {A : Set}{x y : A} → Path x y -> Id x y
-fromPath p = conid i0 p
+fromPath p = conid i0 (\ i → p i)
