@@ -58,7 +58,7 @@ module _ {ℓ} {A : Set ℓ} where
   singl : (a : A) → Set ℓ
   singl a = Σ[ x ∈ A ] (a ≡ x)
 
-  contrSingl : {a b : A} (p : a ≡ b) → Path {A = singl a} (a , refl) (b , p)
+  contrSingl : {a b : A} (p : a ≡ b) → _≡_ {A = singl a} (a , refl) (b , p)
   contrSingl p = λ i → ((p i) , λ j → p (i ∧ j))
 
 module _ {ℓ ℓ'} {A : Set ℓ} {x : A}
@@ -156,11 +156,10 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
   isEquiv : (A → B) → Set (ℓ-max ℓ ℓ')
   isEquiv f = (y : B) → isContr (fiber f y)
 
-  Equiv = Σ _ isEquiv
   infix 4 _≃_
-  _≃_ = Equiv
+  _≃_ = Σ _ isEquiv
 
-  module _ (f : Equiv) (φ : I) (t : Partial A φ) (a : B {- [ φ ↦ f t ] -})
+  module _ (f : _≃_) (φ : I) (t : Partial A φ) (a : B {- [ φ ↦ f t ] -})
            (p : PartialP φ (λ o → a ≡ fst f (t o))) where
     equiv : fiber (fst f) a -- [ φ ↦ (t , λ j → a) ]
     equiv = contr ((snd f) a) φ (λ o → t o , (λ i → p o i))
@@ -218,8 +217,10 @@ module _ {ℓ} {A B : Set ℓ} (P : A ≡ B) where
   pathToEquiv : A ≃ B
   pathToEquiv = f , (λ y → (g y , γ y) , fiberPath y _)
 
-  pathToEquivProof : isEquiv A B f
-  pathToEquivProof = snd pathToEquiv
+pathToEquivProof : ∀ {ℓ} (E : I → Set ℓ) → _
+pathToEquivProof E = snd (pathToEquiv P)
+  where P : E i0 ≡ E i1
+        P i = E i
 
 {-# BUILTIN PATHTOEQUIV pathToEquivProof #-}
 

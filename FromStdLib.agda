@@ -2,6 +2,8 @@
 
 module FromStdLib where
 
+open import Data.Bool using (Bool; true; false) public
+
 open import Data.Product public
   using    ( Σ ; _,_ ; Σ-syntax ; _×_ ; curry ; uncurry)
   renaming ( proj₁ to fst ; proj₂ to snd )
@@ -9,7 +11,7 @@ open import Data.Product public
 open import Function public
   using    ( _∘_ ; flip )
 
-idFun : ∀{ℓ} → (A : Set ℓ) → A → A
+idFun : ∀ {ℓ} → (A : Set ℓ) → A → A
 idFun A x = x
 
 open import Level public

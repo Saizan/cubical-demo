@@ -12,10 +12,9 @@ module Postulates where
   {-# BUILTIN PATH         Path'     #-}
   {-# BUILTIN PATHP        PathP     #-}
 
-  Path : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
-  Path {A = A} = PathP (λ _ → A)
   infix 4 _≡_
-  _≡_ = Path
+  _≡_ : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
+  _≡_ {A = A} = PathP (λ _ → A)
 
   primitive
     primPathApply  : ∀ {ℓ} {A :     Set ℓ} {x y} → Path'   x y →      I →  A
@@ -48,9 +47,9 @@ module Postulates where
 
 
 open Postulates public renaming
-  ( primPathPApply to _∙_ ; primPFrom1 to p[_] ; isOneEmpty to empty
-  ; primIMin       to _∧_ ; primIMax   to _∨_  ; primINeg to ~_
-  ; primIdJ        to J   ; primSubOut to ouc )
+  ( primPathApply  to _∙_   ; primPathPApply to _∙'_ ; primPFrom1 to p[_]
+  ; primIMin       to _∧_   ; primIMax       to _∨_  ; primINeg   to ~_
+  ; isOneEmpty     to empty ; primIdJ        to J    ; primSubOut to ouc )
 
 
 module Unsafe' (dummy : Set₁) = Postulates

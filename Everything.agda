@@ -25,3 +25,7 @@ open import Circle
 -- We can prove bisimilar streams equal by copatterns, where Stream is
 -- the "standard" coinductive record definition.
 open import Stream
+
+-- Testing
+open import Cube
+open import OTTU

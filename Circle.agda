@@ -6,7 +6,7 @@ open import Int
 open import Rewrite
 
 postulate
-  S¹ : Set
+  S¹   : Set
   base : S¹
   loop : base ≡ base
 
@@ -33,7 +33,7 @@ open S¹Elim public
 helix : S¹ → Set
 helix = S¹-elim Int (λ i → sucPathℤ i)
 
-coerce : ∀ {ℓ} {A B : Set ℓ} → Path A B → A → B
+coerce : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A → B
 coerce p a = primComp (λ i → p i) i0 (λ _ → empty) a
 
 winding : base ≡ base → Int
@@ -47,16 +47,11 @@ intLoop : Int → base ≡ base
 intLoop (pos n) = natLoop n
 intLoop (negsuc n) = sym (natLoop (suc n))
 
-
 -- a test case.
 five = suc (suc (suc (suc (suc zero))))
 
--- TODO
--- An internal error has occurred. Please report this as a bug.
--- Location of the error: src/full/Agda/Syntax/Internal.hs:985
+test-winding-pos : winding (intLoop (pos five)) ≡ pos five
+test-winding-pos = refl
 
--- test-winding-pos : winding (intLoop (pos five)) ≡ pos five
--- test-winding-pos = refl
-
--- test-winding-neg : winding (intLoop (negsuc five)) ≡ negsuc five
--- test-winding-neg = refl
+test-winding-neg : winding (intLoop (negsuc five)) ≡ negsuc five
+test-winding-neg = refl

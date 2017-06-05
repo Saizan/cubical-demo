@@ -20,7 +20,7 @@ module UAEquiv {ℓ : Level} where
   ua : {A B : Set ℓ} → A ≃ B → A ≡ B
   ua = equivToPath
 
-  uaid=id : {A : Set ℓ} → Path (ua idEquiv) (λ i → A)
+  uaid=id : {A : Set ℓ} → (ua idEquiv) ≡ (λ i → A)
   uaid=id {A = A} = λ j → λ i → Glue A ((~ i ∨ i) ∨ j) (λ _ → A) (λ _ → idEquiv)
 
   uaβ : {A B : Set ℓ} → (e : A ≃ B) → coe (ua e) ≡ fst e
@@ -29,7 +29,7 @@ module UAEquiv {ℓ : Level} where
 
   lemma' : {A B : Set ℓ} (e : A ≃ B) → fst e ≡ coe (λ i → A → ua e i) (idFun _)
   lemma' e = trans (sym (uaβ e)) (funExt λ z →
-    let p : Path _ _
+    let p : _ ≡ _
         p = sym (trans (fl _) (fl _)) in λ i → coe (ua e) (p i))
 
   [ua∘idtoeqv]refl≡refl : {A : Set ℓ} → (ua (idtoeqv {A = A} refl)) ≡ refl

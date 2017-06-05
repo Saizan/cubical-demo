@@ -10,7 +10,7 @@ Square {A = A} u v r0 r1 = PathP (λ i → (u i ≡ v i)) r0 r1
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
          (s : (y : B) → (f (g y)) ≡ y) (t : (x : A) → (g (f x)) ≡ x) where
   lemIso : (y : B) (x0 x1 : A) (p0 : y ≡ (f x0)) (p1 : y ≡ (f x1))
-             → Path {A = fiber f y} (x0 , p0) (x1 , p1)
+             → _≡_ {A = fiber f y} (x0 , p0) (x1 , p1)
   lemIso y x0 x1 p0 p1 = λ i → (p i) , sq1 i where
     rem0 : g y ≡ x0
     rem0 = λ i → primComp (λ _ → A) _ (λ k → λ { (i = i1) → t x0 k

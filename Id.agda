@@ -11,7 +11,7 @@ module _ {ℓ} {A : Set ℓ} where
   transId : {x y z : A} → Id x y → Id y z → Id x z
   transId {x} {y} p = J (λ y _ → Id x y) p
 
-  pathToId : {x y : A} → Path x y → Id x y
+  pathToId : {x y : A} → x ≡ y → Id x y
   pathToId p = conid i0 (λ i → p i)
 
 module _ {ℓ ℓ'} {A : Set ℓ} where
@@ -22,7 +22,7 @@ module _ {ℓ ℓ'} {A : Set ℓ} where
   Jdef P d = refl
 
 conid' : ∀ {ℓ} {A : Set ℓ} {x : A} φ {y : Sub {A = A} φ (λ {_ → x})}
-           → (w : Sub {A = Path x (ouc y)} φ λ {_ → (λ _ → x)}) → Id x (ouc y)
+           → (w : Sub {A = x ≡ ouc y} φ λ {_ → (λ _ → x)}) → Id x (ouc y)
 conid' φ {y} w = conid φ (λ i → ouc w i)
 
 primitive
@@ -57,7 +57,7 @@ transI {A = A} {x} = elimId _ λ φp y p → elimId _ λ φq z q →
 
 
 module Test {ℓ} {A : Set ℓ} {x : A} φ {y : Sub {A = A} φ (λ{_ → x})}
-            (w : Sub {A = Path x (ouc y)} φ λ { _ → (λ _ → x) }) where
+            (w : Sub {A = x ≡ ouc y} φ λ { _ → (λ _ → x) }) where
   eq : Id x (ouc y)
   eq = (conid' φ {y} w)
 
