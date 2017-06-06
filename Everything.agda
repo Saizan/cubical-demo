@@ -29,3 +29,9 @@ open import Stream
 -- Testing
 open import Cube
 open import OTTU
+
+-- Demo
+open import AIM_Demo.DemoPath
+open import AIM_Demo.DemoPartial
+open import AIM_Demo.DemoGlue
+open import AIM_Demo.DemoUniv

@@ -8,7 +8,7 @@ open import Univalence
 -- open import Data.List
 open import NotIsEquiv using (notIsEquiv)
 
-notEquiv : Equiv Bool Bool
+notEquiv : Bool ≃ Bool
 notEquiv = not , notIsEquiv
 
 notpath : Path Bool Bool
