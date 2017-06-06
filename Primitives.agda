@@ -16,6 +16,8 @@ module Postulates where
   _≡_ : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
   _≡_ {A = A} = PathP (λ _ → A)
 
+  Path = _≡_
+
   primitive
     primPathApply  : ∀ {ℓ} {A :     Set ℓ} {x y} → Path'   x y →      I →  A
     primPathPApply : ∀ {ℓ} {A : I → Set ℓ} {x y} → PathP A x y → (i : I) → A i
@@ -47,7 +49,7 @@ module Postulates where
 
 
 open Postulates public renaming
-  ( primPathApply  to _∙_   ; primPathPApply to _∙'_ ; primPFrom1 to p[_]
+  ( primPFrom1 to p[_]
   ; primIMin       to _∧_   ; primIMax       to _∨_  ; primINeg   to ~_
   ; isOneEmpty     to empty ; primIdJ        to J    ; primSubOut to ouc )
 
