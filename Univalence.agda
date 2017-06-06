@@ -16,16 +16,14 @@ idtoeqv {A = A} p = coe (λ i → A ≃ p i) (idEquiv {A = A})
                            r  = (transp A' (transp A' (transp A' z)))
                         in fl r) (fl _)) (fl _)) (fl z))) )
 
-module UAEquiv {ℓ : Level} where
-  ua : {A B : Set ℓ} → A ≃ B → A ≡ B
-  ua = equivToPath
 
-  uaid=id : {A : Set ℓ} → (ua idEquiv) ≡ (λ i → A)
-  uaid=id {A = A} = λ j → λ i → Glue A ((~ i ∨ i) ∨ j) (λ _ → A) (λ _ → idEquiv)
-
-  uaβ : {A B : Set ℓ} → (e : A ≃ B) → coe (ua e) ≡ fst e
-  uaβ e = funExt (λ x → let p = _ in trans (fl _) (trans (fl _) (trans (fl _)
-                    (λ i → (fst e) (fl p i)))))
+module UAEquiv
+  -- To derive univalence it's sufficient to provide the following three
+  -- maps, regardless of the implementation.
+    (ua : ∀ {l} {A B : Set l} → A ≃ B → Path A B)
+    (uaid=id : ∀ {l} {A : Set l} → Path (ua idEquiv) (λ i → A))
+    (uaβ : ∀ {l} {A B : Set l} → (e : A ≃ B) → coe (ua e) ≡ fst e)
+    {ℓ : Level} where
 
   lemma' : {A B : Set ℓ} (e : A ≃ B) → fst e ≡ coe (λ i → A → ua e i) (idFun _)
   lemma' e = trans (sym (uaβ e)) (funExt λ z →
@@ -41,5 +39,15 @@ module UAEquiv {ℓ : Level} where
                             (λ y → lemSig propIsEquiv _ _ (sym (lemma' y)))
                             (pathJ P [ua∘idtoeqv]refl≡refl _)
 
+ua : ∀ {ℓ} {A B : Set ℓ} → A ≃ B → A ≡ B
+ua = equivToPath
+
+uaid=id : ∀ {ℓ} {A : Set ℓ} → (ua idEquiv) ≡ (λ i → A)
+uaid=id {A = A} = λ j → λ i → Glue A ((~ i ∨ i) ∨ j) (λ _ → A) (λ _ → idEquiv)
+
+uaβ : ∀ {ℓ} {A B : Set ℓ} → (e : A ≃ B) → coe (ua e) ≡ fst e
+uaβ e = funExt (λ x → let p = _ in trans (fl _) (trans (fl _) (trans (fl _)
+                    (λ i → (fst e) (fl p i)))))
+
 univalence : ∀ {ℓ} {A B : Set ℓ} → (A ≡ B) ≃ (A ≃ B)
-univalence = idtoeqv , UAEquiv.univEquiv
+univalence = idtoeqv , UAEquiv.univEquiv ua uaid=id uaβ
