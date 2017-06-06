@@ -69,6 +69,22 @@ idᶠLeft {ℓ} {F} = Func≡.path r where
              ; presComp≡ = λ f g → {!!}
              }
 
+  trans-id : ∀ {ℓ}{A : Set ℓ} {x y : A} → (p : x ≡ y) → trans p (\ i → y) ≡ p
+  trans-id {A = A} {x} {y} p i j = primComp (λ _ → A) (((~ j) ∨ j) ∨ i)
+                                            (\ { k (j = i0) → p (~ k)
+                                               ; k (j = i1) → y
+                                               ; k (i = i1) → p (j ∨ ~ k)
+                                               })
+                                            y
+
+  directpath : idᶠ ∘ᶠ F ≡ F
+  directpath i = record
+    { map = R.map
+    ; fmap = R.fmap
+    ; presId = λ A → trans-id (R.presId A) i
+    ; presComp = \ f g → trans-id (R.presComp f g) i
+    }
+
 -- idᶠRight : ∀{ℓ}{F : Func {ℓ}} → F ∘ᶠ idᶠ ≡ F
 -- idᶠRight {ℓ} {F} = TODO
 
