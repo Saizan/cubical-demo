@@ -40,12 +40,12 @@ module Postulates where
   {-# BUILTIN SUB Sub #-}
 
   postulate
-    inc : ∀ {ℓ} {A : Set ℓ} {φ} (x : A) → Sub {A = A} φ (λ _ → x)
+    inc : ∀ {ℓ} {A : Set ℓ} {φ} (x : A) → Sub A φ (λ _ → x)
 
   {-# BUILTIN SUBIN inc #-}
 
   primitive
-    primSubOut : ∀ {ℓ} {A : Set ℓ} {φ : I} {u : Partial A φ} → Sub φ u → A
+    primSubOut : ∀ {ℓ} {A : Set ℓ} {φ : I} {u : Partial A φ} → Sub _ φ u → A
 
 
 open Postulates public renaming
