@@ -117,28 +117,28 @@ NT= {D = D} {F} {G} {a} {b} eq p i .natural {X} {Y} f
 
 -- Functor category, of functors F : C -> D into a 1-cat D
 Func : ∀ {o1 h1 o2 h2} (C : Category {o1} {h1}) (D : Category {o2} {h2}) → 1-cat D → Category
-Func C D 1-D .Obj = Functor C D
-Func C D 1-D .Hom = NaturalTransformation
-Func C D 1-D .id {F} .apply = D .id
-Func C D 1-D .id .natural f = trans (D .id-left _) (sym (D .id-right _))
-(Func C D 1-D ._∘_ f g) .apply = D ._∘_ (f .apply) (g .apply)
+Func C D 1-D .Obj                  = Functor C D
+Func C D 1-D .Hom                  = NaturalTransformation
+Func C D 1-D .id {F} .apply        = D .id
+Func C D 1-D .id .natural f        = trans (D .id-left _) (sym (D .id-right _))
+(Func C D 1-D ._∘_ f g) .apply     = D ._∘_ (f .apply) (g .apply)
 (Func C D 1-D ._∘_ f g) .natural h = trans (sym (D .∘-assoc _ _ _))
                                     (trans (cong (D ._∘_ (f .apply)) (g .natural h)) (trans (D .∘-assoc _ _ _)
                                     (trans (cong (\ x → D ._∘_ x (g .apply)) (f .natural h)) (sym (D .∘-assoc _ _ _)))))
-Func C D 1-D .id-left  f = NT= (\ i → D .id-left (f .apply) i) 1-D
-Func C D 1-D .id-right f = NT= (\ i →  D .id-right (f .apply) i) 1-D
-Func C D 1-D .∘-assoc f g h = NT= (\ i → D .∘-assoc (f .apply) (g .apply) (h .apply) i) 1-D
+Func C D 1-D .id-left  f           = NT= (\ i → D .id-left (f .apply) i) 1-D
+Func C D 1-D .id-right f           = NT= (\ i →  D .id-right (f .apply) i) 1-D
+Func C D 1-D .∘-assoc f g h        = NT= (\ i → D .∘-assoc (f .apply) (g .apply) (h .apply) i) 1-D
 
 
 
 hSets : (o : Level) → Category
-hSets o .Obj = Σ (Set o) isSet
+hSets o .Obj                 = Σ (Set o) isSet
 hSets o .Hom (A , _) (B , _) = A → B
-hSets o .id = \ x → x
-hSets o ._∘_ f g x = f (g x)
-hSets o .id-left f = refl
-hSets o .id-right f = refl
-hSets o .∘-assoc f g h = refl
+hSets o .id                  = \ x → x
+hSets o ._∘_ f g x           = f (g x)
+hSets o .id-left f           = refl
+hSets o .id-right f          = refl
+hSets o .∘-assoc f g h       = refl
 
 1-Sets : ∀ o → 1-cat (hSets o)
 1-Sets o (X , Xset) (Y , Yset) f g p q = \ i → funExt (\ x → Yset (f x) (g x) (\ j → p j x) (\ j → q j x) i)
