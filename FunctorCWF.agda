@@ -83,7 +83,7 @@ Func≡ {C = C} {D} 1-D {F} {G} eq p = r where
    r : F ≡ G
    r i .obj = eq i
    r i .hom = p i _ _
-   r i .presId {X} = H X i
+   r i .presId {X}   = H X i
    r i .presComp f g = H2 f g i
 
 
@@ -161,9 +161,9 @@ module Model (C : Category {ℓ-zero} {ℓ-zero}) where
   Elem G ._∘_     f g .fst       = f .fst C.∘ g .fst
   Elem G ._∘_ {X} f g .snd       = trans (\ i → G .presComp (g .fst) (f .fst) i (X .snd))
                                   (trans (cong (G .hom (f .fst)) (g .snd)) (f .snd))
-  Elem G .id-left  {X} {Y} f     = Σ= (C .id-left (f .fst)) (toPathP (is-h-set G (Y .fst) _ _ _ _))
+  Elem G .id-left  {X} {Y} f     = Σ= (C .id-left (f .fst))  (toPathP (is-h-set G (Y .fst) _ _ _ _))
   Elem G .id-right {X} {Y} f     = Σ= (C .id-right (f .fst)) (toPathP (is-h-set G (Y .fst) _ _ _ _))
-  Elem G .∘-assoc {D = D} f g h  = Σ= (C.∘-assoc _ _ _) (toPathP (is-h-set G (D .fst) _ _ _ _ ))
+  Elem G .∘-assoc {D = D} f g h  = Σ= (C.∘-assoc _ _ _)      (toPathP (is-h-set G (D .fst) _ _ _ _ ))
 
   substElem : ∀ {Γ Δ : Functor C (hSets ℓ-zero)}
          {A B : Elem Γ .Obj}
@@ -188,21 +188,20 @@ module Model (C : Category {ℓ-zero} {ℓ-zero}) where
   subTy : ∀ {Γ Δ : Cxt .Obj} → Ty Δ → Subst Γ Δ → Ty Γ
   subTy A σ = A ∘ᶠ ElemHom σ
 
-
+  -- Tm G A as a Limit of A.
   record Tm (G : Cxt .Obj) (A : Ty G) : Set where
     no-eta-equality
     constructor con
     field
-      tm : ∀ c ρ → A .obj (c , ρ) .fst
-      tm-nat : ∀ {c1 c2}
-               (f : Hom C c1 c2) (ρf : G .obj c2 .fst)
-               (ρ : G .obj c1 .fst) (eq : G .hom f ρ ≡ ρf)
-               → A .hom (f , eq) (tm c1 ρ) ≡ tm c2 ρf
+      tm : ∀ ρ → A .obj ρ .fst
+      tm-nat : ∀ {ρ1 ρ2}
+               (f : Hom (Elem G) ρ1 ρ2)
+               → A .hom f (tm ρ1) ≡ tm ρ2
   open Tm
 
   subTm : ∀ {Γ Δ : Cxt .Obj} → {A : Ty Δ} → (t : Tm Δ A) → (σ : Subst Γ Δ) → Tm Γ (subTy A σ)
-  subTm t σ .tm c ρ           = t .tm c (σ .apply ρ)
-  subTm t σ .tm-nat f ρ ρ₁ eq = t .tm-nat f (σ .apply ρ) (σ .apply ρ₁) (substElem σ (f , eq))
+  subTm t σ .tm ρ           = t .tm (ElemHom σ .obj ρ)
+  subTm t σ .tm-nat f = t .tm-nat (ElemHom σ .hom f)
 
   subTy-id : ∀ {G : Cxt .Obj} → (A : Ty G) → subTy A (Cxt .id {G}) ≡ A
   subTy-id {G} A = Func≡ (1-Sets ℓ-zero)
@@ -210,5 +209,5 @@ module Model (C : Category {ℓ-zero} {ℓ-zero}) where
                         (\ i X Y f a → A .hom (f .fst , (is-h-set G (Y .fst) _ _ (substElem (Cxt .id {G}) f) (f .snd)) i) a)
 
   subTm-id : ∀ {G : Cxt .Obj} (A : Ty G) (t : Tm G A) → PathP (\ i → Tm G (subTy-id A i)) (subTm t (Cxt .id {G})) t
-  subTm-id A t i .tm c ρ           = t .tm c ρ
-  subTm-id A t i .tm-nat f ρ₁ ρ eq = t .tm-nat _ _ _ _
+  subTm-id A t i .tm ρ      = t .tm ρ
+  subTm-id A t i .tm-nat f  = t .tm-nat _
