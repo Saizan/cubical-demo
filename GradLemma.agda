@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical #-}
+{-# OPTIONS --cubical --postfix-projections #-}
 module GradLemma where
 
 open import PathPrelude
@@ -9,15 +9,14 @@ Square {A = A} u v r0 r1 = PathP (λ i → (u i ≡ v i)) r0 r1
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
          (s : (y : B) → (f (g y)) ≡ y) (t : (x : A) → (g (f x)) ≡ x) where
-  lemIso : (y : B) (x0 x1 : A) (p0 : y ≡ (f x0)) (p1 : y ≡ (f x1))
-             → _≡_ {A = fiber f y} (x0 , p0) (x1 , p1)
-  lemIso y x0 x1 p0 p1 = λ i → (p i) , sq1 i where
+  module _ (y : B) (x0 x1 : A) (p0 : y ≡ (f x0)) (p1 : y ≡ (f x1)) where
     rem0 : g y ≡ x0
     rem0 = λ i → primComp (λ _ → A) _ (λ k → λ { (i = i1) → t x0 k
                                                ; (i = i0) → g y }) (g (p0 i))
     rem1 : g y ≡ x1
     rem1 = λ i → primComp (λ _ → A) _ (λ k → λ { (i = i1) → t x1 k
                                                ; (i = i0) → g y})  (g (p1 i))
+
     p    : x0 ≡ x1
     p    = λ i → primComp (λ _ → A) _ (λ k → λ { (i = i1) → rem1 k
                                                ; (i = i0) → rem0 k })  (g y)
@@ -55,9 +54,15 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
                                                     ; (j = i0) → s y k })
                                (f (sq i j))
 
+    lemIso : _≡_ {A = fiber f y} (x0 , p0) (x1 , p1)
+    lemIso i .fst = p i
+    lemIso i .snd = sq1 i
+
   gradLemma : isEquiv A B f
-  gradLemma = λ y → (g y , λ i →  s y (~ i)) , λ z →
-    lemIso y (g y) (fst z) (λ i → s y (~ i)) (snd z)
+  gradLemma y .fst .fst = g y
+  gradLemma y .fst .snd i = s y (~ i)
+  gradLemma y .snd z = lemIso y (g y) (fst z) (λ i → s y (~ i)) (snd z)
+
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (w : A ≃ B) where
   invEq : (y : B) → A

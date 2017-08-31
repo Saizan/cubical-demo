@@ -217,7 +217,7 @@ module _ {ℓ} {A B : Set ℓ} (P : A ≡ B) where
   pathToEquiv : A ≃ B
   pathToEquiv = f , (λ y → (g y , γ y) , fiberPath y _)
 
-pathToEquivProof : ∀ {ℓ} (E : I → Set ℓ) → _
+pathToEquivProof : ∀ {ℓ} (E : I → Set ℓ) → isEquiv (E i0) (E i1) (transp E)
 pathToEquivProof E = snd (pathToEquiv P)
   where P : E i0 ≡ E i1
         P i = E i

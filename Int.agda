@@ -35,4 +35,8 @@ predSuc (negsuc zero)    = refl
 predSuc (negsuc (suc n)) = refl
 
 sucPathℤ : Int ≡ Int
-sucPathℤ = equivToPath (sucℤ , gradLemma sucℤ predℤ sucPred predSuc)
+sucPathℤ = equivToPath suc-equiv
+ where
+   suc-equiv : Σ _ (isEquiv Int Int)
+   suc-equiv .fst = sucℤ
+   suc-equiv .snd = gradLemma sucℤ predℤ sucPred predSuc
