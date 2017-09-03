@@ -11,9 +11,15 @@ module _ {ℓ} {A : Set ℓ} where
   sym : {x y : A} → x ≡ y → y ≡ x
   sym p = λ i → p (~ i)
 
+  trans' : {x y z : A} → x ≡ y → y ≡ z → x ≡ z
+  trans' {y = y} p q i = primComp (λ _ → A) _
+                                 (λ { j (i = i0) → p (~ j)
+                                    ; j (i = i1) → q j })
+                                 y
+
   trans : {x y z : A} → x ≡ y → y ≡ z → x ≡ z
-  trans {y = y} p q i = primComp (λ _ → A) _ (λ { j (i = i0) → p (~ j)
-                                            ; j (i = i1) → q j }) y
+  trans {x = x} p q i = primComp (λ _ → A) _ (λ { j (i = i0) → x
+                                                ; j (i = i1) → q j }) (p i)
 
   cong : ∀ {ℓ'} {B : Set ℓ'} {x y : A} → (f : A → B) → x ≡ y → f x ≡ f y
   cong f p = λ i → f (p i)
