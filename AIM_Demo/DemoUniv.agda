@@ -1,11 +1,11 @@
 {-# OPTIONS --cubical #-}
 module AIM_Demo.DemoUniv where
 
-open import PathPrelude
+open import PathPrelude renaming (equivToPath to ua)
 open import Data.Bool
 open import Data.Product
-open import Univalence
--- open import Data.List
+open import Data.Nat
+open import Data.List
 open import NotIsEquiv using (notIsEquiv)
 
 notEquiv : Bool ≃ Bool
@@ -22,17 +22,6 @@ test-is-false : test ≡ false
 test-is-false = refl
 
 
-
-data List (A : Set) : Set where
-  [] : List A
-  _∷_ : (x : A) → List A → List A
-
-infixr 20 _∷_
-
-data Tr (A : Set) : Set where
-  zero : Tr A
-  suc : Tr A → Tr A → Tr A
-
 ListNot : List Bool ≡ List Bool
 ListNot = \ i → List (notpath i)
 
@@ -42,17 +31,20 @@ emptyL = primComp (\ _ → List Bool) i0 (\ _ → empty) []
 empty∷ : List Bool
 empty∷ = primComp (\ _ → List Bool) i0 (\ _ → empty) (true ∷ [])
 
-one : Tr Bool
-one = primComp (\ _ → Tr Bool) i0 (\ _ → empty) (suc zero zero)
-
 trues : List Bool
 trues = true ∷ true ∷ []
 
 falses : List Bool
 falses = primComp (\ i → ListNot i) i0 (\ _ → empty) trues
 
+test-falses : falses ≡ false ∷ false ∷ []
+test-falses = refl
+
 trues2 : List Bool
 trues2 = primComp (\ i → trans ListNot ListNot i) i0 (\ _ → empty) trues
+
+test-trues2 : trues2 ≡ true ∷ true ∷ []
+test-trues2 = refl
 
 trues3 : List Bool
 trues3 = primComp (\ i → let p = trans ListNot ListNot in
@@ -60,3 +52,7 @@ trues3 = primComp (\ i → let p = trans ListNot ListNot in
                   i0
                   (\ _ → empty)
                   trues
+
+
+test-trues3 : trues3 ≡ true ∷ true ∷ []
+test-trues3 = refl
