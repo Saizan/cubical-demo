@@ -92,8 +92,8 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
   lemPropF : (P : (x : A) → isProp (B x)) {a0 a1 : A}
     (p : a0 ≡ a1) {b0 : B a0} {b1 : B a1} → PathP (λ i → B (p i)) b0 b1
   lemPropF P p {b0} {b1} = λ i → P (p i)
-     (primComp (λ j → B (p (i ∧ j)) ) (~ i) (λ _ →  λ { _ → b0 }) b0)
-     (primComp (λ j → B (p (i ∨ ~ j)) ) (i) (λ _ → λ{ _ → b1 }) b1) i
+     (primComp (λ j → B (p (i ∧ j)) ) (~ i) (λ _ →  λ { (i = i0) → b0 }) b0)
+     (primComp (λ j → B (p (i ∨ ~ j)) ) (i) (λ _ → λ{ (i = i1) → b1 }) b1) i
 
   lemSig : (pB : (x : A) → isProp (B x))
     (u v : Σ A B) (p : fst u ≡ fst v) → u ≡ v

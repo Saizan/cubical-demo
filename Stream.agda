@@ -28,9 +28,9 @@ head (Stream-η {A} {xs} i) = head xs
 tail (Stream-η {A} {xs} i) = tail xs
 
 
-elimS : ∀{A} (P : Stream A → Set)(c : ∀ x xs → P (x , xs))(xs : Stream A) → P xs
-elimS P c xs = primComp (λ i → P (Stream-η {xs = xs} (~ i)))
-                 i0 (λ _ → empty) (c (head xs) (tail xs))
+elimS : ∀{A} (P : Stream A → Set) (c : ∀ x xs → P (x , xs)) (xs : Stream A) → P xs
+elimS P c xs = transp (λ i → P (Stream-η {xs = xs} (~ i)))
+                      (c (head xs) (tail xs))
 
 
 module Equality≅Bisimulation where
@@ -65,7 +65,7 @@ module Equality≅Bisimulation where
   ≈tail refl≈ = refl≈
 
   cast : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → x ≈ y
-  cast {A} {x} {y} p = primComp (λ i → x ≈ p i) i0 (λ i → empty) refl≈
+  cast {A} {x} {y} p = transp (λ i → x ≈ p i) refl≈
 
   fillId : ∀ {A : Set} ({x} y : A) (q : x ≡ y) →
     (λ i → fill (λ i → A) i (λ i' → (λ _ → q i')) x i) ≡ q

@@ -43,7 +43,7 @@ module _ {ℓ} {A : Set ℓ} where
 fill : {ℓ : I → Level} → (A : (i : I) → Set (ℓ i)) → (φ : I) →
   ((i : I) → Partial (A i) φ) → A i0 → (i : I) → A i
 fill A φ u a0 i = unsafeComp (λ j → A (i ∧ j)) (φ ∨ ~ i)
-  (λ j → unsafePOr φ (~ i) (u (i ∧ j)) λ { _ → a0 }) a0
+  (λ j → unsafePOr φ (~ i) (u (i ∧ j)) λ { (i = i0) → a0 }) a0
 
 transp : {ℓ : I → Level} → (A : (i : I) → Set (ℓ i)) → A i0 → A i1
 transp A x = primComp A i0 (λ _ → empty) x
@@ -118,7 +118,7 @@ module _ {ℓ} {A : Set ℓ} where
   contr (c , p) φ u = primComp (λ _ → A) φ (λ i o → p (u o) i) c
 
   lemContr : (contr1 : ∀ φ → Partial A φ → A)
-             → (contr2 : ∀ u → u ≡ (contr1 i1 λ {_ → u})) → isContr A
+             → (contr2 : ∀ u → u ≡ (contr1 i1 λ { _ → u})) → isContr A
   lemContr contr1 contr2 = x , (λ y → let module M = Aux y in
       trans (contr2 x) (trans (λ i → M.v i) (sym (contr2 y))))
     where x = contr1 i0 empty
@@ -130,20 +130,20 @@ module _ {ℓ} {A : Set ℓ} where
 
   contrIsProp : isContr A → isProp A
   contrIsProp h a b i = primComp (λ _ → A) _ (λ j →
-    [ ~ i ↦ (λ {_ → snd h a j}) , i ↦ (λ {_ → snd h b j})]) (fst h)
+    \ { (i = i0) → snd h a j; (i = i1) → snd h b j }) (fst h)
 
 module _ {ℓ ℓ' : I → Level} {T : ∀ i → Set (ℓ i)} {A : ∀ i → Set (ℓ' i)}
          (f : ∀ i → T i → A i) (φ : I) (t : ∀ i → Partial (T i) φ)
          (t0 : T i0 {- [ φ ↦ t i0 ] -}) where
   private
     c1 c2 : A i1
-    c1 = unsafeComp A φ (λ i → (λ {_ → f i (t i itIsOne)})) (f i0 t0)
+    c1 = unsafeComp A φ (λ i → (λ { (φ = i1) → f i (t i itIsOne)})) (f i0 t0)
     c2 = f i1 (unsafeComp T φ t t0)
 
     a0 = f i0 t0
 
     a : ∀ i → Partial (A i) φ
-    a i = (λ {_ → f i ((t i) itIsOne)})
+    a i = (λ { (φ = i1) → f i ((t i) itIsOne)})
 
     u : ∀ i → A i
     u = fill A φ a a0
@@ -152,8 +152,8 @@ module _ {ℓ ℓ' : I → Level} {T : ∀ i → Set (ℓ i)} {A : ∀ i → Set
     v = fill T φ t t0
 
   pres : c1 ≡ c2
-  pres j = unsafeComp A (φ ∨ (j ∨ ~ j)) (λ i → primPOr φ ((j ∨ ~ j))
-    (a i) [ j ↦ (λ {_ → f i (v i)}) , ~ j ↦ (λ {_ → u i}) ] ) a0
+  pres j = unsafeComp A (φ ∨ (j ∨ ~ j)) (λ i → primPOr φ (j ∨ ~ j)
+    (a i) \ { (j = i1) → f i (v i); (j = i0) → u i}) a0
 
 fiber : ∀ {ℓ ℓ'} {E : Set ℓ} {B : Set ℓ'} (f : E → B) (y : B) → Set (ℓ-max ℓ ℓ')
 fiber {E = E} f y = Σ[ x ∈ E ] y ≡ f x
@@ -270,14 +270,14 @@ module FaceForall (φ : I → I) where
 module _ {ℓ ℓ'} {A : Set ℓ} {φ : I} {T : Partial (Set ℓ') φ}
            {f : (PartialP φ λ o → T o ≃ A)} where
   fwdGlueIso : PartialP φ (λ o → Glue A φ T f → T o)
-  fwdGlueIso = λ { _ → idFun _ }
+  fwdGlueIso (φ = i1) = idFun _
 
   backGlueIso : PartialP φ (λ o → T o → Glue A φ T f)
-  backGlueIso = λ { _ → idFun _ }
+  backGlueIso (φ = i1) = idFun _
 
   lemGlueIso : (b : PartialP φ (λ _ → Glue A φ T f)) → PartialP φ λ o →
                  (unglue {φ = φ} (b o)) ≡ (fst (f o) (fwdGlueIso o (b o)))
-  lemGlueIso _ = λ { _ → refl }
+  lemGlueIso _ (φ = i1) = refl
 
 module CompGlue {ℓ ℓ' : I → Level} (A : ∀ i → Set (ℓ i))
                 (φ : I → I) (T : ∀ i → Partial (Set (ℓ' i)) (φ i))

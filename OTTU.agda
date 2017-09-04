@@ -33,7 +33,7 @@ test-Π : ∀ φ (A : I → Partial U φ)
          → unsafeComp (λ i → U) φ (λ i o → `Π (A i o) (B i o)) (`Π A0 B0)
          ≡ `Π (unsafeComp (λ i → U) φ A A0)
               (unsafeComp (λ i → El (fill (λ i → U) φ A A0 i) → U)
-                          φ (λ i → λ { _ → B i itIsOne }) B0)
+                          φ (λ i → λ { (φ = i1) → B i itIsOne }) B0)
 test-Π = λ φ A B A0 B0 → refl
 
 -- when starting from a constant system
@@ -44,7 +44,7 @@ test-Π-const : ∀ φ (A' : Partial U φ) (let A = λ (i : I) → A')
          → unsafeComp (λ i → U) φ (λ i o → `Π (A i o) (B i o)) (`Π A0 B0)
            ≡ `Π (unsafeComp (λ i → U) φ (λ _ → A') A0)
                 (unsafeComp (λ i → El (fill (λ i → U) φ (λ _ → A') A0 i) → U)
-                            φ (λ i → λ { _ → B' itIsOne }) B0)
+                            φ (λ i → λ { (φ = i1) → B' itIsOne }) B0)
 test-Π-const = λ φ A' B' A0 B0 → refl
 
 test-Σ : ∀ φ (A : I → Partial U φ)
@@ -53,7 +53,7 @@ test-Σ : ∀ φ (A : I → Partial U φ)
          → unsafeComp (λ i → U) φ (λ i o → `Σ (A i o) (B i o)) (`Σ A0 B0)
          ≡ `Σ (unsafeComp (λ i → U) φ A A0)
               (unsafeComp (λ i → El (fill (λ i → U) φ A A0 i) → U)
-                          φ (λ i → λ { _ → B i itIsOne }) B0)
+                          φ (λ i → λ { (φ = i1) → B i itIsOne }) B0)
 test-Σ = λ φ A B A0 B0 → refl
 
 test-W : ∀ φ (A : I → Partial U φ)
@@ -62,5 +62,5 @@ test-W : ∀ φ (A : I → Partial U φ)
          → unsafeComp (λ i → U) φ (λ i o → `W (A i o) (B i o)) (`W A0 B0)
          ≡ `W (unsafeComp (λ i → U) φ A A0)
               (unsafeComp (λ i → El (fill (λ i → U) φ A A0 i) → U)
-                          φ (λ i → λ { _ → B i itIsOne }) B0)
+                          φ (λ i → λ { (φ = i1) → B i itIsOne }) B0)
 test-W = λ φ A B A0 B0 → refl

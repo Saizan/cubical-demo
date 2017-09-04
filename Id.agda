@@ -21,14 +21,14 @@ module _ {ℓ ℓ'} {A : Set ℓ} where
   Jdef : {x : A} (P : ∀ y → Id x y → Set ℓ') (d : P x reflId) → J P d reflId ≡ d
   Jdef P d = refl
 
-conid' : ∀ {ℓ} {A : Set ℓ} {x : A} φ {y : Sub A φ (λ {_ → x})}
-           → (w : Sub (x ≡ ouc y) φ λ {_ → (λ _ → x)}) → Id x (ouc y)
+conid' : ∀ {ℓ} {A : Set ℓ} {x : A} φ {y : Sub A φ (λ { _ → x})}
+           → (w : Sub (x ≡ ouc y) _ λ { (φ = i1) → (λ _ → x)}) → Id x (ouc y)
 conid' φ {y} w = conid φ (λ i → ouc w i)
 
 primitive
   primIdElim : ∀ {ℓ ℓ'} {A : Set ℓ}{x : A} (P : ∀ y → Id x y → Set ℓ') →
     (∀ φ (y : Sub A φ (λ{_ → x})) -- y : A [ φ ↦ x ]
-    → (w : Sub _ φ (λ { _ → (λ i → x)})) → P (ouc y) (conid φ (ouc w)))
+    → (w : Sub _ φ (λ { (φ = i1) → (λ i → x)})) → P (ouc y) (conid φ (ouc w)))
     → ∀ (y : A) (w : Id x y) → P y w
 
 elimId = primIdElim
@@ -38,7 +38,7 @@ module _ {ℓ ℓ'} {A : Set ℓ} {x : A} (P : ∀ y → Id x y → Set ℓ')
   myJ : ∀ y w → P y w
   myJ = elimId _ (λ φ y w → primComp (λ i →
     P (ouc w i) (conid' (φ ∨ ~ i) {inc (ouc w i)} (inc (λ j → ouc w (i ∧ j)))))
-    φ (λ i → λ { _ → d}) d) where
+    φ (λ i → λ { (φ = i1) → d}) d) where
 
   myJdef : myJ _ reflId ≡ d
   myJdef = refl
@@ -57,7 +57,7 @@ transI {A = A} {x} = elimId _ λ φp y p → elimId _ λ φq z q →
 
 
 module Test {ℓ} {A : Set ℓ} {x : A} φ {y : Sub A φ (λ{_ → x})}
-            (w : Sub (x ≡ ouc y) φ λ { _ → (λ _ → x) }) where
+            (w : Sub (x ≡ ouc y) φ λ { (φ = i1) → (λ _ → x) }) where
   eq : Id x (ouc y)
   eq = (conid' φ {y} w)
 
