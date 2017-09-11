@@ -76,6 +76,13 @@ module _ {ℓ ℓ'} {A : Set ℓ} {x : A}
   pathJprop : pathJ _ refl ≡ d
   pathJprop i = primComp (λ _ → P x refl) i (λ {j (i = i1) → d}) d
 
+module _ {ℓ ℓ'} {A : Set ℓ} {P : A → Set ℓ'} where
+  subst : (a b : A) (p : Path a b) → P a → P b
+  subst a b p p0 = pathJ {ℓ} {ℓ'} (λ (y : A) → λ _ → P y) p0 b p
+
+  substInv : (a x : A) (p : Path a x) → P x → P a
+  substInv a x p  =  subst x a (λ i → p (~ i))
+
 module _ {ℓ} {A0 A1 : Set ℓ} (A : A0 ≡ A1) {φ : I} (a0 : A i0)
          (p : Partial (Σ A1 λ y → PathP (λ i → A i) a0 y) φ) where
   -- primComp using only Path

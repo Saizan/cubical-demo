@@ -4,7 +4,7 @@
 
 module Sigma where
 open import PathPrelude
-open import GradLemma
+open import GradLemma hiding (rem1)
 open import Sub
 open import Data.Product renaming (proj₁ to fst; proj₂ to snd)
 
@@ -90,12 +90,6 @@ funDepTr {ℓ} {ℓ'} {A} {P} a0 a1 p u0 u1 = trans q r where
               (Path {A = P a1} (transp (λ i → P (p i)) u0) u1)
   r = sym (nonDepPath ((transp (λ i → P (p i)) u0)) u1)
 
-module _ {ℓ ℓ'} {A : Set ℓ} {P : A → Set ℓ'} where
-  subst : (a b : A) (p : Path a b) → P a → P b
-  subst a b p p0 = pathJ {ℓ} {ℓ'} (λ (y : A) → λ _ → P y) p0 b p
-
-  substInv : (a x : A) (p : Path a x) → P x → P a
-  substInv a x p  =  subst x a (λ i → p (~ i))
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
   lem2 : (t u : Σ {ℓ} {ℓ'} A B) (p : Path (fst t) (fst u)) →
