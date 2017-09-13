@@ -263,7 +263,7 @@ module Unsafe''' = Unsafe'' Set -- using () renaming (prim^glue to unsafeGlue) p
 unsafeGlue = Unsafe'''.prim^glue
 
 Glue : ∀ {ℓ ℓ'} (A : Set ℓ) → (φ : I) → (T : Partial (Set ℓ') φ)
-  (f : (PartialP φ λ o → T o ≃ A)) → Set ℓ'
+  (f : (PartialP φ (λ o → T o ≃ A))) → Set ℓ'
 Glue A φ T f = primGlue A φ T (λ o → fst (f o)) (λ o → snd (f o))
 
 equivToPath : ∀ {ℓ} {A B : Set ℓ} → A ≃ B → A ≡ B
