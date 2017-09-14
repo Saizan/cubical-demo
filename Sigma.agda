@@ -4,7 +4,7 @@
 
 module Sigma where
 open import PathPrelude
-open import GradLemma hiding (rem1)
+open import GradLemma
 open import Sub
 open import Data.Product renaming (proj₁ to fst; proj₂ to snd)
 
