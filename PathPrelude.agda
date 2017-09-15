@@ -83,8 +83,8 @@ module _ {ℓ ℓ'} {A : Set ℓ} {P : A → Set ℓ'} where
   substInv : (a x : A) (p : Path a x) → P x → P a
   substInv a x p  =  subst x a (λ i → p (~ i))
 
-injective : {A B : Set} → (f : A → B) → Set
-injective {A} f = {a0 a1 : A} → f a0 ≡ f a1 → a0 ≡ a1
+injective : ∀ {ℓa ℓb} → {A : Set ℓa} → {B : Set ℓb} → (f : A → B) → Set (ℓ-max ℓa ℓb)
+injective {_} {_} {A} f = {a0 a1 : A} → f a0 ≡ f a1 → a0 ≡ a1
 
 module _ {ℓ} {A0 A1 : Set ℓ} (A : A0 ≡ A1) {φ : I} (a0 : A i0)
          (p : Partial (Σ A1 λ y → PathP (λ i → A i) a0 y) φ) where

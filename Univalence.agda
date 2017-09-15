@@ -4,6 +4,9 @@ module Univalence where
 
 open import PathPrelude hiding (_≃_; idEquiv)
 open import GradLemma
+open import Retract
+
+import Function
 
 record _≃_ {ℓa ℓb} (A : Set ℓa)(B : Set ℓb) : Set (ℓ-max ℓa ℓb) where
   no-eta-equality
@@ -53,10 +56,12 @@ module UAEquiv
   [ua∘idtoeqv]refl≡refl : {A : Set ℓ} → (ua {A = A} {B = A} (idtoeqv {A = A} refl)) ≡ refl
   [ua∘idtoeqv]refl≡refl {A = A} = trans (λ i → ua {A = A} {B = A} ([idtoeqv]refl=id i)) uaid=id
 
+ 
+
   univEquiv : {A B : Set ℓ} → isEquiv (A ≡ B) (A ≃ B) idtoeqv
   univEquiv {A} {B} =
     let P = \ y z → ua {A = A} {B = y} (coe (λ i → A ≃ z i) idEquiv) ≡ z in
-    gradLemma (λ z → coe (λ i → A ≃ z i) idEquiv) (ua {A = A} {B = B})
+    gradLemma idtoeqv (ua {A = A} {B = B})
                             (λ y → lemEqv _ _ (sym (lemma' y)))
                             (pathJ P [ua∘idtoeqv]refl≡refl _)
 
@@ -74,3 +79,14 @@ uaβ e = funExt (λ x → let p = _ in trans (fl _) (trans (fl _) (trans (fl _)
 univalence : ∀ {ℓ} {A B : Set ℓ} → (A ≡ B) ≃ (A ≃ B)
 univalence .eqv = idtoeqv
 univalence .isEqv = UAEquiv.univEquiv ua uaid=id uaβ
+
+module _ where
+
+  open module X = UAEquiv ua uaid=id uaβ
+
+  univRetract : ∀ {ℓ} → {A B : Set ℓ} → retract {_} {_} {A ≡ B} {A ≃ B} idtoeqv ua
+  univRetract {_} {A} {B} = (pathJ P [ua∘idtoeqv]refl≡refl _) where
+    P = \ y z → ua {A = A} {B = y} (coe (λ i → A ≃ z i) idEquiv) ≡ z
+
+  univSection : ∀ {ℓ} → {A B : Set ℓ} → section {_} {_} {A ≡ B} {A ≃ B} idtoeqv ua
+  univSection {_} {A} {B} = (λ y → lemEqv _ _ (sym (lemma' y)))  
