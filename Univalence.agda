@@ -22,8 +22,6 @@ idEquiv : ∀ {ℓ} {A : Set ℓ} → A ≃ A
 idEquiv .eqv = idFun _
 idEquiv .isEqv = (λ y → (y , refl) , contrSingl ∘ snd)
 
-fl : ∀ {ℓ} {A : Set ℓ} → (z : A) → (primComp (λ _ → A) i0 (λ _ → empty) z) ≡ z
-fl {ℓ} {A} = λ z → (λ i → primComp (λ i → A) i (λ { i _ → z }) z)
 
 idtoeqv : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A ≃ B
 idtoeqv {A = A} p = coe (λ i → A ≃ p i) (idEquiv {A = A})
@@ -37,7 +35,7 @@ lemEqv u v p i .isEqv = (lemPropF {B = isEquiv _ _} propIsEquiv p) {u .isEqv} {v
 [idtoeqv]refl=id {A = A} = lemEqv _ _ ((funExt (λ z →
   trans (trans (trans (let A' = (λ _ → A)
                            r  = (transp A' (transp A' (transp A' z)))
-                        in fl r) (fl _)) (fl _)) (fl z))) )
+                        in transp-refl r) (transp-refl _)) (transp-refl _)) (transp-refl z))) )
 
 
 module UAEquiv
@@ -51,7 +49,7 @@ module UAEquiv
   lemma' : {A B : Set ℓ} (e : A ≃ B) → eqv e ≡ coe (λ i → A → ua e i) (idFun _)
   lemma' e = trans (sym (uaβ e)) (funExt λ z →
     let p : _ ≡ _
-        p = sym (trans (fl _) (fl _)) in λ i → coe (ua e) (p i))
+        p = sym (trans (transp-refl _) (transp-refl _)) in λ i → coe (ua e) (p i))
 
   [ua∘idtoeqv]refl≡refl : {A : Set ℓ} → (ua {A = A} {B = A} (idtoeqv {A = A} refl)) ≡ refl
   [ua∘idtoeqv]refl≡refl {A = A} = trans (λ i → ua {A = A} {B = A} ([idtoeqv]refl=id i)) uaid=id
@@ -73,8 +71,8 @@ uaid=id : ∀ {ℓ} {A : Set ℓ} → (ua idEquiv) ≡ (λ i → A)
 uaid=id {A = A} = λ j → λ i → Glue A ((~ i ∨ i) ∨ j) (λ _ → A) (λ _ → idEquiv .eqv , idEquiv .isEqv)
 
 uaβ : ∀ {ℓ} {A B : Set ℓ} → (e : A ≃ B) → coe (ua e) ≡ eqv e
-uaβ e = funExt (λ x → let p = _ in trans (fl _) (trans (fl _) (trans (fl _)
-                    (λ i → (eqv e) (fl p i)))))
+uaβ e = funExt (λ x → let p = _ in trans (transp-refl _) (trans (transp-refl _) (trans (transp-refl _)
+                    (λ i → (eqv e) (transp-refl p i)))))
 
 univalence : ∀ {ℓ} {A B : Set ℓ} → (A ≡ B) ≃ (A ≃ B)
 univalence .eqv = idtoeqv
@@ -90,3 +88,4 @@ module _ where
 
   univSection : ∀ {ℓ} → {A B : Set ℓ} → section {_} {_} {A ≡ B} {A ≃ B} idtoeqv ua
   univSection {_} {A} {B} = (λ y → lemEqv _ _ (sym (lemma' y)))  
+
