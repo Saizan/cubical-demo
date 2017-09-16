@@ -61,6 +61,12 @@ toPathP {ℓ} {A} {x} {y} p i = primComp (λ _ → A i) φ u (xPathP i)
         xPathP : PathP A x (transp A x )
         xPathP j = fill A _ (λ _ → empty) x j
 
+transp-refl : ∀{ℓb} → {B : Set ℓb} → (x : B) → primComp (λ j → B) i0 (λ j → empty) x ≡ x
+transp-refl {B = B} x i = primComp (λ _ → B) i ((λ { j (i = i1) → x })) x
+
+transp-pi : ∀{ℓb} → {B : Set ℓb} → {ℓa : I → Level} → (A : (i : I) → Set (ℓa i)) → (f : (B → A i0)) → (λ x → transp A (f x)) ≡ transp (λ i → (B → A i)) f
+transp-pi {B = B} A f i x = (primComp A i0 (λ i → empty)) (f (transp-refl x (~ i)))
+
 module _ {ℓ} {A : Set ℓ} where
   singl : (a : A) → Set ℓ
   singl a = Σ[ x ∈ A ] (a ≡ x)
@@ -99,6 +105,9 @@ module _ {ℓ} {A0 A1 : Set ℓ} (A : A0 ≡ A1) {φ : I} (a0 : A i0)
 
 transpP : ∀ {ℓ ℓ'} {A : Set ℓ}{B : A → Set ℓ'} {x y : A} → x ≡ y → B x → B y
 transpP {B = B} p = pathJ (λ y _ → B _ → B y) (λ x → x) _ p
+
+transpP≡subst : ∀ {ℓ ℓ'} {A : Set ℓ}{B : A → Set ℓ'} {x y : A} → (p : x ≡ y) → transpP {B = B} p ≡ subst {P = B} x y p
+transpP≡subst {A = A} {B} {x} {y} p = sym (transp-pi (λ j → uncurry (λ (y : A) → λ _ → B y) (contrSingl p j)) (λ x → x))
 
 coe : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A → B
 coe {A = A} = transpP {B = λ X → X}
