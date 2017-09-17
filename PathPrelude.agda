@@ -2,6 +2,7 @@
 module PathPrelude where
 
 open import Primitives public
+open import Primitives public using () renaming (Sub to _[_↦_])
 open import FromStdLib public
 
 module _ {ℓ} {A : Set ℓ} where
@@ -247,7 +248,9 @@ module GluePrims where
 open GluePrims public renaming (prim^glue to glue ; prim^unglue to unglue)
 
 module Unsafe'' (dummy : Set1) = GluePrims
-open Unsafe'' Set using () renaming (prim^glue to unsafeGlue) public
+module Unsafe''' = Unsafe'' Set -- using () renaming (prim^glue to unsafeGlue) public
+
+unsafeGlue = Unsafe'''.prim^glue
 
 Glue : ∀ {ℓ ℓ'} (A : Set ℓ) → (φ : I) → (T : Partial (Set ℓ') φ)
   (f : (PartialP φ λ o → T o ≃ A)) → Set ℓ'
