@@ -83,11 +83,11 @@ module _ {ℓ ℓ'} {A : Set ℓ} {x : A}
   pathJprop i = primComp (λ _ → P x refl) i (λ {j (i = i1) → d}) d
 
 module _ {ℓ ℓ'} {A : Set ℓ} {P : A → Set ℓ'} where
-  subst : (a b : A) (p : Path a b) → P a → P b
-  subst a b p p0 = pathJ {ℓ} {ℓ'} (λ (y : A) → λ _ → P y) p0 b p
+  subst : {a b : A} (p : Path a b) → P a → P b
+  subst {a} {b} p p0 = pathJ {ℓ} {ℓ'} (λ (y : A) → λ _ → P y) p0 b p
 
-  substInv : (a x : A) (p : Path a x) → P x → P a
-  substInv a x p  =  subst x a (λ i → p (~ i))
+  substInv : {a x : A} (p : Path a x) → P x → P a
+  substInv p  =  subst (λ i → p (~ i))
 
 injective : ∀ {ℓa ℓb} → {A : Set ℓa} → {B : Set ℓb} → (f : A → B) → Set (ℓ-max ℓa ℓb)
 injective {_} {_} {A} f = {a0 a1 : A} → f a0 ≡ f a1 → a0 ≡ a1
@@ -106,7 +106,7 @@ module _ {ℓ} {A0 A1 : Set ℓ} (A : A0 ≡ A1) {φ : I} (a0 : A i0)
 transpP : ∀ {ℓ ℓ'} {A : Set ℓ}{B : A → Set ℓ'} {x y : A} → x ≡ y → B x → B y
 transpP {B = B} p = pathJ (λ y _ → B _ → B y) (λ x → x) _ p
 
-transpP≡subst : ∀ {ℓ ℓ'} {A : Set ℓ}{B : A → Set ℓ'} {x y : A} → (p : x ≡ y) → transpP {B = B} p ≡ subst {P = B} x y p
+transpP≡subst : ∀ {ℓ ℓ'} {A : Set ℓ}{B : A → Set ℓ'} {x y : A} → (p : x ≡ y) → transpP {B = B} p ≡ subst {P = B} p
 transpP≡subst {A = A} {B} {x} {y} p = sym (transp-pi (λ j → uncurry (λ (y : A) → λ _ → B y) (contrSingl p j)) (λ x → x))
 
 coe : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A → B

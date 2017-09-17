@@ -89,3 +89,59 @@ module _ where
   univSection : ∀ {ℓ} → {A B : Set ℓ} → section {_} {_} {A ≡ B} {A ≃ B} idtoeqv ua
   univSection {_} {A} {B} = (λ y → lemEqv _ _ (sym (lemma' y)))  
 
+
+
+-- The formalization is due to Fabian Ruch.
+univalenceAlt : ∀ {ℓ} → {B : Set ℓ} → isContr (Σ (Set ℓ) (λ X → X ≃ B))
+univalenceAlt {B = B} = (B , idEquiv) , prf where
+  prf : (y : Σ _ (λ X → X ≃ B)) → (B , idEquiv) ≡ y
+  prf (A , A≃B) = subst {P = λ z → (B , idEquiv) ≡ (A , z)} (univSection A≃B)
+      (pathJ {x = B} (λ X B≡X → (B , idEquiv) ≡ (X , (idtoeqv (sym B≡X))))
+         (sym (cong (λ z → (B , z)) [idtoeqv]refl=id)) A B≡A) where 
+    B≡A : B ≡ A
+    B≡A = sym (ua A≃B)
+
+
+------------------------------------------------------------------------------
+-- Elimination principle for equivalences and isomorphisms
+
+module _ where
+
+  open Function
+
+
+  contrSinglEquiv : ∀ {ℓ} → {A : Set ℓ} → {B : Set ℓ} → (e : A ≃ B)
+                    → (Σ (Set ℓ) (λ X → X ≃ B) ∋ (B , idEquiv)) ≡ (A , e)
+  contrSinglEquiv {ℓ} {A} {B} e = rem where
+    rem1 : isProp (Σ (Set ℓ) (λ X → X ≃ B))
+    rem1 = contrIsProp univalenceAlt
+    rem : (B , idEquiv) ≡ (A , e)
+    rem = rem1 (B , idEquiv) (A , e)
+
+
+  elimEquiv : ∀ {ℓ ℓ'} → {B : Set ℓ} (P : {A : Set ℓ} → (A → B) → Set ℓ') → (d : P (idFun B))
+              → {A : Set ℓ} → (e : A ≃ B) → P (eqv e)
+  elimEquiv {ℓ} {ℓ'} {B} P d {A} e = rem where
+    T : (Σ (Set ℓ) (λ X → X ≃ B)) → Set ℓ'
+    T x = P (eqv (snd x))
+    rem1 : (B , idEquiv) ≡ (A , e)
+    rem1 = contrSinglEquiv e
+    rem : P (eqv e)
+    rem = subst {P = T} rem1 d
+
+  elimIso : ∀{ℓ ℓ'} → {B : Set ℓ} → (Q : {A : Set ℓ} → (A → B) → (B → A) → Set ℓ') → (h : Q (idFun B) (idFun B))
+            → {A : Set ℓ} → (f : A → B) → (g : B → A) → section f g → retract f g → Q f g
+  elimIso {ℓ} {ℓ'} {B} Q h {A} f g sfg rfg = rem1 f g sfg rfg where
+    P : {A : Set ℓ} → (f : A -> B) → Set (ℓ-max ℓ' ℓ)
+    P {A} f = (g : B -> A) -> section f g -> retract f g -> Q f g
+
+    rem : P (idFun B)
+    rem g sfg rfg = substInv {P = Q (idFun B)} (λ i → λ b → (sfg b) i) h
+
+    rem1 : {A : Set ℓ} → (f : A -> B) → P f
+    rem1 f g sfg rfg = elimEquiv P rem (con f (gradLemma f g sfg rfg)) g sfg rfg
+
+  elimIsoInv : ∀{ℓ ℓ'} → {A : Set ℓ} → (Q : {B : Set ℓ} → (A → B) → (B → A) → Set ℓ') → (h : Q (idFun A) (idFun A))
+               → {B : Set ℓ} → (f : A → B) → (g : B → A) → section f g → retract f g → Q f g
+  elimIsoInv {A = A} Q h {B} f g sfg rfg = elimIso (λ f g → Q g f) h g f rfg sfg
+
