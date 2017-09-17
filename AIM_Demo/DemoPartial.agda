@@ -24,10 +24,10 @@ endpoints {A} {B} x y i (i = i0) = y
 endpoints-must-match' : ∀ {A : Set} → A → A → ∀ i (j : I) → Partial A i
 endpoints-must-match' {A} x y i j _ = y
 
+
 endpoints-must-match : ∀ {A : Set} → A → A → ∀ i j → Partial A (i ∨ j)
-endpoints-must-match {A} x y i j o = x
--- endpoints-must-match {A} x y i j (i = i1) = x
--- endpoints-must-match {A} x y i j (j = i1) = x
+endpoints-must-match {A} x y i j (i = i1) = x
+endpoints-must-match {A} x y i j (j = i1) = x
 
 
 foo : ∀ i → Partial Bool (i ∨ ~ i)
@@ -53,7 +53,7 @@ test-foo-bar i P pfoo = pfoo
 
 
 trans : ∀ {a} {A : Set a} → {x y z : A} → Path x y → Path y z → Path x z
-trans {A = A} {x} {y} p q = \ i → primComp (λ j → A) (i ∨ ~ i)
+trans {A = A} {x} {y} p q = \ i → primComp (λ j → A) _ -- (i ∨ ~ i)
                                            (\ j → \ { (i = i1) → q j
                                                     ; (i = i0) → x
                                                     }

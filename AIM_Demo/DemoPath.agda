@@ -4,8 +4,24 @@ module AIM_Demo.DemoPath where
 open import Primitives
 
 
+
+-- Path {a} {A} x y ~~ {f : I → A | f i0 = x, f i1 = y}
 refl : ∀ {a} {A : Set a} {x : A} → Path x x
-refl {x = d} = λ i → d
+refl {x = d} = \ i → d
+
+
+toLine : ∀ {a} {A : Set a}{x y : A} → Path x y → I → A
+toLine p = \ i → p i
+
+
+
+
+
+
+
+
+
+
 
 -- ~ : I → I
 -- ~ i0 ≡ i1
@@ -32,6 +48,8 @@ test-1 p = refl
 
 
 
+
+
 eta-expand : ∀ {a} {A : Set a} {x y : A} → (p : Path x y) -> Path x y
 eta-expand p = λ z → p z
 
@@ -42,9 +60,36 @@ eta-eq p = refl
 
 
 
--- primComp : ∀ {a} (A : (i : I) → Set (a i)) (φ : I) → (∀ i → Partial (A i) φ) → (a : A i0) → A i1
+
+
+
+
+
+fun-ext : ∀ {a b} {A : Set a} {B : A → Set b} → {f g : (x : A) → B x}
+          → (∀ x → Path (f x) (g x)) → Path f g
+fun-ext p = λ i → \ x → p x i
+
+--  p x i0 = f x
+--  p x i1 = g x
+-- -------------------------------------
+--  (\ x → p x i0) = (\ x → f x) =η f
+--  (\ x → p x i1) = (\ x → g x) =η g
+
+
+
+transp : ∀ {l} (A : I → Set l) → A i0 → A i1
+transp A a = primComp A i0 (\ _ → empty) a
+
+-- ((i : I) → A i)
+transp-coh : ∀ {l} → (A : I → Set l) → (x : A i0) → PathP A x (transp A x)
+transp-coh A x i = primComp (\ j → A (i ∧ j)) (~ i) (\ { j (i = i0) → x }) x
+
+
+
+-- primComp : ∀ {a} (A : (i : I) → Set (a i)) (φ : I) → (u : ∀ i → Partial (A i) φ) → (a : A i0) → A i1
 
 -- ("Partial A φ" is something like "(φ = i1) → A")
+
 
 
 pathJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → P x refl →
@@ -64,12 +109,6 @@ pathJprop {x = x} P d = \ i → primComp (λ _ → P x refl) i (\ { j (i = i1) �
 
 
 
-fun-ext : ∀ {a b} {A : Set a} {B : A → Set b} → {f g : (x : A) → B x}
-          → (∀ x → Path (f x) (g x)) → Path f g
-fun-ext p = λ i → \ x → p x i
-
--- p x i0 = f x
--- p x i1 = g x
 
 
 
