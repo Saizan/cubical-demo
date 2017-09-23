@@ -100,7 +100,7 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
   corSigProp : {pB : (x : A) →
     isProp (B x)} (t u : Σ A B) (p : Path (fst t) (fst u)) →
     isProp (PathP (λ i → B (p i)) (snd t) (snd u))
-  corSigProp {pB} t u p = substInv {A = Set ℓ'}{P = isProp} T0 T1 rem rem1 where
+  corSigProp {pB} t u p = substInv {A = Set ℓ'}{P = isProp} rem rem1 where
     P : I → Set ℓ'
     P = λ i → B (p i)
 
@@ -123,7 +123,7 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
   corSigSet : {sB : (x : A)
     → isSet (B x)} (t u : Σ A B) (p : Path (fst t) (fst u))
     → isProp (PathP (λ i → B (p i)) (snd t) (snd u))
-  corSigSet {sB} t u p = substInv {A = Set ℓ'} {isProp} T0 T1 rem rem1 where
+  corSigSet {sB} t u p = substInv {A = Set ℓ'} {isProp} rem rem1 where
     P : I → Set ℓ' -- Path (B (fst t)) (B (fst u))
     P = λ i → B (p i)
 
@@ -145,7 +145,7 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
 
   setSig : {sA : isSet A}{sB : (x : A)→ isSet (B x)}(t u : Σ A B)→ isProp(t ≡ u)
   setSig {sA} {sB} t u = substInv {A = Set (ℓ-max ℓ ℓ')} {isProp}
-      (t ≡ u) (Σ T (λ p →  C p)) rem3 rem2 where
+      rem3 rem2 where
     T : Set ℓ
     T = Path (t .fst) (u .fst)
     C : T →  Set ℓ'
@@ -166,7 +166,7 @@ corSigGroupoid : ∀ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} (gB : (x : A)
    → groupoid (B x)) (t u : Σ A B) (p : Path (t .fst) (u .fst))
    → isSet (PathP (λ i → B (p i)) (t .snd) (u .snd))
 corSigGroupoid {ℓ} {ℓ'} {A} {B} gB t u p =
-   substInv {A = Set ℓ'} {isSet} T0 T1 rem rem1
+   substInv {A = Set ℓ'} {isSet} rem rem1
 -- = substInv U set T0 T1 rem rem1
  where P : I → Set ℓ' -- Path (B (t .fst)) (B (u .fst))
        P = λ i → B (p i)
@@ -184,7 +184,7 @@ corSigGroupoid {ℓ} {ℓ'} {A} {B} gB t u p =
 groupoidSig : ∀ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} (gA : groupoid A)
   (gB : (x : A) → groupoid (B x)) (t u : Σ A B)→ isSet (Path t u)
 groupoidSig {ℓ} {ℓ'} {A} {B} gA gB t u = substInv {A = Set (ℓ-max ℓ ℓ')}
-    {isSet} (Path t u) (Σ T (λ p → C p)) rem3 rem2 where
+    {isSet} rem3 rem2 where
   T : Set ℓ
   T = Path (t .fst) (u .fst)
   C  : T →  Set ℓ'
@@ -207,7 +207,7 @@ lem3  : ∀ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} (pB : (x : A) → isPr
   (t u : Σ A B) (p : Path (t .fst) (u .fst)) →
   isContr (PathP (λ i → B (p i)) (t .snd) (u .snd))
 lem3 {ℓ} {ℓ'} {A} {B} pB t u p =
-    lemContr' (substInv {A = Set ℓ'} {isProp} T0 T1 rem rem1) rem2 where
+    lemContr' (substInv {A = Set ℓ'} {isProp} rem rem1) rem2 where
   P : I → Set ℓ' -- Path (B (t .fst)) (B (u .fst))
   P = λ i → B (p i)
   T0 : Set ℓ'

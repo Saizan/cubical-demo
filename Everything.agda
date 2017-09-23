@@ -6,6 +6,9 @@ open import Primitives
 -- Some library functions like refl/sym/trans plus Glue and composition for it.
 open import PathPrelude
 
+-- Lemmas on Sigma types
+open import Sigma
+
 -- Isomorphic types are equivalent
 open import GradLemma
 
