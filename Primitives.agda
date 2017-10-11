@@ -2,8 +2,7 @@
 module Primitives where
 
 module Postulates where
-  import Agda.Primitive
-  open Agda.Primitive.CubicalPrimitives public
+  open import Agda.Primitive.Cubical public
 
   postulate
     Path' : ∀ {ℓ} {A :     Set ℓ} → A    → A    → Set ℓ
