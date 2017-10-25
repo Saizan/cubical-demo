@@ -54,7 +54,7 @@ module UAEquiv
   [ua∘idtoeqv]refl≡refl : {A : Set ℓ} → (ua {A = A} {B = A} (idtoeqv {A = A} refl)) ≡ refl
   [ua∘idtoeqv]refl≡refl {A = A} = trans (λ i → ua {A = A} {B = A} ([idtoeqv]refl=id i)) uaid=id
 
- 
+
 
   univEquiv : {A B : Set ℓ} → isEquiv (A ≡ B) (A ≃ B) idtoeqv
   univEquiv {A} {B} =
@@ -87,7 +87,7 @@ module _ where
     P = \ y z → ua {A = A} {B = y} (coe (λ i → A ≃ z i) idEquiv) ≡ z
 
   univSection : ∀ {ℓ} → {A B : Set ℓ} → section {_} {_} {A ≡ B} {A ≃ B} idtoeqv ua
-  univSection {_} {A} {B} = (λ y → lemEqv _ _ (sym (lemma' y)))  
+  univSection {_} {A} {B} = (λ y → lemEqv _ _ (sym (lemma' y)))
 
 
 
@@ -97,7 +97,7 @@ univalenceAlt {B = B} = (B , idEquiv) , prf where
   prf : (y : Σ _ (λ X → X ≃ B)) → (B , idEquiv) ≡ y
   prf (A , A≃B) = subst {P = λ z → (B , idEquiv) ≡ (A , z)} (univSection A≃B)
       (pathJ {x = B} (λ X B≡X → (B , idEquiv) ≡ (X , (idtoeqv (sym B≡X))))
-         (sym (cong (λ z → (B , z)) [idtoeqv]refl=id)) A B≡A) where 
+         (sym (cong (λ z → (B , z)) [idtoeqv]refl=id)) A B≡A) where
     B≡A : B ≡ A
     B≡A = sym (ua A≃B)
 
@@ -144,4 +144,3 @@ module _ where
   elimIsoInv : ∀{ℓ ℓ'} → {A : Set ℓ} → (Q : {B : Set ℓ} → (A → B) → (B → A) → Set ℓ') → (h : Q (idFun A) (idFun A))
                → {B : Set ℓ} → (f : A → B) → (g : B → A) → section f g → retract f g → Q f g
   elimIsoInv {A = A} Q h {B} f g sfg rfg = elimIso (λ f g → Q g f) h g f rfg sfg
-
