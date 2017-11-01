@@ -112,7 +112,7 @@ transpP≡subst {A = A} {B} {x} {y} p = sym (transp-pi (λ j → uncurry (λ (y 
 coe : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A → B
 coe {A = A} = transpP {B = λ X → X}
 
-module _ {ℓ} {A : Set ℓ} {B : A → Set ℓ} where
+module _ {ℓa ℓb} {A : Set ℓa} {B : A → Set ℓb} where
   funUnImp : ({x : A} → B x) → (x : A) → B x
   funUnImp f x = f {x}
 
