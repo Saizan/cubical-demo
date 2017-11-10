@@ -1,8 +1,8 @@
 {-# OPTIONS --cubical #-}
-module Cube where
+module Cubical.Cube where
 
-open import PathPrelude
-open import Id
+open import Cubical.PathPrelude
+open import Cubical.Id
 
 test-sym : ∀ {ℓ} {A : Set ℓ} → {x y : A} → (p : x ≡ y) → sym (sym p) ≡ p
 test-sym p = refl

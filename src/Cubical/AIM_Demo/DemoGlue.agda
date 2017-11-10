@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
-module AIM_Demo.DemoGlue where
+module Cubical.AIM_Demo.DemoGlue where
 
-open import PathPrelude
+open import Cubical.PathPrelude
 
 
 -- Glue : ∀ {a b} (A : Set a) →

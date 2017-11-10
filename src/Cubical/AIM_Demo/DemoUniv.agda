@@ -1,12 +1,12 @@
 {-# OPTIONS --cubical #-}
-module AIM_Demo.DemoUniv where
+module Cubical.AIM_Demo.DemoUniv where
 
-open import PathPrelude renaming (equivToPath to ua)
+open import Cubical.PathPrelude renaming (equivToPath to ua)
 open import Data.Bool
 open import Data.Product
 open import Data.Nat
 open import Data.List
-open import NotIsEquiv using (notIsEquiv)
+open import Cubical.NotIsEquiv using (notIsEquiv)
 
 notEquiv : Bool ≃ Bool
 notEquiv = not , notIsEquiv

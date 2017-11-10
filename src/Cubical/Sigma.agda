@@ -2,10 +2,10 @@
 
 -- Ported from cubicaltt
 
-module Sigma where
-open import PathPrelude
-open import GradLemma
-open import Sub
+module Cubical.Sigma where
+open import Cubical.PathPrelude
+open import Cubical.GradLemma
+open import Cubical.Sub
 open import Data.Product renaming (proj₁ to fst; proj₂ to snd)
 
 -- record Σ {l m : Level} (A : Set ℓ) (B : A → Set ℓ') : Set (l ⊔ m) where

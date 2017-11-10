@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical #-}
-module Category where
+module Cubical.Category where
 
 open import PathPrelude
 

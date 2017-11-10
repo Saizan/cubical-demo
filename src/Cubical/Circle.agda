@@ -1,8 +1,8 @@
 {-# OPTIONS --cubical --rewriting #-}
-module Circle where
-open import PathPrelude
-open import Int
-open import Rewrite
+module Cubical.Circle where
+open import Cubical.PathPrelude
+open import Cubical.Int
+open import Cubical.Rewrite
 
 postulate
   S¹   : Set

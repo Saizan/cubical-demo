@@ -1,5 +1,5 @@
-module NotIsEquiv where
-open import PathPrelude
+module Cubical.NotIsEquiv where
+open import Cubical.PathPrelude
 open import Data.Bool
 open import Data.Product
 

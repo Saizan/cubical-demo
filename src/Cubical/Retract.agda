@@ -1,6 +1,6 @@
-module Retract where
+module Cubical.Retract where
 
-open import PathPrelude
+open import Cubical.PathPrelude
 
 section : ∀ {ℓa ℓb} → {A : Set ℓa} → {B : Set ℓb} → (f : A → B) → (g : B → A) → Set ℓb
 section f g = ∀ b → f (g b) ≡ b

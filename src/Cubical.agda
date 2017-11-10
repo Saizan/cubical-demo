@@ -1,40 +1,40 @@
-module Everything where
+module Cubical where
 
 -- Basic primitives (some are from Agda.Primitive)
-open import Primitives
+open import Cubical.Primitives
 
 -- Some library functions like refl/sym/trans plus Glue and composition for it.
-open import PathPrelude
+open import Cubical.PathPrelude
 
 -- Lemmas on Sigma types
-open import Sigma
+open import Cubical.Sigma
 
 -- Isomorphic types are equivalent
-open import GradLemma
+open import Cubical.GradLemma
 
 -- Equivalent types are equal, using Glue and GradLemma
-open import Univalence
+open import Cubical.Univalence
 
 -- A[φ ↦ u] as a non-fibrant type
-open import Sub
+open import Cubical.Sub
 
 -- Id type where J computes definitionally, eliminator's type defined with Sub
-open import Id
+open import Cubical.Id
 
 -- Circle as HIT, postulating the constructors and providing
 -- computation with REWRITE
-open import Circle
+open import Cubical.Circle
 
 -- We can prove bisimilar streams equal by copatterns, where Stream is
 -- the "standard" coinductive record definition.
-open import Stream
+open import Cubical.Stream
 
 -- Testing
-open import Cube
-open import OTTU
+open import Cubical.Cube
+open import Cubical.OTTU
 
 -- Demo
-open import AIM_Demo.DemoPath
-open import AIM_Demo.DemoPartial
-open import AIM_Demo.DemoGlue
-open import AIM_Demo.DemoUniv
+open import Cubical.AIM_Demo.DemoPath
+open import Cubical.AIM_Demo.DemoPartial
+open import Cubical.AIM_Demo.DemoGlue
+open import Cubical.AIM_Demo.DemoUniv

@@ -1,8 +1,8 @@
 {-# OPTIONS --cubical  #-}
-module Id where
+module Cubical.Id where
 
-open import PathPrelude
-open import Sub
+open import Cubical.PathPrelude
+open import Cubical.Sub
 
 module _ {ℓ} {A : Set ℓ} where
   reflId : {x : A} → Id x x

@@ -1,6 +1,6 @@
 {-# OPTIONS --cubical #-}
 
-module FromStdLib where
+module Cubical.FromStdLib where
 
 open import Data.Bool using (Bool; true; false) public
 

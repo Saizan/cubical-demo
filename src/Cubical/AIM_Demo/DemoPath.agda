@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
-module AIM_Demo.DemoPath where
+module Cubical.AIM_Demo.DemoPath where
 
-open import Primitives
+open import Cubical.Primitives
 
 
 

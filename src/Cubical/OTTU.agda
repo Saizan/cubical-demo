@@ -1,8 +1,8 @@
 {-# OPTIONS --cubical #-}
-module OTTU where
+module Cubical.OTTU where
 
-open import PathPrelude hiding (Bool ; true ; false)
-open import Cube
+open import Cubical.PathPrelude hiding (Bool ; true ; false)
+open import Cubical.Cube
 
 data Bool : Set where
   true false : Bool

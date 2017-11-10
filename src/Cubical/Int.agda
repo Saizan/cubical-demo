@@ -1,8 +1,8 @@
-module Int where
+module Cubical.Int where
 
 open import Data.Product
-open import PathPrelude
-open import GradLemma
+open import Cubical.PathPrelude
+open import Cubical.GradLemma
 
 data Nat : Set where
   zero : Nat
