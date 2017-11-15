@@ -29,17 +29,15 @@ module _ {ℓ} {A : Set ℓ} where
   infixr 2 _≡⟨⟩_ _≡⟨_⟩_
   infix  1 ≡-proof_ begin_
 
-  ≡-proof_ : {x y : A} → x ≡ y → x ≡ y
+  ≡-proof_ begin_ : {x y : A} → x ≡ y → x ≡ y
   ≡-proof x≡y = x≡y
+  begin_ = ≡-proof_
 
   _≡⟨⟩_ : (x {y} : A) → x ≡ y → x ≡ y
   _ ≡⟨⟩ x≡y = x≡y
 
   _≡⟨_⟩_ : (x {y z} : A) → x ≡ y → y ≡ z → x ≡ z
   _ ≡⟨ x≡y ⟩ y≡z = trans x≡y y≡z
-
-  begin_ : ∀{x y : A} → x ≡ y → x ≡ y
-  begin_ x≡y = x≡y
 
   _≡-qed _∎ : (x : A) → x ≡ x
   _ ≡-qed  = refl
