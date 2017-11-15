@@ -25,9 +25,9 @@ module _ {ℓ} {A : Set ℓ} where
   cong : ∀ {ℓ'} {B : Set ℓ'} {x y : A} → (f : A → B) → x ≡ y → f x ≡ f y
   cong f p = λ i → f (p i)
 
-  infix  3 _≡-qed
+  infix  3 _≡-qed _∎
   infixr 2 _≡⟨⟩_ _≡⟨_⟩_
-  infix  1 ≡-proof_
+  infix  1 ≡-proof_ begin_
 
   ≡-proof_ : {x y : A} → x ≡ y → x ≡ y
   ≡-proof x≡y = x≡y
