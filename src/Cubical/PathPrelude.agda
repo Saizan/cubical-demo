@@ -38,8 +38,12 @@ module _ {ℓ} {A : Set ℓ} where
   _≡⟨_⟩_ : (x {y z} : A) → x ≡ y → y ≡ z → x ≡ z
   _ ≡⟨ x≡y ⟩ y≡z = trans x≡y y≡z
 
-  _≡-qed : (x : A) → x ≡ x
+  begin_ : ∀{x y : A} → x ≡ y → x ≡ y
+  begin_ x≡y = x≡y
+
+  _≡-qed _∎ : (x : A) → x ≡ x
   _ ≡-qed  = refl
+  _∎ = _≡-qed
 
 fill : {ℓ : I → Level} → (A : (i : I) → Set (ℓ i)) → (φ : I) →
   ((i : I) → Partial (A i) φ) → A i0 → (i : I) → A i
