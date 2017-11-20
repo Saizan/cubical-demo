@@ -1,13 +1,10 @@
 {-# OPTIONS --cubical #-}
 module OTTU where
 
-open import PathPrelude hiding (Bool ; true ; false)
+open import PathPrelude
 open import Cube
 
-data Bool : Set where
-  true false : Bool
 
-data ⊥ : Set where
 record ⊤ : Set where
 
 data W (A : Set) (B : A → Set) : Set where

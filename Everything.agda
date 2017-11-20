@@ -33,6 +33,8 @@ open import Stream
 open import Cube
 open import OTTU
 
+open import binnat
+
 -- Demo
 open import AIM_Demo.DemoPath
 open import AIM_Demo.DemoPartial

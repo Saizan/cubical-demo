@@ -1,5 +1,6 @@
 {-# OPTIONS --cubical --rewriting #-}
 module Circle where
+open import FromStdLib
 open import PathPrelude
 open import Int
 open import Rewrite
@@ -43,7 +44,7 @@ winding p = coerce (λ i → helix (p i)) (pos zero)
 
 
 
-natLoop : Nat → base ≡ base
+natLoop : ℕ → base ≡ base
 natLoop zero = refl
 natLoop (suc n) = trans (natLoop n) loop
 

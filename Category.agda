@@ -68,14 +68,14 @@ idᶠLeft {ℓ} {F} = Func≡.path r where
              ; presId≡   = λ A → {!!}
              ; presComp≡ = λ f g → {!!}
              }
+  open import Comp
 
   trans-id : ∀ {ℓ}{A : Set ℓ} {x y : A} → (p : x ≡ y) → trans p (\ i → y) ≡ p
-  trans-id {A = A} {x} {y} p i j = primComp (λ _ → A) (((~ j) ∨ j) ∨ i)
-                                            (\ { k (j = i0) → p (~ k)
-                                               ; k (j = i1) → y
-                                               ; k (i = i1) → p (j ∨ ~ k)
-                                               })
-                                            y
+  trans-id {A = A} {x} {y} p i j = Comp.fill (λ _ → A) _
+                                             (λ { i (j = i0) → x
+                                                ; i (j = i1) → y })
+                                             (inc (p j))
+                                             (~ i)
 
   directpath : idᶠ ∘ᶠ F ≡ F
   directpath i = record

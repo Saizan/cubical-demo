@@ -1,8 +1,10 @@
 module NotIsEquiv where
 open import PathPrelude
-open import Data.Bool
-open import Data.Product
+open import FromStdLib
 
+not : Bool → Bool
+not true = false
+not false = true
 
 notnot : ∀ y → y ≡ not (not y)
 notnot true = refl

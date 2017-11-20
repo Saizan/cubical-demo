@@ -1,16 +1,12 @@
 module Int where
 
-open import Data.Product
+open import FromStdLib
 open import PathPrelude
 open import GradLemma
 
-data Nat : Set where
-  zero : Nat
-  suc  : Nat → Nat
-
 data Int : Set where
-  pos    : (n : Nat) → Int
-  negsuc : (n : Nat) → Int
+  pos    : (n : ℕ) → Int
+  negsuc : (n : ℕ) → Int
 
 sucℤ : Int → Int
 sucℤ (pos n)          = pos (suc n)

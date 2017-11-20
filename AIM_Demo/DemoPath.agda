@@ -3,11 +3,12 @@ module AIM_Demo.DemoPath where
 
 open import Primitives
 
+-- I : Setω -- Interval type
 
 
 -- Path {a} {A} x y ~~ {f : I → A | f i0 = x, f i1 = y}
 refl : ∀ {a} {A : Set a} {x : A} → Path x x
-refl {x = d} = \ i → d
+refl {x = x} = \ i → x
 
 
 toLine : ∀ {a} {A : Set a}{x y : A} → Path x y → I → A
@@ -35,6 +36,7 @@ sym p = λ i → p (~ i)
 
 -- _≡_ = Path
 
+-- ~ (~ i) = i
 test-sym : ∀ {a} {A : Set a} → {x y : A} → (p : Path x y) → sym (sym p) ≡ p
 test-sym p = refl
 
@@ -86,21 +88,24 @@ transp-coh A x i = primComp (\ j → A (i ∧ j)) (~ i) (\ { j (i = i0) → x })
 
 
 
--- primComp : ∀ {a} (A : (i : I) → Set (a i)) (φ : I) → (u : ∀ i → Partial (A i) φ) → (a : A i0) → A i1
+-- primComp : ∀ {a} (A : (i : I) → Set (a i)) (φ : I)
+--            → (u : ∀ i → Partial (A i) φ) → (a : A i0) → A i1
 
 -- ("Partial A φ" is something like "(φ = i1) → A")
 
 
 
-pathJ : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → P x refl →
+pathJ : ∀ {a}{b}{A : Set a}{x : A}(P : ∀ y → Path x y → Set b) → P x refl →
         ∀ y (p : Path x y) → P y p
 pathJ P d _ p = primComp (λ i → P (p i) (\ j → p (i ∧ j))) i0 (\ _ → empty) d
 
 
-test-primComp : ∀ {a} (A : Set a) {x y : A} (p : Path x y) → primComp (\ _ → A) i1 (\ j _ → p j) x ≡ y
+test-primComp : ∀ {a} (A : Set a) {x y : A} (p : Path x y)
+                → primComp (\ _ → A) i1 (\ j _ → p j) x ≡ y
 test-primComp A p = refl
 
-pathJprop : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p) → (d : P x ((\ i -> x))) →
+pathJprop : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p)
+            → (d : P x ((\ i -> x))) →
             pathJ P d _ refl ≡ d
 pathJprop {x = x} P d = \ i → primComp (λ _ → P x refl) i (\ { j (i = i1) → d }) d
 
@@ -118,7 +123,8 @@ pathJprop {x = x} P d = \ i → primComp (λ _ → P x refl) i (\ { j (i = i1) �
 reflId : ∀ {a} {A : Set a}{x : A} → Id x x
 reflId {x = x} = conid i1 (λ _ → x)
 
-Jdef : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Id x y → Set p) → (d : P x reflId) → J P d reflId ≡ d
+Jdef : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Id x y → Set p) → (d : P x reflId)
+       → J P d reflId ≡ d
 Jdef P d = refl
 
 fromPath : ∀ {A : Set}{x y : A} → Path x y -> Id x y

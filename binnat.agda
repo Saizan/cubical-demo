@@ -1,9 +1,8 @@
+{-# OPTIONS --cubical #-}
 module binnat where
 
-open import Data.Nat
+open import FromStdLib
 open import CTT.Data.Nat
-open import Data.Empty
-open import Relation.Nullary
 open import PathPrelude
 open import GradLemma
 open import Univalence

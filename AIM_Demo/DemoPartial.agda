@@ -1,10 +1,9 @@
 {-# OPTIONS --cubical #-}
 module AIM_Demo.DemoPartial where
 
-open import Level renaming (zero to lzero)
+open import FromStdLib
 open import PathPrelude hiding (trans)
 
-open import Data.Bool hiding (_∨_; _∧_)
 
 
 -- "Partial A φ"  is a special version of "(φ = i1) → A"
@@ -15,8 +14,10 @@ const b φ (φ = i1) = b
 myempty : ∀ {A : Set} → Partial A i0
 myempty = empty
 
-                                                                    --- Partial Set (i ∨ ~ i)
-endpoints : ∀ {A B : Set} → A → B → ∀ i → PartialP {lzero} (i ∨ ~ i) (\ { (i = i1) → A; (i = i0) → B })
+
+endpoints : ∀ {A B : Set} → A → B
+                                                --- Partial Set (i ∨ ~ i)
+            → ∀ i → PartialP {ℓ-zero} (i ∨ ~ i) (\ { (i = i1) → A; (i = i0) → B })
 endpoints {A} {B} x y i (i = i1) = x
 endpoints {A} {B} x y i (i = i0) = y
 

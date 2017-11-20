@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
 
 module Stream where
-open import Data.Product using (_×_)
+open import FromStdLib using (_×_)
 open import PathPrelude
 
 
@@ -80,14 +80,12 @@ module Equality≅Bisimulation where
 
 module Stream≅Nat→ {A : Set} where
 
-  open import Data.Nat
-
   lookup : Stream A → ℕ → A
   lookup xs zero = head xs
   lookup xs (suc n) = lookup (tail xs) n
 
   tabulate : (ℕ → A) → Stream A
-  head (tabulate f) = f 0
+  head (tabulate f) = f zero
   tail (tabulate f) = tabulate (λ n → f (suc n))
 
 

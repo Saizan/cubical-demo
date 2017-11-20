@@ -1,12 +1,11 @@
-{-# OPTIONS --cubical #-}
+{-# OPTIONS --cubical  #-}
 module Univalence where
-
 
 open import PathPrelude hiding (_≃_; idEquiv)
 open import GradLemma
 open import Retract
 
-import Function
+
 
 record _≃_ {ℓa ℓb} (A : Set ℓa)(B : Set ℓb) : Set (ℓ-max ℓa ℓb) where
   no-eta-equality
@@ -107,11 +106,8 @@ univalenceAlt {B = B} = (B , idEquiv) , prf where
 
 module _ where
 
-  open Function
-
-
   contrSinglEquiv : ∀ {ℓ} → {A : Set ℓ} → {B : Set ℓ} → (e : A ≃ B)
-                    → (Σ (Set ℓ) (λ X → X ≃ B) ∋ (B , idEquiv)) ≡ (A , e)
+                    → (B , idEquiv {A = B}) ≡ (A , e)
   contrSinglEquiv {ℓ} {A} {B} e = rem where
     rem1 : isProp (Σ (Set ℓ) (λ X → X ≃ B))
     rem1 = contrIsProp univalenceAlt

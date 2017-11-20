@@ -2,11 +2,8 @@
 module AIM_Demo.DemoUniv where
 
 open import PathPrelude renaming (equivToPath to ua)
-open import Data.Bool
-open import Data.Product
-open import Data.Nat
-open import Data.List
-open import NotIsEquiv using (notIsEquiv)
+open import FromStdLib
+open import NotIsEquiv using (not; notIsEquiv)
 
 notEquiv : Bool ≃ Bool
 notEquiv = not , notIsEquiv
@@ -47,10 +44,10 @@ test-trues2 : trues2 ≡ true ∷ true ∷ []
 test-trues2 = refl
 
 trues3 : List Bool
-trues3 = primComp (\ i → let p = trans ListNot ListNot in
+trues3 = transp (\ i → let p = trans ListNot ListNot in
                          trans p p i)
-                  i0
-                  (\ _ → empty)
+                  -- i0
+                  -- (\ _ → empty)
                   trues
 
 

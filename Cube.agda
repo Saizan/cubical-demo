@@ -332,12 +332,6 @@ test4-test : ∀ j → primComp (λ i → Bool) (j ∨ ~ j)
 test4-test j = refl
 
 
-data List (A : Set) : Set where
-  [] : List A
-  _∷_ : A → List A → List A
-
-infixr 20 _∷_
-
 ListNot : List Bool ≡ List Bool
 ListNot = λ i → List (univ {A = Bool} {B = Bool} notEquiv i)
 
