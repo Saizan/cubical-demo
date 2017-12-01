@@ -17,10 +17,6 @@ module Postulates where
 
   Path = _≡_
 
-  primitive
-    primPathApply  : ∀ {ℓ} {A :     Set ℓ} {x y} → Path'   x y →      I →  A
-    primPathPApply : ∀ {ℓ} {A : I → Set ℓ} {x y} → PathP A x y → (i : I) → A i
-
   postulate
     Id : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
 
