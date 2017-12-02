@@ -1,7 +1,8 @@
 {-# OPTIONS --cubical  #-}
 module Cubical.Univalence where
 
-open import Cubical.PathPrelude hiding (_≃_; idEquiv)
+open import Cubical hiding (_≃_; idEquiv)
+open import Cubical.FromStdLib
 open import Cubical.GradLemma
 open import Cubical.Retract
 

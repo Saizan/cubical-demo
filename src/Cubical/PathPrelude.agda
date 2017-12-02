@@ -3,7 +3,7 @@ module Cubical.PathPrelude where
 
 open import Cubical.Primitives public
 open import Cubical.Primitives public using () renaming (Sub to _[_↦_])
-open import Cubical.FromStdLib public
+open import Cubical.FromStdLib
 
 module _ {ℓ} {A : Set ℓ} where
   refl : {x : A} → x ≡ x

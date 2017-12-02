@@ -1,7 +1,8 @@
 {-# OPTIONS --cubical #-}
 module Cubical.Sub where
 
-open import Cubical.PathPrelude
+open import Cubical
+open import Cubical.FromStdLib
 
 -- "Sub A φ t" is another notation for "A[φ ↦ t]" as a type.
 
