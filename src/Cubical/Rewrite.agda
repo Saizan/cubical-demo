@@ -1,5 +1,5 @@
 {-# OPTIONS --rewriting #-}
-module Rewrite where
+module Cubical.Rewrite where
 
 postulate
   Rewrite : ∀ {ℓ} {A : Set ℓ} → A → A → Set

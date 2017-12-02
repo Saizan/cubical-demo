@@ -1,8 +1,8 @@
-module Int where
+module Cubical.Int where
 
-open import FromStdLib
-open import PathPrelude
-open import GradLemma
+open import Cubical.FromStdLib
+open import Cubical.PathPrelude
+open import Cubical.GradLemma
 
 data Int : Set where
   pos    : (n : ℕ) → Int

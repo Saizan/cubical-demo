@@ -1,6 +1,6 @@
-module NotIsEquiv where
-open import PathPrelude
-open import FromStdLib
+module Cubical.NotIsEquiv where
+open import Cubical.PathPrelude
+open import Cubical.FromStdLib
 
 not : Bool → Bool
 not true = false

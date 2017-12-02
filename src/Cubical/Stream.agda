@@ -1,8 +1,8 @@
 {-# OPTIONS --cubical #-}
 
-module Stream where
-open import FromStdLib using (_×_)
-open import PathPrelude
+module Cubical.Stream where
+open import Cubical.FromStdLib using (_×_)
+open import Cubical.PathPrelude
 
 
 record Stream (A : Set) : Set where
@@ -98,7 +98,7 @@ module Stream≅Nat→ {A : Set} where
   head (tabulate∘lookup i xs) = head xs
   tail (tabulate∘lookup i xs) = tabulate∘lookup i (tail xs)
 
-  open import GradLemma
+  open import Cubical.GradLemma
 
   Stream≡Nat→ : Stream A ≡ (ℕ → A)
   Stream≡Nat→ = isoToPath lookup tabulate

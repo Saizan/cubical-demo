@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical --postfix-projections #-}
-module GradLemma where
+module Cubical.GradLemma where
 
-open import PathPrelude
+open import Cubical.PathPrelude
 
 Square : ∀ {ℓ} {A : Set ℓ} {a0 a1 b0 b1 : A}
           (u : a0 ≡ a1) (v : b0 ≡ b1) (r0 : a0 ≡ b0) (r1 : a1 ≡ b1) → Set ℓ

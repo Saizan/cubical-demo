@@ -1,8 +1,8 @@
 {-# OPTIONS --cubical #-}
-module AIM_Demo.DemoPartial where
+module Cubical.AIM_Demo.DemoPartial where
 
-open import FromStdLib
-open import PathPrelude hiding (trans)
+open import Cubical.FromStdLib
+open import Cubical.PathPrelude hiding (trans)
 
 
 

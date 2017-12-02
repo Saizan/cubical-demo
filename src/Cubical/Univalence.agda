@@ -1,9 +1,10 @@
 {-# OPTIONS --cubical  #-}
-module Univalence where
+module Cubical.Univalence where
 
-open import PathPrelude hiding (_≃_; idEquiv)
-open import GradLemma
-open import Retract
+open import Cubical.PathPrelude hiding (_≃_; idEquiv)
+open import Cubical.GradLemma
+open import Cubical.Retract
+
 
 
 

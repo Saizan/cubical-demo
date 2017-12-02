@@ -1,4 +1,6 @@
-module FromStdLib where
+{-# OPTIONS --cubical #-}
+
+module Cubical.FromStdLib where
 
 open import Agda.Primitive public
   using    ( Level )

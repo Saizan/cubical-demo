@@ -1,8 +1,8 @@
 {-# OPTIONS --cubical #-}
-module OTTU where
+module Cubical.OTTU where
 
-open import PathPrelude
-open import Cube
+open import Cubical.PathPrelude
+open import Cubical.Cube
 
 
 record ⊤ : Set where

@@ -2,11 +2,11 @@
 
 -- Ported from cubicaltt
 
-module Sigma where
-open import PathPrelude
-open import GradLemma
-open import Sub
-open import FromStdLib
+module Cubical.Sigma where
+open import Cubical.PathPrelude
+open import Cubical.GradLemma
+open import Cubical.Sub
+open import Cubical.FromStdLib
 
 and : ∀ {ℓ} (A : Set ℓ) (B : Set ℓ) → Set ℓ
 and A B = Σ A (λ _ → B)

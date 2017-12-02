@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical #-}
-module Primitives where
+module Cubical.Primitives where
 
 module Postulates where
   open import Agda.Primitive.Cubical public

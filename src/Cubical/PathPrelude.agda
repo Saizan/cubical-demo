@@ -1,9 +1,9 @@
 {-# OPTIONS --cubical #-}
-module PathPrelude where
+module Cubical.PathPrelude where
 
-open import Primitives public
-open import Primitives public using () renaming (Sub to _[_↦_])
-open import FromStdLib public
+open import Cubical.Primitives public
+open import Cubical.Primitives public using () renaming (Sub to _[_↦_])
+open import Cubical.FromStdLib public
 
 module _ {ℓ} {A : Set ℓ} where
   refl : {x : A} → x ≡ x
@@ -25,12 +25,13 @@ module _ {ℓ} {A : Set ℓ} where
   cong : ∀ {ℓ'} {B : Set ℓ'} {x y : A} → (f : A → B) → x ≡ y → f x ≡ f y
   cong f p = λ i → f (p i)
 
-  infix  3 _≡-qed
+  infix  3 _≡-qed _∎
   infixr 2 _≡⟨⟩_ _≡⟨_⟩_
-  infix  1 ≡-proof_
+  infix  1 ≡-proof_ begin_
 
-  ≡-proof_ : {x y : A} → x ≡ y → x ≡ y
+  ≡-proof_ begin_ : {x y : A} → x ≡ y → x ≡ y
   ≡-proof x≡y = x≡y
+  begin_ = ≡-proof_
 
   _≡⟨⟩_ : (x {y} : A) → x ≡ y → x ≡ y
   _ ≡⟨⟩ x≡y = x≡y
@@ -38,8 +39,9 @@ module _ {ℓ} {A : Set ℓ} where
   _≡⟨_⟩_ : (x {y z} : A) → x ≡ y → y ≡ z → x ≡ z
   _ ≡⟨ x≡y ⟩ y≡z = trans x≡y y≡z
 
-  _≡-qed : (x : A) → x ≡ x
+  _≡-qed _∎ : (x : A) → x ≡ x
   _ ≡-qed  = refl
+  _∎ = _≡-qed
 
 fill : {ℓ : I → Level} → (A : (i : I) → Set (ℓ i)) → (φ : I) →
   ((i : I) → Partial (A i) φ) → A i0 → (i : I) → A i
