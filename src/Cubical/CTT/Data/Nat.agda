@@ -1,7 +1,7 @@
-module CTT.Data.Nat where
+module Cubical.CTT.Data.Nat where
 
-open import PathPrelude
-open import FromStdLib
+open import Cubical.PathPrelude
+open import Cubical.FromStdLib
 
 caseNat : ∀{l} → {A : Set l} → (a0 aS : A) → ℕ → A
 caseNat a0 aS zero = a0

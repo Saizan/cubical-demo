@@ -33,7 +33,7 @@ open import Cubical.Stream
 open import Cubical.Cube
 open import Cubical.OTTU
 
-open import binnat
+open import Cubical.BinNat
 
 -- Demo
 open import Cubical.AIM_Demo.DemoPath

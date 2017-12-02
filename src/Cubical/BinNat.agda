@@ -1,11 +1,12 @@
 {-# OPTIONS --cubical #-}
-module binnat where
+module Cubical.BinNat where
 
-open import FromStdLib
-open import CTT.Data.Nat
-open import PathPrelude
-open import GradLemma
-open import Univalence
+open import Cubical.CTT.Data.Nat
+
+open import Cubical.FromStdLib
+open import Cubical.PathPrelude
+open import Cubical.GradLemma
+open import Cubical.Univalence
 
 data Pos : Set where
   pos1 : Pos
