@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical #-}
-module Cubical.Cube where
+module Cubical.Examples.Cube where
 
 open import Cubical.PathPrelude
 open import Cubical.Id

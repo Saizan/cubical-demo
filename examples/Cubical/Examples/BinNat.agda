@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
-module Cubical.BinNat where
+module Cubical.Examples.BinNat where
 
-open import Cubical.CTT.Data.Nat
+open import Cubical.Examples.CTT.Data.Nat
 
 open import Cubical.FromStdLib
 open import Cubical.PathPrelude

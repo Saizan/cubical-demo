@@ -1,10 +1,12 @@
 {-# OPTIONS --cubical --rewriting #-}
 
-module Cubical.Circle where
+module Cubical.Examples.Circle where
+
 open import Cubical.FromStdLib
 open import Cubical.PathPrelude
-open import Cubical.Int
 open import Cubical.Rewrite
+
+open import Cubical.Examples.Int
 
 postulate
   S¹   : Set

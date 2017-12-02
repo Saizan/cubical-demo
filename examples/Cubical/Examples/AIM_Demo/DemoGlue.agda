@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical #-}
-module Cubical.AIM_Demo.DemoGlue where
+module Cubical.Examples.AIM_Demo.DemoGlue where
 
 open import Cubical.PathPrelude
 

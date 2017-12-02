@@ -1,9 +1,10 @@
 {-# OPTIONS --cubical #-}
-module Cubical.AIM_Demo.DemoUniv where
+module Cubical.Examples.AIM_Demo.DemoUniv where
 
 open import Cubical.PathPrelude renaming (equivToPath to ua)
 open import Cubical.FromStdLib
-open import Cubical.NotIsEquiv using (not; notIsEquiv)
+
+open import Cubical.Examples.NotIsEquiv using (not; notIsEquiv)
 
 notEquiv : Bool ≃ Bool
 notEquiv = not , notIsEquiv

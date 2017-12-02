@@ -1,6 +1,7 @@
 {-# OPTIONS --cubical #-}
 
-module Cubical.Stream where
+module Cubical.Examples.Stream where
+
 open import Cubical.FromStdLib using (_×_)
 open import Cubical.PathPrelude
 

@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical #-}
-module Cubical.AIM_Demo.DemoPath where
+module Cubical.Examples.AIM_Demo.DemoPath where
 
 open import Cubical.Primitives
 

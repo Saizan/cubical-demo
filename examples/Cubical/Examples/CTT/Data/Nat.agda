@@ -1,4 +1,4 @@
-module Cubical.CTT.Data.Nat where
+module Cubical.Examples.CTT.Data.Nat where
 
 open import Cubical.PathPrelude
 open import Cubical.FromStdLib

@@ -20,23 +20,3 @@ open import Cubical.Sub
 
 -- Id type where J computes definitionally, eliminator's type defined with Sub
 open import Cubical.Id
-
--- Circle as HIT, postulating the constructors and providing
--- computation with REWRITE
-open import Cubical.Circle
-
--- We can prove bisimilar streams equal by copatterns, where Stream is
--- the "standard" coinductive record definition.
-open import Cubical.Stream
-
--- Testing
-open import Cubical.Cube
-open import Cubical.OTTU
-
-open import Cubical.BinNat
-
--- Demo
-open import Cubical.AIM_Demo.DemoPath
-open import Cubical.AIM_Demo.DemoPartial
-open import Cubical.AIM_Demo.DemoGlue
-open import Cubical.AIM_Demo.DemoUniv

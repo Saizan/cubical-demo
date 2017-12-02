@@ -1,4 +1,5 @@
-module Cubical.NotIsEquiv where
+module Cubical.Examples.NotIsEquiv where
+
 open import Cubical.PathPrelude
 open import Cubical.FromStdLib
 

@@ -1,4 +1,4 @@
-module Cubical.Int where
+module Cubical.Examples.Int where
 
 open import Cubical.FromStdLib
 open import Cubical.PathPrelude
