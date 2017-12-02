@@ -1,8 +1,8 @@
-module Comp where
+module Cubical.Comp where
 
-open import PathPrelude hiding (fill)
+open import Cubical.PathPrelude hiding (fill)
 
-open import Sub
+open import Cubical.Sub
 
 comp : ∀ {ℓ} → (A : (i : I) → Set ℓ) → {φ : I} →
          (u : (i : I) → Partial (A i) φ) → A i0 [ φ ↦ u i0 ]
