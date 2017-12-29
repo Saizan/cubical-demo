@@ -1,7 +1,8 @@
 {-# OPTIONS --cubical #-}
-module FunctorCWF where
+module Cubical.Examples.FunctorCWF where
 
-open import PathPrelude hiding (_∘_)
+open import Cubical.PathPrelude
+open import Cubical.FromStdLib hiding (_∘_)
 
 Σ= : ∀ {a b} {A : Set a} {B : A → Set b} {x y : Σ A B} (eq : x .fst ≡ y .fst)
      → PathP (\ i → B (eq i)) (x .snd) (y .snd) → x ≡ y

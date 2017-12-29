@@ -3,6 +3,7 @@ module Cubical.Examples.Cube where
 
 open import Cubical.PathPrelude
 open import Cubical.Id
+open import Cubical.FromStdLib
 
 test-sym : ∀ {ℓ} {A : Set ℓ} → {x y : A} → (p : x ≡ y) → sym (sym p) ≡ p
 test-sym p = refl

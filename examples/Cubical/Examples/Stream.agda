@@ -2,7 +2,7 @@
 
 module Cubical.Examples.Stream where
 
-open import Cubical.FromStdLib using (_×_)
+open import Cubical.FromStdLib using (_×_; ℕ; zero; suc)
 open import Cubical.PathPrelude
 
 

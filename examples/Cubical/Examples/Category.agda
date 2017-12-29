@@ -1,7 +1,8 @@
 {-# OPTIONS --cubical #-}
 module Cubical.Examples.Category where
 
-open import PathPrelude
+open import Cubical.FromStdLib
+open import Cubical.PathPrelude
 
 -- Functor
 record Func {ℓ} : Set (ℓ-suc ℓ) where
@@ -56,19 +57,21 @@ G ∘ᶠ F = record
           module G = Func G
 
 idᶠLeft : ∀{ℓ}{F : Func {ℓ}} → idᶠ ∘ᶠ F ≡ F
-idᶠLeft {ℓ} {F} = Func≡.path r where
+idᶠLeft {ℓ} {F} =
+  directpath where
+  -- Func≡.path r where
   module L = Func (idᶠ ∘ᶠ F)
   module R = Func F
-  map≡ : L.map ≡ R.map
-  map≡ = funExt (λ _ → refl)
-  r = record { F         = idᶠ ∘ᶠ F
-             ; G         = F
-             ; map≡      = λ A → refl
-             ; fmap≡     = λ f → funExt λ _ → refl
-             ; presId≡   = λ A → {!!}
-             ; presComp≡ = λ f g → {!!}
-             }
-  open import Comp
+  -- map≡ : L.map ≡ R.map
+  -- map≡ = funExt (λ _ → refl)
+  -- r = record { F         = idᶠ ∘ᶠ F
+  --            ; G         = F
+  --            ; map≡      = λ A → refl
+  --            ; fmap≡     = λ f → funExt λ _ → refl
+  --            ; presId≡   = λ A → {!!}
+  --            ; presComp≡ = λ f g → {!!}
+  --            }
+  open import Cubical.Comp as Comp
 
   trans-id : ∀ {ℓ}{A : Set ℓ} {x y : A} → (p : x ≡ y) → trans p (\ i → y) ≡ p
   trans-id {A = A} {x} {y} p i j = Comp.fill (λ _ → A) _

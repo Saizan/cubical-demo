@@ -14,6 +14,12 @@ open import Cubical.Examples.Cube
 open import Cubical.Examples.OTTU
 
 open import Cubical.Examples.BinNat
+open import Cubical.Examples.Int
+open import Cubical.Examples.SizedStream
+
+open import Cubical.Examples.Category
+open import Cubical.Examples.FunctorCWF
+
 
 -- Demo
 open import Cubical.Examples.AIM_Demo.DemoPath

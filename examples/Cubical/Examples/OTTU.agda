@@ -2,6 +2,7 @@
 module Cubical.Examples.OTTU where
 
 open import Cubical.PathPrelude
+open import Cubical.FromStdLib
 
 open import Cubical.Examples.Cube
 
