@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical #-}
-module Cubical.PushOut.Tests where
+module Cubical.Tests.PushOut where
 
 open import Cubical.PathPrelude
 open import Cubical.Sub
