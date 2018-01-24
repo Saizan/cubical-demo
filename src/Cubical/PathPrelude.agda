@@ -63,11 +63,18 @@ toPathP {ℓ} {A} {x} {y} p i = primComp (λ _ → A i) φ u (xPathP i)
         xPathP : PathP A x (transp A x )
         xPathP j = fill A _ (λ _ → empty) x j
 
+fromPathP : ∀{ℓ}{A : I → Set ℓ}{x : A i0}{y : A i1} → PathP A x y → transp A x ≡ y
+fromPathP {A = A} {x} {y} p  j = primComp (\ i → A i) j (\ { i (j = i1) → p i }) x
+
 transp-refl : ∀{ℓb} → {B : Set ℓb} → (x : B) → primComp (λ j → B) i0 (λ j → empty) x ≡ x
 transp-refl {B = B} x i = primComp (λ _ → B) i ((λ { j (i = i1) → x })) x
 
 transp-pi : ∀{ℓb} → {B : Set ℓb} → {ℓa : I → Level} → (A : (i : I) → Set (ℓa i)) → (f : (B → A i0)) → (λ x → transp A (f x)) ≡ transp (λ i → (B → A i)) f
 transp-pi {B = B} A f i x = (primComp A i0 (λ i → empty)) (f (transp-refl x (~ i)))
+
+transp-iso : ∀{ℓ}(A : I → Set ℓ)(x : A i0) → transp (\ i → A (~ i)) (transp A x) ≡ x
+transp-iso A x = \ i → primComp (\ j → A (~ j ∧ ~ i)) i (\ { j (i = i1) → x })
+                             (primComp (\ j → A (j ∧ ~ i)) i (\ { j (i = i1) → x }) x)
 
 module _ {ℓ} {A : Set ℓ} where
   singl : (a : A) → Set ℓ
