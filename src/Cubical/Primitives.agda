@@ -11,9 +11,11 @@ module Postulates where
   {-# BUILTIN PATH         Path'     #-}
   {-# BUILTIN PATHP        PathP     #-}
 
-  infix 4 _≡_
+  infix 4 _≡_ _[_≡_]
   _≡_ : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
   _≡_ {A = A} = PathP (λ _ → A)
+  _[_≡_] : ∀ {ℓ} (A : I → Set ℓ) → A i0 → A i1 → Set ℓ
+  _[_≡_] = PathP
 
   Path = _≡_
 
