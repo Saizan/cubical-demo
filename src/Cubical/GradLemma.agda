@@ -90,7 +90,8 @@ invEquiv {A} {B} f = invEq f , gradLemma (invEq f) (fst f) (secEq f) (retEq f)
 
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
-  propPi : (h : (x : A) → isProp (B x)) (f0 f1 : (x : A) → B x) → f0 ≡ f1
+  -- Π preserves propositionality in the following sense:
+  propPi : (h : (x : A) → isProp (B x)) → isProp ((x : A) → B x)
   propPi h f0 f1  = λ i → λ x → (h x (f0 x) (f1 x)) i
 
   lemPropF : (P : (x : A) → isProp (B x)) {a0 a1 : A}

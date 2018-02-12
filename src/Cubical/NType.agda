@@ -1,11 +1,8 @@
-{-# OPTIONS --without-K --cubical #-}
+{-# OPTIONS --cubical #-}
+module Cubical.NType where
 
 open import Cubical.FromStdLib
-open import Cubical.PathPrelude
--- open import lib.Relation
-
-
-module Cubical.NType where
+open import Cubical.Primitives
 
 -- Taken from HoTT-Agda. https://github.com/HoTT/HoTT-Agda
 
@@ -16,13 +13,30 @@ data TLevel : Set where
 
 ℕ₋₂ = TLevel
 
+⟨-1⟩ ⟨0⟩ : TLevel
+⟨-1⟩ = S ⟨-2⟩
+⟨0⟩  = S ⟨-1⟩
+
 ⟨_⟩₋₂ : ℕ → ℕ₋₂
 ⟨ zero ⟩₋₂ = ⟨-2⟩
 ⟨ suc n ⟩₋₂ = S ⟨ n ⟩₋₂
 
+{-# BUILTIN FROMNAT ⟨_⟩₋₂ #-}
+
+-- A formulation of homotopy levels without wrapping it in a constructor as is
+-- done below.
+module _ {ℓ : Level} where
+  import Cubical.PathPrelude
+  -- Definition of the homotopy level of a type.
+  --
+  -- `HasLevel` is defined this way for backwards compatibility - it differs from
+  -- the version with constructors below.
+  HasLevel : TLevel → Set ℓ → Set ℓ
+  HasLevel ⟨-2⟩     = Cubical.PathPrelude.isContr
+  HasLevel (S ⟨-2⟩) = Cubical.PathPrelude.isProp
+  HasLevel (S (S n)) A = (x y : A) → HasLevel (S n) (x ≡ y)
 
 module _ {i} where
-
   {- Definition of contractible types and truncation levels -}
 
   -- We define `has-level' as a record, so that it does not unfold when
