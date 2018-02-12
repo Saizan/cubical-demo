@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --rewriting #-}
+{-# OPTIONS --cubical #-}
 
 -- Ported from cubicaltt
 
@@ -28,23 +28,7 @@ lemPathSig {ℓ} {ℓ'} {A} {B} t u = isoToPath f g s r where
    r q = refl
 
 nonDepPath : ∀{ℓ} {A : Set ℓ} → (t u : A) → (t ≡ u) ≡ (PathP (λ i → A) t u)
-nonDepPath {ℓ} {A} t u = isoToPath g f r s where
-  T0 : Set ℓ
-  T0 = Path t u
-
-  T1 : Set ℓ
-  T1 = PathP (λ i → A) t u
-
-  f : T1 → T0
-  f p i = p i
-
-  g : T0 → T1
-  g q i = q i
-
-  s : (z : T0) → Path (f (g z)) z
-  s z = refl
-  r : (q : T1) →  Path (g (f q)) q
-  r q = refl
+nonDepPath {ℓ} {A} t u = refl
 
 congP : ∀ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} {x y : A} (f : A → B) →
    Path x y → Path (f x) (f y)
