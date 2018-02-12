@@ -249,3 +249,23 @@ setGroupoid {ℓ} sA a0 a1 = propSet (sA a0 a1)
 
 propGroupoid : ∀ {ℓ} {A : Set ℓ} (pA : isProp A) → groupoid A
 propGroupoid pA = setGroupoid (propSet pA)
+
+module _ {ℓa ℓb : Level} {A : Set ℓa} {B : A → Set ℓb} where
+  -- Theorem 7.1.8 in HoTT:
+
+  -- Σ preserves contractibility in the following sense:
+  sigPresContr : isContr A → (∀ a → isContr (B a)) → isContr (Σ A B)
+  sigPresContr (a0 , contrA) a→contrB =
+    let
+      (b0 , contrB) = a→contrB a0
+      P : (y : A) → a0 ≡ y → Set ℓb
+      P y eq = ∀ b' → (λ i → B (eq i)) [ b0 ≡ b' ]
+    in (a0 , b0) , λ {(a , b) →
+      let
+        eqA : a0 ≡ a
+        eqA = contrA a
+        eqB : (Ba' : B a) → (λ j → B (eqA j)) [ b0 ≡ Ba' ]
+        eqB = pathJ P contrB a eqA
+        u : (λ i → B (eqA i)) [ b0 ≡ b ]
+        u = eqB b
+      in λ i → eqA i , u i}
