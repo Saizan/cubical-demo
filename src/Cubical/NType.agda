@@ -26,14 +26,23 @@ data TLevel : Set where
 -- A formulation of homotopy levels without wrapping it in a constructor as is
 -- done below.
 module _ {ℓ : Level} where
-  import Cubical.PathPrelude
+  module _ (A : Set ℓ) where
+    isContr : Set ℓ
+    isContr = Σ[ x ∈ A ] (∀ y → x ≡ y)
+
+    isProp  : Set ℓ
+    isProp  = (x y : A) → x ≡ y
+
+    isSet   : Set ℓ
+    isSet   = (x y : A) → (p q : x ≡ y) → p ≡ q
+
   -- Definition of the homotopy level of a type.
   --
   -- `HasLevel` is defined this way for backwards compatibility - it differs from
   -- the version with constructors below.
   HasLevel : TLevel → Set ℓ → Set ℓ
-  HasLevel ⟨-2⟩     = Cubical.PathPrelude.isContr
-  HasLevel (S ⟨-2⟩) = Cubical.PathPrelude.isProp
+  HasLevel ⟨-2⟩     = isContr
+  HasLevel (S ⟨-2⟩) = isProp
   HasLevel (S (S n)) A = (x y : A) → HasLevel (S n) (x ≡ y)
 
 module _ {i} where
