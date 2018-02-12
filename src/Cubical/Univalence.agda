@@ -5,7 +5,7 @@ open import Cubical hiding (_≃_; idEquiv)
 open import Cubical.FromStdLib
 open import Cubical.GradLemma
 open import Cubical.Retract
-
+open import Cubical.NType.Properties using (lemPropF ; propIsEquiv ; propSet)
 
 
 
