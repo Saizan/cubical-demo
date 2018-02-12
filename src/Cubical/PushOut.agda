@@ -3,7 +3,7 @@ module Cubical.PushOut where
 
 open import Cubical.PathPrelude
 open import Cubical.Sub
-open import Cubical.FromStdLib
+open import Cubical.Prelude
 
 postulate
   P : ∀ {l} → {A B C : Set l} → (f : C → A) (g : C → B) → Set l

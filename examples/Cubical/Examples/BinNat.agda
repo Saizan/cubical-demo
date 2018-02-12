@@ -3,7 +3,7 @@ module Cubical.Examples.BinNat where
 
 open import Cubical.Examples.CTT.Data.Nat
 
-open import Cubical.FromStdLib
+open import Cubical.Prelude
 open import Cubical.PathPrelude
 open import Cubical.GradLemma
 open import Cubical.Univalence

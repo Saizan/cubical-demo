@@ -2,7 +2,7 @@
 module Cubical.Examples.SizedStream where
 
 open import Cubical.PathPrelude
-open import Cubical.FromStdLib using (_×_)
+open import Cubical.Prelude using (_×_)
 open import Agda.Builtin.Size
 
 record Stream (A : Set) (i : Size) : Set where

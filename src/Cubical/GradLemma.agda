@@ -2,7 +2,7 @@
 module Cubical.GradLemma where
 
 open import Cubical
-open import Cubical.FromStdLib
+open import Cubical.Prelude
 open import Cubical.NType.Properties
 
 Square : ∀ {ℓ} {A : Set ℓ} {a0 a1 b0 b1 : A}

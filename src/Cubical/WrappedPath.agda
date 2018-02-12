@@ -1,6 +1,6 @@
 {-# OPTIONS --cubical --postfix-projections #-}
 module Cubical.WrappedPath where
-open import Cubical.FromStdLib
+open import Cubical.Prelude
 open import Cubical.Primitives hiding (PathP; _≡_; Path)
 import Cubical.PathPrelude as P
 

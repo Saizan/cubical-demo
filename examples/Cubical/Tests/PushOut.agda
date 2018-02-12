@@ -3,7 +3,7 @@ module Cubical.Tests.PushOut where
 
 open import Cubical.PathPrelude
 open import Cubical.Sub
-open import Cubical.FromStdLib
+open import Cubical.Prelude
 open import Cubical.PushOut
 
 primFwd : ∀ {l : I → Level} (A : (i : I) → Set (l i)) → (r : I) → A r → A i1
@@ -42,7 +42,7 @@ module Elim {l m} {A B C : Set l} {f : C → A} {g : C → B} (M : P f g -> Set 
      test4 = refl
 
 
-open import Cubical.FromStdLib
+open import Cubical.Prelude
 module PrimComp {l : I → Level} {A B C : (i : I) → Set (l i)} {f : ∀ i → C i → A i} {g : ∀ i → C i → B i}
                     (let P = \ (i : I) → P (f i) (g i))
                     (φ : I) (u : ∀ i → Partial (P i) φ) (u0 : Sub (P i0) φ (u i0)) where

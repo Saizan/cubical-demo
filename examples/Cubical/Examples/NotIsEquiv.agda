@@ -1,7 +1,7 @@
 module Cubical.Examples.NotIsEquiv where
 
 open import Cubical.PathPrelude
-open import Cubical.FromStdLib
+open import Cubical.Prelude
 
 not : Bool → Bool
 not true = false
