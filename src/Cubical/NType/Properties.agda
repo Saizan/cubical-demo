@@ -3,6 +3,7 @@ module Cubical.NType.Properties where
 
 open import Cubical.PathPrelude
 open import Cubical.Prelude
+open import Cubical.NType
 
 lemProp : ∀ {ℓ} {A : Set ℓ} → (A → isProp A) → isProp A
 lemProp h = λ a → h a a
@@ -41,3 +42,7 @@ module _ {ℓ} {A : Set ℓ} where
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'}  where
   propIsEquiv : (f : A → B) → isProp (isEquiv A B f)
   propIsEquiv f = λ u0 u1 → λ i → λ y → propIsContr (u0 y) (u1 y) i
+
+module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
+  -- Corollary 7.1.5 in HoTT.
+  postulate equivPreservesNType : {n : TLevel} → A ≃ B → HasLevel n A → HasLevel n B
