@@ -4,6 +4,7 @@ module Cubical.PathPrelude where
 open import Cubical.Primitives public
 open import Cubical.Primitives public using () renaming (Sub to _[_↦_])
 open import Cubical.FromStdLib
+open import Cubical.NType public using (isContr ; isProp ; isSet)
 
 module _ {ℓ} {A : Set ℓ} where
   refl : {x : A} → x ≡ x
@@ -131,16 +132,6 @@ module _ {ℓa ℓb} {A : Set ℓa} {B : A → Set ℓb} where
   funExtImp : {f g : {x : A} → B x} → ((x : A) → f {x} ≡ g {x}) →
                                        {x : A} → f {x} ≡ g {x}
   funExtImp p {x} = λ i → p x i
-
-module _ {ℓ} (A : Set ℓ) where
-  isContr : Set ℓ
-  isContr = Σ[ x ∈ A ] (∀ y → x ≡ y)
-
-  isProp  : Set ℓ
-  isProp  = (x y : A) → x ≡ y
-
-  isSet   : Set ℓ
-  isSet   = (x y : A) → (p q : x ≡ y) → p ≡ q
 
 module _ {ℓ} {A : Set ℓ} where
   contr : isContr A → (φ : I) → (u : Partial A φ) → A

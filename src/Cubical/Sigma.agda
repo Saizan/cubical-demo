@@ -7,6 +7,7 @@ open import Cubical.PathPrelude
 open import Cubical.GradLemma
 open import Cubical.Sub
 open import Cubical.FromStdLib
+open import Cubical.NType.Properties
 
 and : ∀ {ℓ} (A : Set ℓ) (B : Set ℓ) → Set ℓ
 and A B = Σ A (λ _ → B)
