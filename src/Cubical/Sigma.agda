@@ -7,11 +7,13 @@ open import Cubical.PathPrelude
 open import Cubical.GradLemma
 open import Cubical.Sub
 open import Cubical.FromStdLib
+open import Cubical.NType
 open import Cubical.NType.Properties
 
 and : ∀ {ℓ} (A : Set ℓ) (B : Set ℓ) → Set ℓ
 and A B = Σ A (λ _ → B)
 
+-- 2.7.2 in HoTT
 lemPathSig : ∀ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} (t u : Σ {ℓ} {ℓ'} A B) →
   Path (Path t u) (Σ (Path (fst t) (fst u))
   (λ p → PathP (λ i → B (p i)) (snd t) (snd u)))
@@ -254,3 +256,32 @@ module _ {ℓa ℓb : Level} {A : Set ℓa} {B : A → Set ℓb} where
         u : (λ i → B (eqA i)) [ b0 ≡ b ]
         u = eqB b
       in λ i → eqA i , u i}
+
+  sigPresProp : isProp A → (∀ a → isProp (B a)) → isProp (Σ A B)
+  sigPresProp = propSig
+
+sigPresNType : {ℓa ℓb : Level} {A : Set ℓa} {B : A → Set ℓb} {n : TLevel}
+  → HasLevel n A → (∀ a → HasLevel n (B a)) → HasLevel n (Σ A B)
+sigPresNType {n = ⟨-2⟩} = sigPresContr
+sigPresNType {n = S ⟨-2⟩} = sigPresProp
+sigPresNType {ℓb = ℓb} {A = A} {B} {S (S n)} ntA a→ntB (a₁ , b₁) (a₂ , b₂) =
+  let
+    T = a₁ ≡ a₂
+    U p = (λ i → B (p i)) [ b₁ ≡ b₂ ]
+    V = Σ T U
+    t : HasLevel (S n) T
+    t = ntA a₁ a₂
+    u : (eqa : T) → HasLevel (S n) (U eqa)
+    u eqa =
+      let
+        f : (b : B a₁) → HasLevel (S n) ((λ i → B a₁) [ b₁ ≡ b ])
+        f = a→ntB a₁ b₁
+        P : (y : A) → a₁ ≡ y → Set ℓb
+        P y eq = ∀ b → HasLevel (S n) ((λ i → B (eq i)) [ b₁ ≡ b ])
+      in pathJ P f a₂ eqa b₂
+    -- Inductive hypothesis.
+    prev : HasLevel (S n) V
+    prev = sigPresNType {n = S n} t u
+    equivl : V ≃ ((a₁ , b₁) ≡ (a₂ , b₂))
+    equivl = pathToEquiv (sym (lemPathSig (a₁ , b₁) (a₂ , b₂)))
+  in equivPreservesNType {n = S n} equivl prev

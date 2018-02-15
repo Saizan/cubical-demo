@@ -23,6 +23,10 @@ data TLevel : Set where
 
 {-# BUILTIN FROMNAT ⟨_⟩₋₂ #-}
 
+⟨_⟩₊₂ : ℕ₋₂ → ℕ
+⟨ ⟨-2⟩ ⟩₊₂ = zero
+⟨ S n ⟩₊₂ = suc ⟨ n ⟩₊₂
+
 -- A formulation of homotopy levels without wrapping it in a constructor as is
 -- done below.
 module _ {ℓ : Level} where

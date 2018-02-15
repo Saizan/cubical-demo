@@ -1,3 +1,7 @@
-check:
-	agda src/Cubical/Everything.agda
-	agda examples/Cubical/Examples/Everything.agda
+check: cubical cubical-examples
+
+cubical:
+	make -C src
+
+cubical-examples:
+	make -C examples

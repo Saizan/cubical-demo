@@ -3,6 +3,7 @@ module Cubical.NType.Properties where
 
 open import Cubical.PathPrelude
 open import Cubical.FromStdLib
+open import Cubical.NType
 
 lemProp : ∀ {ℓ} {A : Set ℓ} → (A → isProp A) → isProp A
 lemProp h = λ a → h a a
@@ -41,3 +42,84 @@ module _ {ℓ} {A : Set ℓ} where
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'}  where
   propIsEquiv : (f : A → B) → isProp (isEquiv A B f)
   propIsEquiv f = λ u0 u1 → λ i → λ y → propIsContr (u0 y) (u1 y) i
+
+open import Cubical.Retract
+
+module _ {ℓa ℓb : Level} {A : Set ℓa} {B : A → Set ℓb} where
+  module _ (f g : (a : A) → B a) where
+    Homotopy : Set (ℓ-max ℓa ℓb)
+    Homotopy = ∀ a → f a ≡ g a
+
+module _ {ℓ : Level} {A B : Set ℓ} where
+  module _ {f g : A → A} where
+    -- Just as a reminder: A retract of f and g is a homotopy between their
+    -- composition and the identity function.
+    fromRetract : retract f g → Homotopy (g ∘ f) λ a → a
+    fromRetract r = r
+
+private
+  infixl 5 _◾_
+  _◾_ = trans
+
+private
+  module _ {ℓ : Level} {A : Set ℓ} {a b c : A} {p : a ≡ b} {q : b ≡ c} where
+    postulate  helper : {r : a ≡ c} → p ◾ q ≡ r → q ≡ sym p ◾ r
+
+    module _ {d : A} {r : c ≡ d} where
+      postulate trans-assoc : (p ◾ (q ◾ r)) ≡ (p ◾ q ◾ r)
+
+module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
+  module _ {f g : A → B} {x y : A} (H : Homotopy f g) (p : x ≡ y) where
+    -- Lemma 2.4.3:
+    postulate lem2-4-3 : H x ◾ cong g p ≡ cong f p ◾ H y
+
+    fff : cong g p ≡ sym (H x) ◾ (cong f p ◾ H y)
+    fff = helper lem2-4-3
+    lem2-4-3' : cong g p ≡ sym (H x) ◾ cong f p ◾ H y
+    lem2-4-3' = trans fff trans-assoc
+
+-- Theorem 7.1.4 in HoTT p. 222:
+postulate transportNType : ∀ {ℓa ℓb} {A : Set ℓa} {B : Set ℓb} {n} → IsRetract A B → HasLevel n A → HasLevel n B
+-- transportNType {A = A} {B} {⟨-2⟩}   = retractPresContr A B
+-- transportNType {A = A} {B} {S ⟨-2⟩} = retractPresProp A B
+-- transportNType {A = A} {B} {S (S n)} (p , (s , ε)) lvl a a' = transportNType {n = S n} r' llvl
+--   where
+--     -- p : HasLevel (S n) (s a ≡ s a')
+--     -- p = {!!}
+--     apS : a ≡ a' → s a ≡ s a'
+--     apS = cong s
+--     t : s a ≡ s a' → a ≡ a'
+--     t q = (sym (ε a)) ◾ (cong p q) ◾ (ε a')
+--     module _ (r : a ≡ a') where
+--       -- tttt : trans (ε a) (cong (λ z → z) eq) ≡ trans (cong (λ z → p (s z)) (ε a')
+--       tttt : ε a ◾ r ≡ cong (p ∘ s) r ◾ ε a'
+--       tttt = lem2-4-3 ε r
+--       tttt' : r ≡ sym (ε a) ◾ cong (p ∘ s) r ◾ ε a'
+--       tttt' = lem2-4-3' ε r
+--       -- hh : (t ∘ apS) r ≡ r
+--       -- hh : t (cong s r) ≡ r
+--       hh : sym (ε a) ◾ cong (p ∘ s) r ◾ ε a' ≡ r
+--       hh = sym tttt'
+--     module _ (sr : s a ≡ s a') where
+--       hhhh : {!ε!} ≡ sym (ε a) ◾ cong p sr ◾ ε a'
+--       hhhh = {!!}
+--       --hhh : (apS ∘ t) sr ≡ sr
+--       hhh : sr ≡ cong s ((sym (ε a)) ◾ (cong p sr) ◾ (ε a'))
+--       -- hhh : sym (ε a) ◾ cong p sr ◾ ε a' ≡ r
+--       hhh = {!lem2-4-3'!}
+--     h : (sr : s a ≡ s a') → (apS ∘ t) sr ≡ sr
+--     h = sym ∘ hhh
+--     r : IsRetract (a ≡ a') (s a ≡ s a')
+--     r = apS , t , h
+--     r' : IsRetract (s a ≡ s a') (a ≡ a')
+--     r' = t , apS , hh
+--     llvl : HasLevel (S n) (s a ≡ s a')
+--     llvl = {!!}
+--     -- prev' : ∀ {T U : Set} → IsRetract T U → HasLevel (S n) T → HasLevel (S n) U
+--     -- prev' {T} {U} = transportNType {A = T} {U} {S n}
+
+
+module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
+  -- Corollary 7.1.5 in HoTT.
+  equivPreservesNType : {n : TLevel} → A ≃ B → HasLevel n A → HasLevel n B
+  equivPreservesNType {n} eqv = transportNType {n = n} (Cubical.Retract.fromEquiv eqv)
