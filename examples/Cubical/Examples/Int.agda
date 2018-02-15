@@ -1,6 +1,6 @@
 module Cubical.Examples.Int where
 
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.PathPrelude
 open import Cubical.GradLemma
 

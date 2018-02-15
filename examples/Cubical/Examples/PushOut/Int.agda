@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
 module Cubical.Examples.PushOut.Int where
 
-open import Cubical.Prelude hiding (_+_)
+open import Cubical.FromStdLib hiding (_+_)
 open import Cubical.PathPrelude
 open import Cubical.GradLemma
 open import Cubical.PushOut renaming (primPushOutElim to PO-elim; P to PushOut)

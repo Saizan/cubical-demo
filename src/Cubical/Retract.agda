@@ -1,7 +1,7 @@
 module Cubical.Retract where
 
 open import Cubical
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 
 module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
   section : (f : A → B) → (g : B → A) → Set ℓb

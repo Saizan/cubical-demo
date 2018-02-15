@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
 module Cubical.Examples.Category where
 
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.PathPrelude
 
 -- Functor

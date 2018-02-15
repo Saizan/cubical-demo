@@ -1,15 +1,9 @@
-{-
-- Do not import this module!
--
-- In stead you should use `Cubical.Prelude`.
--}
-
 {-# OPTIONS --cubical #-}
 module Cubical.PathPrelude where
 
 open import Cubical.Primitives public
 open import Cubical.Primitives public using () renaming (Sub to _[_↦_])
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.NType public using (isContr ; isProp ; isSet)
 
 module _ {ℓ} {A : Set ℓ} where

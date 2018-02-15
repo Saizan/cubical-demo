@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
 module Cubical.NType where
 
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.Primitives
 
 -- Taken from HoTT-Agda. https://github.com/HoTT/HoTT-Agda

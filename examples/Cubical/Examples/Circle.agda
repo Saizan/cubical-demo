@@ -2,7 +2,7 @@
 
 module Cubical.Examples.Circle where
 
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.PathPrelude
 open import Cubical.Rewrite
 

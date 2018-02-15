@@ -2,7 +2,7 @@
 module Cubical.NType.Properties where
 
 open import Cubical.PathPrelude
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.NType
 
 lemProp : ∀ {ℓ} {A : Set ℓ} → (A → isProp A) → isProp A

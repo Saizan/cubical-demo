@@ -1,7 +1,7 @@
 {-# OPTIONS --cubical #-}
 module Cubical.Examples.IsSetSigma where
 open import Cubical.PathPrelude
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.Comp
 
 

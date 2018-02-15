@@ -6,7 +6,7 @@ module Cubical.Sigma where
 open import Cubical.PathPrelude
 open import Cubical.GradLemma
 open import Cubical.Sub
-open import Cubical.Prelude
+open import Cubical.FromStdLib
 open import Cubical.NType
 open import Cubical.NType.Properties
 
