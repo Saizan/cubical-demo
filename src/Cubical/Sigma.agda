@@ -285,3 +285,7 @@ sigPresNType {ℓb = ℓb} {A = A} {B} {S (S n)} ntA a→ntB (a₁ , b₁) (a₂
     equivl : V ≃ ((a₁ , b₁) ≡ (a₂ , b₂))
     equivl = pathToEquiv (sym (lemPathSig (a₁ , b₁) (a₂ , b₂)))
   in equivPreservesNType {n = S n} equivl prev
+
+module _ {ℓa ℓb : Level} {A : Set ℓa} {B : A → Set ℓb} where
+  sigPresSet : isSet A → (∀ a → isSet (B a)) → isSet (Σ A B)
+  sigPresSet = sigPresNType {n = S (S ⟨-2⟩)}
