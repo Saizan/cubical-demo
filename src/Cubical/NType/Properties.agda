@@ -4,6 +4,7 @@ module Cubical.NType.Properties where
 open import Cubical.PathPrelude
 open import Cubical.FromStdLib
 open import Cubical.NType
+open import Cubical.Lemmas
 
 lemProp : ∀ {ℓ} {A : Set ℓ} → (A → isProp A) → isProp A
 lemProp h = λ a → h a a
@@ -68,20 +69,15 @@ private
 
 private
   module _ {ℓ : Level} {A : Set ℓ} {a b c : A} {p : a ≡ b} {q : b ≡ c} where
-    postulate  helper : {r : a ≡ c} → p ◾ q ≡ r → q ≡ sym p ◾ r
-
-    module _ {d : A} {r : c ≡ d} where
-      postulate trans-assoc : (p ◾ (q ◾ r)) ≡ (p ◾ q ◾ r)
+    helper : {r : a ≡ c} → p ◾ q ≡ r → q ≡ sym p ◾ r
+    helper {r} = pathJ (\ b p → (q : b ≡ c) → p ◾ q ≡ r → q ≡ sym p ◾ r) (\ q eq →
+           trans (sym (trans-id-l q)) (trans eq (sym (trans-id-l r)))) b p q
 
 module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
   module _ {f g : A → B} {x y : A} (H : Homotopy f g) (p : x ≡ y) where
-    -- Lemma 2.4.3:
-    postulate lem2-4-3 : H x ◾ cong g p ≡ cong f p ◾ H y
 
-    fff : cong g p ≡ sym (H x) ◾ (cong f p ◾ H y)
-    fff = helper lem2-4-3
     lem2-4-3' : cong g p ≡ sym (H x) ◾ cong f p ◾ H y
-    lem2-4-3' = trans fff trans-assoc
+    lem2-4-3' = trans (helper (lem2-4-3 H p)) trans-assoc
 
 -- Theorem 7.1.4 in HoTT p. 222:
 transportNType : ∀ {ℓa ℓb} {A : Set ℓa} {B : Set ℓb} {n} → IsRetract A B → HasLevel n A → HasLevel n B
