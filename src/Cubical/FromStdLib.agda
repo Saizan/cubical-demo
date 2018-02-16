@@ -20,9 +20,7 @@ data ⊥ : Set where
 ¬_ : ∀ {l} → Set l → Set l
 ¬ A = A → ⊥
 
-
-data Bool : Set where
-  true false : Bool
+open import Agda.Builtin.Bool public
 
 record Σ {a b} (A : Set a) (B : A → Set b) : Set (ℓ-max a b) where
   constructor _,_
