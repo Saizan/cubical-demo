@@ -22,13 +22,7 @@ data ⊥ : Set where
 
 open import Agda.Builtin.Bool public
 
-record Σ {a b} (A : Set a) (B : A → Set b) : Set (ℓ-max a b) where
-  constructor _,_
-  field
-    fst : A
-    snd : B fst
-
-open Σ public
+open import Agda.Builtin.Sigma public
 
 infix 2 Σ-syntax
 
@@ -37,7 +31,6 @@ infix 2 Σ-syntax
 
 syntax Σ-syntax A (λ x → B) = Σ[ x ∈ A ] B
 
-infixr 4 _,_
 infixr 2 _×_
 
 curry : ∀ {a b c} {A : Set a} {B : A → Set b} {C : Σ A B → Set c} →
