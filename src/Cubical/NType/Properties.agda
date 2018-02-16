@@ -39,6 +39,11 @@ module _ {ℓ} {A : Set ℓ} where
   propIsContr = lemProp (λ t → propSig (λ a b → trans (sym (snd t a)) (snd t b))
          (λ x → propPi (propSet ((λ a b → trans (sym (snd t a)) (snd t b))) x)))
 
+  hasLevelPath : ∀ n → HasLevel (S n) A → ∀ (x y : A) → HasLevel n (x ≡ y)
+  hasLevelPath ⟨-2⟩      lvl x y = lvl x y , propSet lvl x y (lvl x y)
+  hasLevelPath (S ⟨-2⟩)  lvl = lvl
+  hasLevelPath (S (S n)) lvl = lvl
+
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'}  where
   propIsEquiv : (f : A → B) → isProp (isEquiv A B f)
   propIsEquiv f = λ u0 u1 → λ i → λ y → propIsContr (u0 y) (u1 y) i
@@ -79,44 +84,17 @@ module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
     lem2-4-3' = trans fff trans-assoc
 
 -- Theorem 7.1.4 in HoTT p. 222:
-postulate transportNType : ∀ {ℓa ℓb} {A : Set ℓa} {B : Set ℓb} {n} → IsRetract A B → HasLevel n A → HasLevel n B
--- transportNType {A = A} {B} {⟨-2⟩}   = retractPresContr A B
--- transportNType {A = A} {B} {S ⟨-2⟩} = retractPresProp A B
--- transportNType {A = A} {B} {S (S n)} (p , (s , ε)) lvl a a' = transportNType {n = S n} r' llvl
---   where
---     -- p : HasLevel (S n) (s a ≡ s a')
---     -- p = {!!}
---     apS : a ≡ a' → s a ≡ s a'
---     apS = cong s
---     t : s a ≡ s a' → a ≡ a'
---     t q = (sym (ε a)) ◾ (cong p q) ◾ (ε a')
---     module _ (r : a ≡ a') where
---       -- tttt : trans (ε a) (cong (λ z → z) eq) ≡ trans (cong (λ z → p (s z)) (ε a')
---       tttt : ε a ◾ r ≡ cong (p ∘ s) r ◾ ε a'
---       tttt = lem2-4-3 ε r
---       tttt' : r ≡ sym (ε a) ◾ cong (p ∘ s) r ◾ ε a'
---       tttt' = lem2-4-3' ε r
---       -- hh : (t ∘ apS) r ≡ r
---       -- hh : t (cong s r) ≡ r
---       hh : sym (ε a) ◾ cong (p ∘ s) r ◾ ε a' ≡ r
---       hh = sym tttt'
---     module _ (sr : s a ≡ s a') where
---       hhhh : {!ε!} ≡ sym (ε a) ◾ cong p sr ◾ ε a'
---       hhhh = {!!}
---       --hhh : (apS ∘ t) sr ≡ sr
---       hhh : sr ≡ cong s ((sym (ε a)) ◾ (cong p sr) ◾ (ε a'))
---       -- hhh : sym (ε a) ◾ cong p sr ◾ ε a' ≡ r
---       hhh = {!lem2-4-3'!}
---     h : (sr : s a ≡ s a') → (apS ∘ t) sr ≡ sr
---     h = sym ∘ hhh
---     r : IsRetract (a ≡ a') (s a ≡ s a')
---     r = apS , t , h
---     r' : IsRetract (s a ≡ s a') (a ≡ a')
---     r' = t , apS , hh
---     llvl : HasLevel (S n) (s a ≡ s a')
---     llvl = {!!}
---     -- prev' : ∀ {T U : Set} → IsRetract T U → HasLevel (S n) T → HasLevel (S n) U
---     -- prev' {T} {U} = transportNType {A = T} {U} {S n}
+transportNType : ∀ {ℓa ℓb} {A : Set ℓa} {B : Set ℓb} {n} → IsRetract A B → HasLevel n A → HasLevel n B
+transportNType {A = A} {B} {⟨-2⟩}   = retractPresContr A B
+transportNType {A = A} {B} {S ⟨-2⟩} = retractPresProp A B
+transportNType {A = A} {B} {S (S n)} (p , (s , ε)) lvl a a' = transportNType {n = S n} r' llvl
+  where
+    t : s a ≡ s a' → a ≡ a'
+    t q = (sym (ε a)) ◾ (cong p q) ◾ (ε a')
+    r' : IsRetract (s a ≡ s a') (a ≡ a')
+    r' = t , (cong s) , \ r → sym (lem2-4-3' ε r)
+    llvl : HasLevel (S n) (s a ≡ s a')
+    llvl = hasLevelPath (S n) lvl (s a) (s a')
 
 
 module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
