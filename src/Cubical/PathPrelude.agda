@@ -201,11 +201,15 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
 idEquiv : ∀ {ℓ} → {A : Set ℓ} → A ≃ A
 idEquiv {A = A} = idFun A , (λ y → (y , refl) , contrSingl ∘ snd)
 
-module _ {ℓ} {A B : Set ℓ} (P : A ≡ B) where
+module _ {ℓ : I → Level} (P : (i : I) → Set (ℓ i)) where
   private
-    E ~E : I → Set ℓ
+    E : (i : I) → Set (ℓ i)
     E  = λ i → P i
+    ~E : (i : I) → Set (ℓ (~ i))
     ~E = λ i → P (~ i)
+
+    A = P i0
+    B = P i1
 
     f : A → B
     f = transp E
@@ -213,10 +217,12 @@ module _ {ℓ} {A B : Set ℓ} (P : A ≡ B) where
     g : B → A
     g = transp ~E
 
-    u : PathP (λ i → A → E i) (idFun A) f
+--    u : PathP (λ i → A → E i) (idFun A) f
+    u : ∀ i → A → E i
     u i x = fill E i0 (λ _ → empty) x i
 
-    v : PathP (λ i → B → E i) g (idFun B)
+--    v : PathP (λ i → B → E i) g (idFun B)
+    v : ∀ i → B → E i
     v i y = fill ~E i0 (λ _ → empty) y (~ i)
 
     fiberPath : (y : B) → (xβ0 xβ1 : fiber f y) → xβ0 ≡ xβ1
@@ -240,15 +246,18 @@ module _ {ℓ} {A B : Set ℓ} (P : A ≡ B) where
     γ y j = primComp E _ (λ i → λ { (j = i0) → v i y
                                   ; (j = i1) → u i (g y) }) (g y)
 
-  pathToEquiv : A ≃ B
-  pathToEquiv = f , (λ y → (g y , γ y) , fiberPath y _)
+  pathToEquiv' : A ≃ B
+  pathToEquiv' = f , (λ y → (g y , γ y) , fiberPath y _)
 
-pathToEquivProof : ∀ {ℓ} (E : I → Set ℓ) → isEquiv (E i0) (E i1) (transp E)
-pathToEquivProof E = snd (pathToEquiv P)
-  where P : E i0 ≡ E i1
-        P i = E i
+
+pathToEquivProof : ∀ {ℓ : I → Level} (E : (i : I) → Set (ℓ i)) → isEquiv (E i0) (E i1) (transp E)
+pathToEquivProof E = snd (pathToEquiv' E)
 
 {-# BUILTIN PATHTOEQUIV pathToEquivProof #-}
+
+
+pathToEquiv : ∀ {ℓ} {A B : Set ℓ} (P : A ≡ B) → A ≃ B
+pathToEquiv P = pathToEquiv' (\ i → P i)
 
 module GluePrims where
   primitive
