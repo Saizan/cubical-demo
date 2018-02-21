@@ -13,4 +13,4 @@ module _ {ℓ : Level} where
   hSet = ⟨0⟩ -type
 
   Prop : Set (ℓ-suc ℓ)
-  Prop = ⟨-2⟩ -type
+  Prop = ⟨-1⟩ -type
