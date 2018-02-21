@@ -98,9 +98,9 @@ module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
   equivPreservesNType : {n : TLevel} → A ≃ B → HasLevel n A → HasLevel n B
   equivPreservesNType {n} eqv = transportNType {n = n} (Cubical.Retract.fromEquiv eqv)
 
-module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
+module _ {ℓ ℓ'} {A : Set ℓ} where
   -- Π preserves homotopy levels in the following sense:
-  contrPi : ((x : A) → isContr (B x)) → isContr ((x : A) → B x)
+  contrPi : {B : A → Set ℓ'} → ((x : A) → isContr (B x)) → isContr ((x : A) → B x)
   fst (contrPi h) a = fst (h a)
   snd (contrPi h) π = funExt λ x →
     let
@@ -110,13 +110,19 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
       eq = allEq (π x)
     in eq
 
-  postulate
-    -- This is example 3.1.6 in [HoTT] - would also follow from `piPresNType`
-    -- below (if that holds)
-    setPi
-      : ((x : A) → isSet (B x))
-      → isSet ((x : A) → B x)
-    piPresNType
+  -- Thm 7.1.9
+  piPresNType
       : (n : TLevel)
+      → {B : A → Set ℓ'}
       → ((x : A) → HasLevel n (B x))
       → HasLevel n ((x : A) → B x)
+  piPresNType ⟨-2⟩      = contrPi
+  piPresNType (S ⟨-2⟩)  = propPi
+  piPresNType (S n@(S m)) nB f g = transportNType {n = n}
+                                                  (funExt , (\ eq x i → eq i x) , (λ a → refl))
+                                                  (piPresNType n (\ x → nB x (f x) (g x)))
+
+
+  setPi : {B : A → Set ℓ'} → ((x : A) → isSet (B x))
+        → isSet ((x : A) → B x)
+  setPi = piPresNType ⟨0⟩
