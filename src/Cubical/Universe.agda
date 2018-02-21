@@ -6,11 +6,11 @@ open import Cubical.FromStdLib
 open import Cubical.NType
 
 module _ {ℓ : Level} where
-  hSet : TLevel → Set (ℓ-suc ℓ)
-  hSet n = Σ (Set ℓ) (HasLevel n)
+  _-type : TLevel → Set (ℓ-suc ℓ)
+  n -type = Σ (Set ℓ) (HasLevel n)
 
-  0-Set : Set (ℓ-suc ℓ)
-  0-Set = hSet ⟨0⟩
+  hSet : Set (ℓ-suc ℓ)
+  hSet = ⟨0⟩ -type
 
   Prop : Set (ℓ-suc ℓ)
-  Prop = hSet ⟨-2⟩
+  Prop = ⟨-2⟩ -type
