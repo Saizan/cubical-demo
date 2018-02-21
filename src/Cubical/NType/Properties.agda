@@ -97,3 +97,26 @@ module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
   -- Corollary 7.1.5 in HoTT.
   equivPreservesNType : {n : TLevel} → A ≃ B → HasLevel n A → HasLevel n B
   equivPreservesNType {n} eqv = transportNType {n = n} (Cubical.Retract.fromEquiv eqv)
+
+module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
+  -- Π preserves homotopy levels in the following sense:
+  contrPi : ((x : A) → isContr (B x)) → isContr ((x : A) → B x)
+  fst (contrPi h) a = fst (h a)
+  snd (contrPi h) π = funExt λ x →
+    let
+      allEq : ∀ y → fst (h x) ≡ y
+      allEq = snd (h x)
+      eq : fst (h x) ≡ π x
+      eq = allEq (π x)
+    in eq
+
+  postulate
+    -- This is example 3.1.6 in [HoTT] - would also follow from `piPresNType`
+    -- below (if that holds)
+    setPi
+      : ((x : A) → isSet (B x))
+      → isSet ((x : A) → B x)
+    piPresNType
+      : (n : TLevel)
+      → ((x : A) → HasLevel n (B x))
+      → HasLevel n ((x : A) → B x)
