@@ -200,8 +200,8 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
 
 -- | The isomorphism going in the opposite direction induced by an equivalence.
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} where
-  reverse : A ≃ B → B → A
-  reverse (_ , eqv) b = fst (fst (eqv b))
+  inverse : A ≃ B → B → A
+  inverse (_ , eqv) b = fst (fst (eqv b))
 
 idEquiv : ∀ {ℓ} → {A : Set ℓ} → A ≃ A
 idEquiv {A = A} = idFun A , (λ y → (y , refl) , contrSingl ∘ snd)
