@@ -132,3 +132,9 @@ module _ {ℓ ℓ'} {A : Set ℓ} where
   setPi : {B : A → Set ℓ'} → ((x : A) → isSet (B x))
         → isSet ((x : A) → B x)
   setPi = piPresNType ⟨0⟩
+
+
+propHasLevel : ∀ {ℓ} {A : Set ℓ} n → isProp (HasLevel n A)
+propHasLevel ⟨-2⟩ = propIsContr
+propHasLevel (S ⟨-2⟩) = lemProp λ p → piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propSet p _ _
+propHasLevel (S m@(S n)) = piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propHasLevel m
