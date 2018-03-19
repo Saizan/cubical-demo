@@ -55,6 +55,7 @@ _∘_ : ∀ {a b c}
         (∀ {x} (y : B x) → C y) → (g : (x : A) → B x) →
         ((x : A) → C (g x))
 f ∘ g = λ x → f (g x)
+infixr 9 _∘_
 
 idFun : ∀ {ℓ} → (A : Set ℓ) → A → A
 idFun A x = x
