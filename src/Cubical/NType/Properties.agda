@@ -14,6 +14,9 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
   propPi : (h : (x : A) → isProp (B x)) → isProp ((x : A) → B x)
   propPi h f0 f1  = λ i → λ x → (h x (f0 x) (f1 x)) i
 
+  propPiImpl : (h : (x : A) → isProp (B x)) → isProp ({x : A} → B x)
+  propPiImpl h f0 f1  = λ i → λ {x} → (h x (f0 {x}) (f1 {x})) i
+
   -- `lemPropF` can be used to prove equalities in the dependent function space
   -- of propositions.
   lemPropF : (P : (x : A) → isProp (B x)) {a0 a1 : A}
