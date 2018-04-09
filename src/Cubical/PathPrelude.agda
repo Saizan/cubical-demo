@@ -26,6 +26,12 @@ module _ {ℓ} {A : Set ℓ} where
   cong : ∀ {ℓ'} {B : Set ℓ'} {x y : A} → (f : A → B) → x ≡ y → f x ≡ f y
   cong f p = λ i → f (p i)
 
+  -- Dependent version of the above.
+  cong-d : ∀ {ℓ'} {B : A → Set ℓ'} {x y : A}
+    → (f : (a : A) → B a) → (p : x ≡ y)
+    → PathP (λ i → B (p i)) (f x) (f y)
+  cong-d f p = λ i → f (p i)
+
   infix  3 _≡-qed _∎
   infixr 2 _≡⟨⟩_ _≡⟨_⟩_
   infix  1 ≡-proof_ begin_
