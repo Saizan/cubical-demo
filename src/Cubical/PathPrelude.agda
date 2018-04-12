@@ -23,14 +23,14 @@ module _ {ℓ} {A : Set ℓ} where
   trans {x = x} p q i = primComp (λ _ → A) _ (λ { j (i = i0) → x
                                                 ; j (i = i1) → q j }) (p i)
 
-  cong : ∀ {ℓ'} {B : Set ℓ'} {x y : A} → (f : A → B) → x ≡ y → f x ≡ f y
-  cong f p = λ i → f (p i)
-
   -- Dependent version of the above.
   cong-d : ∀ {ℓ'} {B : A → Set ℓ'} {x y : A}
-    → (f : (a : A) → B a) → (p : x ≡ y)
+    → (f : (a : A) → B a) → (p : PathP (λ _ → A) x y)
     → PathP (λ i → B (p i)) (f x) (f y)
   cong-d f p = λ i → f (p i)
+
+  cong : ∀ {ℓ'} {B : Set ℓ'} {x y : A} → (f : A → B) → x ≡ y → f x ≡ f y
+  cong = cong-d
 
   infix  3 _≡-qed _∎
   infixr 2 _≡⟨⟩_ _≡⟨_⟩_
@@ -105,6 +105,18 @@ module _ {ℓ ℓ'} {A : Set ℓ} {P : A → Set ℓ'} where
   substInv : {a x : A} (p : Path a x) → P x → P a
   substInv p  =  subst (λ i → p (~ i))
 
+module _ {ℓ} {A : Set ℓ} {a : A}  where
+  -- | `refl` is a neutral element for substitution.
+  subst-neutral : subst (refl {x = a}) a ≡ a
+  subst-neutral = pathJprop {x = a} (λ _ _ → A) a
+
+module _ {ℓ} {A B : Set ℓ} {a : A} {b : B} {q : A ≡ B} (p : PathP (λ i → q i) a b) where
+  subst-lem : subst q a ≡ b
+  subst-lem = pathJ
+    (λ B' q' → ∀ (b' : B') → (PathP (λ i → q' i) a b') → subst q' a ≡ b')
+    (λ b' p' → trans subst-neutral p')
+    B q b p
+
 injective : ∀ {ℓa ℓb} → {A : Set ℓa} → {B : Set ℓb} → (f : A → B) → Set (ℓ-max ℓa ℓb)
 injective {_} {_} {A} f = {a0 a1 : A} → f a0 ≡ f a1 → a0 ≡ a1
 
@@ -127,6 +139,9 @@ transpP≡subst {A = A} {B} {x} {y} p = sym (transp-pi (λ j → uncurry (λ (y 
 
 coe : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A → B
 coe {A = A} = transpP {B = λ X → X}
+
+coe-lem : {ℓ : Level} {A B : Set ℓ} {a : A} {b : B} {q : A ≡ B} (p : PathP (λ i → q i) a b) → coe q a ≡ b
+coe-lem {A = A} {B} {a = a} {b} {q} p = trans {y = subst q a} (λ i → transpP≡subst q i a) (subst-lem p)
 
 module _ {ℓa ℓb} {A : Set ℓa} {B : A → Set ℓb} where
   funUnImp : ({x : A} → B x) → (x : A) → B x
