@@ -142,9 +142,16 @@ propHasLevel ⟨-2⟩ = propIsContr
 propHasLevel (S ⟨-2⟩) = lemProp λ p → piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propSet p _ _
 propHasLevel (S m@(S n)) = piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propHasLevel m
 
+
 module _ {ℓ : Level} {A : Set ℓ} where
   isSetIsProp : isProp (isSet A)
   isSetIsProp = propHasLevel (S (S ⟨-2⟩))
 
   propIsProp : isProp (isProp A)
   propIsProp = propHasLevel (S ⟨-2⟩)
+
+
+HasLevel+1 : ∀ {ℓ} {A : Set ℓ} n → HasLevel n A → HasLevel (S n) A
+HasLevel+1 ⟨-2⟩      (c , p) x y = trans (sym (p x)) (p y)
+HasLevel+1 (S ⟨-2⟩)  pA          = propSet pA
+HasLevel+1 (S (S n)) lA      x y = HasLevel+1 (S n) (lA x y)
