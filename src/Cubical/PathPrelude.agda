@@ -110,11 +110,17 @@ module _ {ℓ} {A : Set ℓ} {a : A}  where
   subst-neutral : subst (refl {x = a}) a ≡ a
   subst-neutral = pathJprop {x = a} (λ _ _ → A) a
 
-module _ {ℓ} {A B : Set ℓ} {a : A} {b : B} {q : A ≡ B} (p : PathP (λ i → q i) a b) where
-  subst-lem : subst q a ≡ b
-  subst-lem = pathJ
+module _ {ℓ} {A B : Set ℓ} {a : A} {b : B} {q : A ≡ B} where
+  subst-lem : PathP (λ i → q i) a b → subst q a ≡ b
+  subst-lem p = pathJ
     (λ B' q' → ∀ (b' : B') → (PathP (λ i → q' i) a b') → subst q' a ≡ b')
     (λ b' p' → trans subst-neutral p')
+    B q b p
+
+  subst-lem-inv : subst q a ≡ b → PathP (λ i → q i) a b
+  subst-lem-inv p = pathJ
+    (λ B' q' → ∀ b' → subst q' a ≡ b' → PathP (λ i → q' i) a b')
+    (λ b' p' → trans (sym (subst-neutral {a = a})) p')
     B q b p
 
 injective : ∀ {ℓa ℓb} → {A : Set ℓa} → {B : Set ℓb} → (f : A → B) → Set (ℓ-max ℓa ℓb)
@@ -134,14 +140,25 @@ module _ {ℓ} {A0 A1 : Set ℓ} (A : A0 ≡ A1) {φ : I} (a0 : A i0)
 transpP : ∀ {ℓ ℓ'} {A : Set ℓ}{B : A → Set ℓ'} {x y : A} → x ≡ y → B x → B y
 transpP {B = B} p = pathJ (λ y _ → B _ → B y) (λ x → x) _ p
 
-transpP≡subst : ∀ {ℓ ℓ'} {A : Set ℓ}{B : A → Set ℓ'} {x y : A} → (p : x ≡ y) → transpP {B = B} p ≡ subst {P = B} p
-transpP≡subst {A = A} {B} {x} {y} p = sym (transp-pi (λ j → uncurry (λ (y : A) → λ _ → B y) (contrSingl p j)) (λ x → x))
+module _ {ℓ ℓ' : Level} {A : Set ℓ} {B : A → Set ℓ'} {x y : A} (p : x ≡ y) where
+  transpP≡subst : transpP {B = B} p ≡ subst {P = B} p
+  transpP≡subst = sym (transp-pi (λ j → uncurry (λ (y : A) → λ _ → B y) (contrSingl p j)) (λ x → x))
+
+  transpP≡subst' : {b : B x} → transpP {B = B} p b ≡ subst {P = B} p b
+  transpP≡subst' {b} i = transpP≡subst i b
 
 coe : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A → B
 coe {A = A} = transpP {B = λ X → X}
 
-coe-lem : {ℓ : Level} {A B : Set ℓ} {a : A} {b : B} {q : A ≡ B} (p : PathP (λ i → q i) a b) → coe q a ≡ b
-coe-lem {A = A} {B} {a = a} {b} {q} p = trans {y = subst q a} (λ i → transpP≡subst q i a) (subst-lem p)
+module _ {ℓ : Level} {A B : Set ℓ} {a : A} {b : B} {q : A ≡ B} where
+  coe-lem : (p : PathP (λ i → q i) a b) → coe q a ≡ b
+  coe-lem p = trans {y = subst q a} (λ i → transpP≡subst q i a) (fromPathP p)
+
+  coe-lem-inv : coe q a ≡ b → PathP (λ i → q i) a b
+  coe-lem-inv p = toPathP (trans lem p)
+    where
+    lem : transp (λ i → q i) a ≡ coe q a
+    lem = pathJ (λ B' q' → (transp (λ i → q' i) a) ≡ (coe q' a)) (sym subst-neutral) B q
 
 module _ {ℓa ℓb} {A : Set ℓa} {B : A → Set ℓb} where
   funUnImp : ({x : A} → B x) → (x : A) → B x
