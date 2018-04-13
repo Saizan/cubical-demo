@@ -110,19 +110,6 @@ module _ {ℓ} {A : Set ℓ} {a : A}  where
   subst-neutral : subst (refl {x = a}) a ≡ a
   subst-neutral = pathJprop {x = a} (λ _ _ → A) a
 
-module _ {ℓ} {A B : Set ℓ} {a : A} {b : B} {q : A ≡ B} where
-  subst-lem : PathP (λ i → q i) a b → subst q a ≡ b
-  subst-lem p = pathJ
-    (λ B' q' → ∀ (b' : B') → (PathP (λ i → q' i) a b') → subst q' a ≡ b')
-    (λ b' p' → trans subst-neutral p')
-    B q b p
-
-  subst-lem-inv : subst q a ≡ b → PathP (λ i → q i) a b
-  subst-lem-inv p = pathJ
-    (λ B' q' → ∀ b' → subst q' a ≡ b' → PathP (λ i → q' i) a b')
-    (λ b' p' → trans (sym (subst-neutral {a = a})) p')
-    B q b p
-
 injective : ∀ {ℓa ℓb} → {A : Set ℓa} → {B : Set ℓb} → (f : A → B) → Set (ℓ-max ℓa ℓb)
 injective {_} {_} {A} f = {a0 a1 : A} → f a0 ≡ f a1 → a0 ≡ a1
 
