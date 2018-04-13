@@ -83,6 +83,9 @@ transp-iso : ∀{ℓ}(A : I → Set ℓ)(x : A i0) → transp (\ i → A (~ i)) 
 transp-iso A x = \ i → primComp (\ j → A (~ j ∧ ~ i)) i (\ { j (i = i1) → x })
                              (primComp (\ j → A (j ∧ ~ i)) i (\ { j (i = i1) → x }) x)
 
+transp-iso' : ∀{ℓ}(A : I → Set ℓ)(x : A i1) → PathP A (transp (\ i → A (~ i)) x) x
+transp-iso' A x = toPathP {A = A} (transp-iso (λ i → A (~ i)) x)
+
 module _ {ℓ} {A : Set ℓ} where
   singl : (a : A) → Set ℓ
   singl a = Σ[ x ∈ A ] (a ≡ x)
@@ -104,6 +107,9 @@ module _ {ℓ ℓ'} {A : Set ℓ} {P : A → Set ℓ'} where
 
   substInv : {a x : A} (p : Path a x) → P x → P a
   substInv p  =  subst (λ i → p (~ i))
+
+  subst-prop : ∀ {a} (b : A) (p : Path a b) → (x : P a) → PathP (\ i → P (p (~ i))) (subst p x) x
+  subst-prop = pathJ _ \ x → pathJprop (\ y eq → P y) x
 
 module _ {ℓ} {A : Set ℓ} {a : A}  where
   -- | `refl` is a neutral element for substitution.
