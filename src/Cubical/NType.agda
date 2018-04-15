@@ -40,6 +40,9 @@ module _ {ℓ : Level} where
     isSet   : Set ℓ
     isSet   = (x y : A) → (p q : x ≡ y) → p ≡ q
 
+    isGrpd  : Set ℓ
+    isGrpd  = (x y : A) → (p q : x ≡ y) → (a b : p ≡ q) → a ≡ b
+
   -- Definition of the homotopy level of a type.
   --
   -- `HasLevel` is defined this way for backwards compatibility - it differs from
