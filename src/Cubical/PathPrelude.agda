@@ -282,9 +282,14 @@ module _ {ℓ : I → Level} (P : (i : I) → Set (ℓ i)) where
     γ y j = primComp E _ (λ i → λ { (j = i0) → v i y
                                   ; (j = i1) → u i (g y) }) (g y)
 
-  pathToEquiv' : A ≃ B
-  pathToEquiv' = f , (λ y → (g y , γ y) , fiberPath y _)
+  pathToIsEquiv : isEquiv _ _ f
+  pathToIsEquiv y .fst .fst = g y
+  pathToIsEquiv y .fst .snd = γ y
+  pathToIsEquiv y .snd = fiberPath y _
 
+  pathToEquiv' : A ≃ B
+  pathToEquiv' .fst = f
+  pathToEquiv' .snd = pathToIsEquiv
 
 pathToEquivProof : ∀ {ℓ : I → Level} (E : (i : I) → Set (ℓ i)) → isEquiv (E i0) (E i1) (transp E)
 pathToEquivProof E = snd (pathToEquiv' E)
