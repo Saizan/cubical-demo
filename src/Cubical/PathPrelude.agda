@@ -317,9 +317,8 @@ module GluePrims where
 open GluePrims public renaming (prim^glue to glue ; prim^unglue to unglue)
 
 module Unsafe'' (dummy : Set1) = GluePrims
-module Unsafe''' = Unsafe'' Set -- using () renaming (prim^glue to unsafeGlue) public
 
-unsafeGlue = Unsafe'''.prim^glue
+unsafeGlue = Unsafe''.prim^glue Set
 
 Glue : ∀ {ℓ ℓ'} (A : Set ℓ) → (φ : I) → (T : Partial (Set ℓ') φ)
   (f : (PartialP φ (λ o → T o ≃ A))) → Set ℓ'
