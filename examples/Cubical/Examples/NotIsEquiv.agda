@@ -18,4 +18,4 @@ nothelp y (false , eq) = pathJ (λ y₁ eq' → Path (not y₁ , notnot y₁) (f
 
 
 notIsEquiv : isEquiv Bool Bool not
-notIsEquiv = (\ { y → (not y , notnot y) , nothelp y })
+notIsEquiv = (\ { .equiv-proof y → (not y , notnot y) , nothelp y })

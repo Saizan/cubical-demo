@@ -50,7 +50,7 @@ module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
     where
       module _ (b : B) where
         fbr : fiber f b
-        fbr = fst (eqv-f b)
+        fbr = fst (eqv-f .equiv-proof b)
         a : A
         a = fst fbr
         eq : b ≡ f a

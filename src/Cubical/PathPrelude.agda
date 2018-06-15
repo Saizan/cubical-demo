@@ -210,8 +210,13 @@ fiber : ∀ {ℓ ℓ'} {E : Set ℓ} {B : Set ℓ'} (f : E → B) (y : B) → Se
 fiber {E = E} f y = Σ[ x ∈ E ] y ≡ f x
 
 module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
-  isEquiv : (A → B) → Set (ℓ-max ℓ ℓ')
-  isEquiv f = (y : B) → isContr (fiber f y)
+  contrFibers : (A → B) → Set (ℓ-max ℓ ℓ')
+  contrFibers f = (y : B) → isContr (fiber f y)
+
+  record isEquiv (f : A → B) : Set (ℓ-max ℓ ℓ') where
+    field
+      equiv-proof : contrFibers f
+  open isEquiv public
 
   infix 4 _≃_
   _≃_ = Σ _ isEquiv
@@ -219,7 +224,7 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
   module _ (f : _≃_) (φ : I) (t : Partial A φ) (a : B {- [ φ ↦ f t ] -})
            (p : PartialP φ (λ o → a ≡ fst f (t o))) where
     equiv : fiber (fst f) a -- [ φ ↦ (t , λ j → a) ]
-    equiv = contr ((snd f) a) φ (λ o → t o , (λ i → p o i))
+    equiv = contr ((f .snd .equiv-proof) a) φ (λ o → t o , (λ i → p o i))
 
     equivFunc : A
     equivFunc = fst equiv
@@ -232,10 +237,11 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
 -- | The isomorphism going in the opposite direction induced by an equivalence.
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} where
   inverse : A ≃ B → B → A
-  inverse (_ , eqv) b = fst (fst (eqv b))
+  inverse (_ , eqv) b = fst (fst (eqv .equiv-proof b))
 
+-- Lemma 2.4.12 (i)
 idEquiv : ∀ {ℓ} → {A : Set ℓ} → A ≃ A
-idEquiv {A = A} = idFun A , (λ y → (y , refl) , contrSingl ∘ snd)
+idEquiv {A = A} = idFun A , (λ { .equiv-proof y → (y , refl) , \ z → contrSingl (z .snd)  })
 
 module _ {ℓ : I → Level} (P : (i : I) → Set (ℓ i)) where
   private
@@ -282,14 +288,14 @@ module _ {ℓ : I → Level} (P : (i : I) → Set (ℓ i)) where
     γ y j = primComp E _ (λ i → λ { (j = i0) → v i y
                                   ; (j = i1) → u i (g y) }) (g y)
 
-  pathToIsEquiv : isEquiv _ _ f
-  pathToIsEquiv y .fst .fst = g y
-  pathToIsEquiv y .fst .snd = γ y
-  pathToIsEquiv y .snd = fiberPath y _
+  pathToisEquiv : isEquiv _ _ f
+  pathToisEquiv .equiv-proof y .fst .fst = g y
+  pathToisEquiv .equiv-proof y .fst .snd = γ y
+  pathToisEquiv .equiv-proof y .snd = fiberPath y _
 
   pathToEquiv' : A ≃ B
   pathToEquiv' .fst = f
-  pathToEquiv' .snd = pathToIsEquiv
+  pathToEquiv' .snd = pathToisEquiv
 
 pathToEquivProof : ∀ {ℓ : I → Level} (E : (i : I) → Set (ℓ i)) → isEquiv (E i0) (E i1) (transp E)
 pathToEquivProof E = snd (pathToEquiv' E)

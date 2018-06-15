@@ -56,7 +56,7 @@ module _ {ℓ} {A : Set ℓ} where
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'}  where
   propIsEquiv : (f : A → B) → isProp (isEquiv A B f)
-  propIsEquiv f = λ u0 u1 → λ i → λ y → propIsContr (u0 y) (u1 y) i
+  propIsEquiv f = λ u0 u1 → λ i → λ { .equiv-proof y → propIsContr (u0 .equiv-proof y) (u1 .equiv-proof y) i }
 
 open import Cubical.Retract
 

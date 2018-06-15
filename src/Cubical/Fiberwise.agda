@@ -33,7 +33,11 @@ module _ {a p q} {A : Set a} (P : A → Set p) (Q : A → Set q)
   -- half of Thm 4.7.7
   fiberEquiv : ([tf] : isEquiv (Σ A P) (Σ A Q) total)
                → ∀ x → isEquiv (P x) (Q x) (f x)
-  fiberEquiv [tf] x y = equivPreservesNType {n = ⟨-2⟩} fibers-total ([tf] (x , y))
+  fiberEquiv [tf] x .equiv-proof y = equivPreservesNType {n = ⟨-2⟩} fibers-total ([tf] .equiv-proof (x , y))
+
+  totalEquiv : (∀ x → isEquiv (P x) (Q x) (f x)) → isEquiv (Σ A P) (Σ A Q) total
+  totalEquiv equivf .equiv-proof xv = equivPreservesNType {n = ⟨-2⟩} fibers-f (equivf (xv .fst) .equiv-proof (xv .snd))
+
 
 module ContrToUniv {ℓ : Level} {U : Set ℓ} {ℓr} (_~_ : U → U → Set ℓr)
        (idTo~ : ∀ {A B} → A ≡ B → A ~ B )
@@ -42,6 +46,6 @@ module ContrToUniv {ℓ : Level} {U : Set ℓ} {ℓr} (_~_ : U → U → Set ℓ
 
   lemma : ∀ {A B} → isEquiv _ _ (idTo~ {A} {B})
   lemma {A} {B} = fiberEquiv (λ z → A ≡ z) (λ z → A ~ z) (\ B → idTo~ {A} {B})
-                  (λ y → sigPresContr ((_ , refl) , (\ z → contrSingl (z .snd)))
-                                      \ a → hasLevelPath ⟨-2⟩ (HasLevel+1 ⟨-2⟩ (c A)) _ _)
+                  (λ { .equiv-proof y → sigPresContr ((_ , refl) , (\ z → snd contrSingl z))
+                                      \ a → hasLevelPath ⟨-2⟩ (HasLevel+1 ⟨-2⟩ (c A)) _ _ })
                   B

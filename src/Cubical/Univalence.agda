@@ -16,12 +16,14 @@ record _≃_ {ℓa ℓb} (A : Set ℓa)(B : Set ℓb) : Set (ℓ-max ℓa ℓb) 
     eqv : A → B
     isEqv : isEquiv A B eqv
 
+  open isEquiv isEqv public
+
 open _≃_
 
 
 idEquiv : ∀ {ℓ} {A : Set ℓ} → A ≃ A
 idEquiv .eqv = idFun _
-idEquiv .isEqv = (λ y → (y , refl) , contrSingl ∘ snd)
+idEquiv .isEqv = Cubical.idEquiv .snd
 
 
 idtoeqv : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A ≃ B

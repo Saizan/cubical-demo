@@ -202,31 +202,31 @@ module _ {ℓ} {A : Set ℓ} (w : Σ[ T ∈ Set ℓ ] T ≃ A) where
   f = fst (snd w)
 
   inv : A → T
-  inv b = fst (fst (snd (snd (w)) b))
+  inv b = fst (fst (snd (snd (w)) .equiv-proof b))
 
   id=f-inv : (b : A) → b ≡ f (inv b)
-  id=f-inv b = snd (fst (snd (snd (w)) b))
+  id=f-inv b = snd (fst (snd (snd (w)) .equiv-proof b))
 
   foo : (b : A) → (v : Σ[ x ∈ T ] b ≡ f x) → inv b ≡ fst v
-  foo b v j = fst ((snd (snd (snd (w)) b)) v j)
+  foo b v j = fst ((snd (snd (snd (w)) .equiv-proof b)) v j)
 
   bar : (b : A) → (v : Σ[ x ∈ T ] b ≡ fst (snd w) x) → I → I → A
-  bar b v j k = (snd (snd (snd (snd w) b) v j) k )
+  bar b v j k = (snd (snd (snd (snd w) .equiv-proof b) v j) k )
 
 unglueEquiv : ∀ {ℓ} (A : Set ℓ) (φ : I) (T : Partial (Set ℓ) φ)
   (f : PartialP φ λ o → (T o) ≃ A) → (Glue A φ T f) ≃ A
-unglueEquiv A φ T f = unglue {φ = φ} , (λ b →
-  let u = (λ j → (λ{ (φ = i1) → snd (fst (snd (snd (w itIsOne)) b)) j })) in
-  ((glue {φ = φ} ((λ{ (φ = i1) → fst (fst (snd (snd (w itIsOne)) b)) }))
+unglueEquiv A φ T f = unglue {φ = φ} , (λ { .equiv-proof b →
+  let u = (λ j → (λ{ (φ = i1) → snd (fst (snd (snd (w itIsOne)) .equiv-proof b)) j })) in
+  ((glue {φ = φ} ((λ{ (φ = i1) → fst (fst (snd (snd (w itIsOne)) .equiv-proof b)) }))
     (primComp (λ _ → A) φ u b)) , (λ k → fill (λ v → A) φ u b k))
   , (λ v j → let
       u' = (λ k →
-        [ φ   ↦ (λ{ (φ = i1) → (snd (snd (snd (snd (w itIsOne)) b) v j) k ) }) , _ ↦
+        [ φ   ↦ (λ{ (φ = i1) → (snd (snd (snd (snd (w itIsOne)) .equiv-proof b) v j) k ) }) , _ ↦
         [ ~ j ↦ (λ{ (j = i0) → fill (λ _ → A) φ u b k })
         , j   ↦ (λ{ (j = i1) → (snd v)  k }) ] ]) in
-    (glue {φ = φ} (λ{ (φ = i1) → fst ((snd (snd (snd (w itIsOne)) b)) v j) })
+    (glue {φ = φ} (λ{ (φ = i1) → fst ((snd (snd (snd (w itIsOne)) .equiv-proof b)) v j) })
       (primComp (λ _ → A) _ u' b))
-    , ((λ z → fill (λ _ → A) _ u' b z))))
+    , ((λ z → fill (λ _ → A) _ u' b z))) })
     where w : PartialP φ λ _ → Σ[ T ∈ _ ] T ≃ A
           w = λ o → (T o , f o)
 
@@ -267,7 +267,7 @@ nothelp y (false , eq) = pathJ (λ y₁ eq' →
   (not y₁ , notnot y₁) ≡ (false , sym eq')) refl _ (sym eq)
 
 notEquiv : Bool ≃ Bool
-notEquiv = not , (λ { y → (not y , notnot y) , nothelp y })
+notEquiv = not , (λ { .equiv-proof y → (not y , notnot y) , nothelp y })
 
 test : Bool
 test = primComp (λ i → univ {A = Bool} {B = Bool} notEquiv i)
