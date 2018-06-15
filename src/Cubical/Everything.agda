@@ -20,3 +20,5 @@ open import Cubical.Sub
 
 -- Id type where J computes definitionally, eliminator's type defined with Sub
 open import Cubical.Id
+
+open import Cubical.Fiberwise
