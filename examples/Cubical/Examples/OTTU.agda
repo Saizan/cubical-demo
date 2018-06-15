@@ -6,6 +6,8 @@ open import Cubical.FromStdLib
 
 open import Cubical.Examples.Cube
 
+record ⊤ : Set where
+
 
 data W (A : Set) (B : A → Set) : Set where
   sup : (x : A) → (B x → W A B) → W A B
