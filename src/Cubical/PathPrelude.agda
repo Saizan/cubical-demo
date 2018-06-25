@@ -73,7 +73,7 @@ toPathP {ℓ} {A} {x} {y} p i = primComp (λ _ → A i) φ u (xPathP i)
 fromPathP : ∀{ℓ}{A : I → Set ℓ}{x : A i0}{y : A i1} → PathP A x y → transp A x ≡ y
 fromPathP {A = A} {x} {y} p  j = primComp (\ i → A i) j (\ { i (j = i1) → p i }) x
 
-transp-refl : ∀{ℓb} → {B : Set ℓb} → (x : B) → primComp (λ j → B) i0 (λ j → empty) x ≡ x
+transp-refl : ∀{ℓb} → {B : Set ℓb} → (x : B) → transp (\ i → B) x ≡ x
 transp-refl {B = B} x i = primComp (λ _ → B) i ((λ { j (i = i1) → x })) x
 
 transp-pi : ∀{ℓb} → {B : Set ℓb} → {ℓa : I → Level} → (A : (i : I) → Set (ℓa i)) → (f : (B → A i0)) → (λ x → transp A (f x)) ≡ transp (λ i → (B → A i)) f
