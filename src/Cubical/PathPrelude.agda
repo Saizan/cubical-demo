@@ -414,3 +414,8 @@ compGlue A φ T f pf ψ b b0 =
   CompGlue.Local.b1 A φ T (λ i p → (f i p) , (pf i p)) ψ b b0
 
 {-# BUILTIN COMPGLUE compGlue #-}
+
+transp-equiv : ∀ {ℓ} {A B : Set ℓ} → (e : A ≃ B) → ∀ x → transp (\ i → equivToPath e i) x ≡ (e .fst x)
+transp-equiv {A = A} {B = B} e x = trans (transp-refl {B = B} _)
+                                  (trans (transp-refl {B = B} _)
+                                         (transp-refl {B = B} _))
