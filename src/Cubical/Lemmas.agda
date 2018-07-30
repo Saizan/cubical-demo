@@ -6,7 +6,7 @@ open import Cubical.Comp
 
 
 trans-id : ∀ {ℓ}{A : Set ℓ} {x y : A} → (p : x ≡ y) → trans p (\ i → y) ≡ p
-trans-id {A = A} {x} {y} p i j = Cubical.Comp.fill (λ _ → A) _
+trans-id {A = A} {x} {y} p i j = Cubical.Comp.fill (λ _ → A)
                                              (λ { i (j = i0) → x
                                                 ; i (j = i1) → y })
                                              (inc (p j))
