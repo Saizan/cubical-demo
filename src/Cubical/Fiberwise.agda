@@ -6,7 +6,7 @@ open import Cubical.FromStdLib
 open import Cubical.NType
 open import Cubical.NType.Properties
 open import Cubical.Lemmas
-open import Cubical.GradLemma
+open import Cubical.IsoToEquiv
 open import Cubical.Sigma
 
 module _ {a p q} {A : Set a} (P : A → Set p) (Q : A → Set q)
@@ -18,7 +18,7 @@ module _ {a p q} {A : Set a} (P : A → Set p) (Q : A → Set q)
 
   -- Thm 4.7.6
   fibers-total : ∀ {xv} → fiber total (xv) ≃ fiber (f (xv .fst)) (xv .snd)
-  fibers-total {xv} = h , gradLemma h g h-g g-h
+  fibers-total {xv} = h , isoToEquiv h g h-g g-h
    where
     h : ∀ {xv} → fiber total (xv) → fiber (f (xv .fst)) (xv .snd)
     h {xv} (p , eq) = pathJ (\ xv eq → fiber (f (xv .fst)) (xv .snd)) ((p .snd) , refl) xv (sym eq)

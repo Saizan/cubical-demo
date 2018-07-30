@@ -3,7 +3,7 @@ module Cubical.Univalence where
 
 open import Cubical hiding (_≃_; idEquiv)
 open import Cubical.FromStdLib
-open import Cubical.GradLemma
+open import Cubical.IsoToEquiv
 open import Cubical.Retract
 open import Cubical.NType.Properties using (lemPropF ; propIsEquiv ; propSet)
 
@@ -62,7 +62,7 @@ module UAEquiv
   univEquiv : {A B : Set ℓ} → isEquiv (A ≡ B) (A ≃ B) idtoeqv
   univEquiv {A} {B} =
     let P = \ y z → ua {A = A} {B = y} (coe (λ i → A ≃ z i) idEquiv) ≡ z in
-    gradLemma idtoeqv (ua {A = A} {B = B})
+    isoToEquiv idtoeqv (ua {A = A} {B = B})
                             (λ y → lemEqv _ _ (sym (lemma' y)))
                             (pathJ P [ua∘idtoeqv]refl≡refl _)
 
@@ -139,7 +139,7 @@ module _ where
     rem g sfg rfg = substInv {P = Q (idFun B)} (λ i → λ b → (sfg b) i) h
 
     rem1 : {A : Set ℓ} → (f : A -> B) → P f
-    rem1 f g sfg rfg = elimEquiv P rem (con f (gradLemma f g sfg rfg)) g sfg rfg
+    rem1 f g sfg rfg = elimEquiv P rem (con f (isoToEquiv f g sfg rfg)) g sfg rfg
 
   elimIsoInv : ∀{ℓ ℓ'} → {A : Set ℓ} → (Q : {B : Set ℓ} → (A → B) → (B → A) → Set ℓ') → (h : Q (idFun A) (idFun A))
                → {B : Set ℓ} → (f : A → B) → (g : B → A) → section f g → retract f g → Q f g

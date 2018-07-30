@@ -99,7 +99,7 @@ module Stream≅Nat→ {A : Set} where
   head (tabulate∘lookup i xs) = head xs
   tail (tabulate∘lookup i xs) = tabulate∘lookup i (tail xs)
 
-  open import Cubical.GradLemma
+  open import Cubical.IsoToEquiv
 
   Stream≡Nat→ : Stream A ≡ (ℕ → A)
   Stream≡Nat→ = isoToPath lookup tabulate

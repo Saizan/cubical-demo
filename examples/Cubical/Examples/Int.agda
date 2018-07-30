@@ -2,7 +2,7 @@ module Cubical.Examples.Int where
 
 open import Cubical.FromStdLib
 open import Cubical.PathPrelude
-open import Cubical.GradLemma
+open import Cubical.IsoToEquiv
 
 data Int : Set where
   pos    : (n : ℕ) → Int
@@ -35,4 +35,4 @@ sucPathℤ = equivToPath suc-equiv
  where
    suc-equiv : Σ _ (isEquiv Int Int)
    suc-equiv .fst = sucℤ
-   suc-equiv .snd = gradLemma sucℤ predℤ sucPred predSuc
+   suc-equiv .snd = isoToEquiv sucℤ predℤ sucPred predSuc

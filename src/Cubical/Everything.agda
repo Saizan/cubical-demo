@@ -10,9 +10,9 @@ open import Cubical.PathPrelude
 open import Cubical.Sigma
 
 -- Isomorphic types are equivalent
-open import Cubical.GradLemma
+open import Cubical.IsoToEquiv
 
--- Equivalent types are equal, using Glue and GradLemma
+-- Equivalent types are equal, using Glue and IsoToEquiv
 open import Cubical.Univalence
 
 -- A[φ ↦ u] as a non-fibrant type

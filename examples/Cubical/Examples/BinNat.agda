@@ -5,7 +5,7 @@ open import Cubical.Examples.CTT.Data.Nat
 
 open import Cubical.FromStdLib
 open import Cubical.PathPrelude
-open import Cubical.GradLemma
+open import Cubical.IsoToEquiv
 open import Cubical.Univalence
 
 data Pos : Set where

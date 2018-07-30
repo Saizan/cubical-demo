@@ -1,5 +1,5 @@
 {-# OPTIONS --cubical --postfix-projections #-}
-module Cubical.GradLemma where
+module Cubical.IsoToEquiv where
 
 open import Cubical hiding (fill)
 open import Cubical.Comp
@@ -51,10 +51,10 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
       lemIso i .fst = p i
       lemIso i .snd = sq1 i
 
-  gradLemma : isEquiv A B f
-  gradLemma .equiv-proof y .fst .fst = g y
-  gradLemma .equiv-proof y .fst .snd i = s y (~ i)
-  gradLemma .equiv-proof y .snd z = lemIso y (g y) (fst z) (λ i → s y (~ i)) (snd z)
+  isoToEquiv : isEquiv A B f
+  isoToEquiv .equiv-proof y .fst .fst = g y
+  isoToEquiv .equiv-proof y .fst .snd i = s y (~ i)
+  isoToEquiv .equiv-proof y .snd z = lemIso y (g y) (fst z) (λ i → s y (~ i)) (snd z)
 
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (w : A ≃ B) where
@@ -69,10 +69,10 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (w : A ≃ B) where
 
 isoToPath : ∀ {ℓ} {A B : Set ℓ} (f : A → B) (g : B → A)
   (s : (y : B) → f (g y) ≡ y) (t : (x : A) → g (f x) ≡ x) → A ≡ B
-isoToPath f g s t = equivToPath (_ , gradLemma f g s t)
+isoToPath f g s t = equivToPath (_ , isoToEquiv f g s t)
 
 invEquiv : ∀ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} → A ≃ B → B ≃ A
-invEquiv {A} {B} f = invEq f , gradLemma (invEq f) (fst f) (secEq f) (retEq f)
+invEquiv {A} {B} f = invEq f , isoToEquiv (invEq f) (fst f) (secEq f) (retEq f)
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'}  where
   invEquivInvol : (f : A ≃ B) → invEquiv (invEquiv f) ≡ f
