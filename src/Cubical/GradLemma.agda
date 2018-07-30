@@ -1,7 +1,8 @@
 {-# OPTIONS --cubical --postfix-projections #-}
 module Cubical.GradLemma where
 
-open import Cubical
+open import Cubical hiding (fill)
+open import Cubical.Comp
 open import Cubical.FromStdLib
 open import Cubical.NType.Properties
 
@@ -15,46 +16,36 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
   private
     module _ (y : B) (x0 x1 : A) (p0 : y ≡ (f x0)) (p1 : y ≡ (f x1)) where
 
-      -- How can I write this with fill directly?
       fill0 : ∀ (_ _ : I) → A
-      fill0 i j = primComp (λ _ → A) _ (λ k → λ { (i = i1) → t x0 (j ∧ k)
-                                                ; (i = i0) → g y
-                                                ; (j = i0) → g (p0 i) })
-                                   (g (p0 i))
-
-      rem0 : g y ≡ x0
-      rem0 = λ i → fill0 i i1
+      fill0 i j = fill (λ _ → A) _ (λ k → λ { (i = i1) → t x0 k
+                                            ; (i = i0) → g y })
+                                   (inc (g (p0 i))) j
 
       fill1 : ∀ (_ _ : I) → A
-      fill1 i j = primComp (λ _ → A) _ (λ k → λ { (i = i1) → t x1 (j ∧ k)
-                                                        ; (i = i0) → g y
-                                                        ; (j = i0) → g (p1 i) })
-                                   (g (p1 i))
-      rem1 : g y ≡ x1
-      rem1 = λ i → fill1 i i1
+      fill1 i j = fill (λ _ → A) _ (λ k → λ { (i = i1) → t x1 k
+                                            ; (i = i0) → g y })
+                                   (inc (g (p1 i))) j
 
       fill2 : ∀ (_ _ : I) → A
-      fill2 i j = primComp (λ _ → A) _ (λ k → λ { (i = i1) → rem1 (j ∧ k)
-                                                ; (i = i0) → rem0 (j ∧ k)
-                                                ; (j = i0) → g y })
-                                   (g y)
-
-      p    : x0 ≡ x1
-      p    = λ i → fill2 i i1
+      fill2 i j = fill (λ _ → A) _ (λ k → λ { (i = i1) → fill1 k i1
+                                            ; (i = i0) → fill0 k i1 })
+                                   (inc (g y)) j
+      p : x0 ≡ x1
+      p i = fill2 i i1
 
       sq  : ∀ (_ _ : I) → A
-      sq  = λ i → λ j → primComp (λ _ → A) _ (λ k → λ { (i = i1) → fill1 j (~ k)
-                                                      ; (i = i0) → fill0 j (~ k)
-                                                      ; (j = i1) → t (p i) (~ k)
-                                                      ; (j = i0) → g y })
-                                 (fill2 i j)
+      sq i j = comp (λ _ → A) (λ k → λ { (i = i1) → fill1 j (~ k)
+                                       ; (i = i0) → fill0 j (~ k)
+                                       ; (j = i1) → t (fill2 i i1) (~ k)
+                                       ; (j = i0) → g y })
+                              (inc (fill2 i j))
 
       sq1 : Square {A = B} (λ _ → y) (λ i → f (p i)) p0 p1
-      sq1 i j = primComp (λ _ → B) _ (λ k → λ { (i = i1) → s (p1 j) k
-                                              ; (i = i0) → s (p0 j) k
-                                              ; (j = i1) → s (f (p i)) k
-                                              ; (j = i0) → s y k })
-                                 (f (sq i j))
+      sq1 i j = comp (λ _ → B) (λ k → λ { (i = i1) → s (p1 j) k
+                                        ; (i = i0) → s (p0 j) k
+                                        ; (j = i1) → s (f (p i)) k
+                                        ; (j = i0) → s y k })
+                               (inc (f (sq i j)))
 
       lemIso : _≡_ {A = fiber f y} (x0 , p0) (x1 , p1)
       lemIso i .fst = p i
@@ -86,5 +77,4 @@ invEquiv {A} {B} f = invEq f , gradLemma (invEq f) (fst f) (secEq f) (retEq f)
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'}  where
   invEquivInvol : (f : A ≃ B) → invEquiv (invEquiv f) ≡ f
   invEquivInvol f i .fst = fst f
-  invEquivInvol f i .snd = (propIsEquiv (fst f) (snd (invEquiv (invEquiv f)))
-                                               (snd f) i)
+  invEquivInvol f i .snd = propIsEquiv (fst f) (snd (invEquiv (invEquiv f))) (snd f) i
