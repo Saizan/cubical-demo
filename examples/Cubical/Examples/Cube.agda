@@ -169,30 +169,30 @@ module Univ (c : ∀ {ℓ} (A : Set ℓ) → isContr (Σ[ T ∈ _ ] T ≃ A)) wh
                                in fst (contrIsProp (c B)(A , eq)(B , idEquiv) i)
 
 module _ {ℓ} {A : Set ℓ} {φ : I} {T : Partial (Set ℓ) φ}
-             {f : PartialP φ (λ o → T o → A)}
-             {pf : PartialP φ (λ o → isEquiv (T o) A (f o))} where
+             {e : PartialP φ (λ o → T o ≃ A)}
+             where
   test-Glue-β : (t : PartialP φ T) (a : A) →
-    unglue {A = A} {φ = φ} {T = T} {f} {pf} (unsafeGlue t a) ≡ a
+    unglue {A = A} {φ = φ} {T = T} {e} (unsafeGlue t a) ≡ a
   test-Glue-β _ _ = refl
 
-  test-Glue-η : (b : primGlue A φ T f pf) →
+  test-Glue-η : (b : primGlue A φ T e) →
     (glue {φ = φ} (λ{ (φ = i1) → b }) (unglue {φ = φ} b)) ≡ b
   test-Glue-η b = refl
 
 module _ {ℓ} {A : Set ℓ} (let φ = i1) {T : Partial (Set ℓ) φ}
-             {f : PartialP φ (λ o → T o → A)}
-             {pf : PartialP φ (λ o → isEquiv (T o) A (f o))} where
-  test-unglue-0 : (b : primGlue A φ T f pf) →
-    unglue {A = A} {φ = φ} {T = T} {f} {pf} b ≡ f itIsOne b
+             {e : PartialP φ (λ o → T o ≃ A)}
+              where
+  test-unglue-0 : (b : primGlue A φ T e) →
+    unglue {A = A} {φ = φ} {T = T} {e} b ≡ e itIsOne .fst b
   test-unglue-0 _ = refl
 
   test-unglue-2 : (t : PartialP φ T) (a : A) →
-    unglue {A = A} {φ = φ} {T = T} {f} {pf}
-    (unsafeGlue {A = A}{φ = φ}{T = T}{f}{pf} t a) ≡ f itIsOne (t itIsOne) -- = a
+    unglue {A = A} {φ = φ} {T = T} {e}
+    (unsafeGlue {A = A}{φ = φ}{T = T}{e} t a) ≡ e itIsOne .fst (t itIsOne) -- = a
   test-unglue-2 _ _ = refl
 
   test-glue-0 : (t : PartialP φ T) (a : A) →
-    (unsafeGlue {A = A} {T = T} {f} {pf} t a) ≡ t itIsOne
+    (unsafeGlue {A = A} {T = T} {e} t a) ≡ t itIsOne
   test-glue-0 _ _ = refl
 
 module _ {ℓ} {A : Set ℓ} (w : Σ[ T ∈ Set ℓ ] T ≃ A) where

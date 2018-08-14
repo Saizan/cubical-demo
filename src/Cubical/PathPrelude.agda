@@ -232,7 +232,11 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
     equivProof : a ≡ fst f equivFunc
     equivProof = snd equiv
 
-{-# BUILTIN ISEQUIV isEquiv #-}
+equivFun : ∀ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} → A ≃ B → A → B
+equivFun e = fst e
+
+{-# BUILTIN EQUIV _≃_ #-}
+{-# BUILTIN EQUIVFUN  equivFun #-}
 
 -- | The isomorphism going in the opposite direction induced by an equivalence.
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} where
@@ -300,25 +304,24 @@ module _ {ℓ : I → Level} (P : (i : I) → Set (ℓ i)) where
 pathToEquivProof : ∀ {ℓ : I → Level} (E : (i : I) → Set (ℓ i)) → isEquiv (E i0) (E i1) (transp E)
 pathToEquivProof E = snd (pathToEquiv' E)
 
-{-# BUILTIN PATHTOEQUIV pathToEquivProof #-}
+{-# BUILTIN PATHTOEQUIV pathToEquiv' #-}
 
 
 pathToEquiv : ∀ {ℓ} {A B : Set ℓ} (P : A ≡ B) → A ≃ B
 pathToEquiv P = pathToEquiv' (\ i → P i)
 
+
 module GluePrims where
   primitive
     primGlue    : ∀ {ℓ ℓ'} (A : Set ℓ) (φ : I)
-      → (T : Partial (Set ℓ') φ) → (f : PartialP φ (λ o → T o → A))
-      → (pf : PartialP φ (λ o → isEquiv (T o) A (f o))) → Set ℓ'
+      → (T : Partial (Set ℓ') φ) → (e : PartialP φ (λ o → T o ≃ A))
+      → Set ℓ'
     prim^glue   : ∀ {ℓ ℓ'} {A : Set ℓ} {φ : I}
-      → {T : Partial (Set ℓ') φ} → {f : PartialP φ (λ o → T o → A)}
-      → {pf : PartialP φ (λ o → isEquiv (T o) A (f o))}
-      → PartialP φ T → A → primGlue A φ T f pf
+      → {T : Partial (Set ℓ') φ} → {e : PartialP φ (λ o → T o ≃ A)}
+      → PartialP φ T → A → primGlue A φ T e
     prim^unglue : ∀ {ℓ ℓ'} {A : Set ℓ} {φ : I}
-      → {T : Partial (Set ℓ') φ} → {f : PartialP φ (λ o → T o → A)}
-      → {pf : PartialP φ (λ o → isEquiv (T o) A (f o))}
-      → primGlue A φ T f pf → A
+      → {T : Partial (Set ℓ') φ} → {e : PartialP φ (λ o → T o ≃ A)}
+      → primGlue A φ T e → A
 
 open GluePrims public renaming (prim^glue to glue ; prim^unglue to unglue)
 
@@ -328,7 +331,7 @@ unsafeGlue = Unsafe''.prim^glue Set
 
 Glue : ∀ {ℓ ℓ'} (A : Set ℓ) → (φ : I) → (T : Partial (Set ℓ') φ)
   (f : (PartialP φ (λ o → T o ≃ A))) → Set ℓ'
-Glue A φ T f = primGlue A φ T (λ o → fst (f o)) (λ o → snd (f o))
+Glue A φ T f = primGlue A φ T f
 
 equivToPath : ∀ {ℓ} {A B : Set ℓ} → A ≃ B → A ≡ B
 equivToPath {_} {A} {B} f i = Glue B (~ i ∨ i)
@@ -405,17 +408,33 @@ module CompGlue {ℓ ℓ' : I → Level} (A : ∀ i → Set (ℓ i))
 
 compGlue : {ℓ ℓ' : I → Level} (A : ∀ i → Set (ℓ i)) (φ : I → I)
            (T : ∀ i → Partial (Set (ℓ' i)) (φ i))
-           (f : ∀ i → PartialP (φ i) λ o → (T i o) → (A i)) →
-           (pf : ∀ i → PartialP (φ i) (λ o → isEquiv (T i o) (A i) (f i o))) →
+           (e : ∀ i → PartialP (φ i) λ o → (T i o) ≃ (A i)) →
            let B : ∀ i → Set (ℓ' i)
-               B = λ i → primGlue (A i) (φ i) (T i) (f i) (pf i)
+               B = λ i → primGlue (A i) (φ i) (T i) (e i)
            in  (ψ : I) (b : ∀ i → Partial (B i) ψ) (b0 : B i0) → B i1
-compGlue A φ T f pf ψ b b0 =
-  CompGlue.Local.b1 A φ T (λ i p → (f i p) , (pf i p)) ψ b b0
+compGlue A φ T e ψ b b0 =
+  CompGlue.Local.b1 A φ T e ψ b b0
 
 {-# BUILTIN COMPGLUE compGlue #-}
+
+
+contr' : ∀ {ℓ} {A : Set ℓ} → isContr A → (φ : I) → (u : Partial A φ) → A
+contr' {A = A} (c , p) φ u = primHComp A φ (λ i o → p (u o) i) c
+
+EquivProof : ∀ {la lt} (T : Set la) (A : Set lt) → (w : T ≃ A) → (a : A)
+            → ∀ ψ → (Partial (fiber (w .fst) a) ψ) → fiber (w .fst) a
+EquivProof A B w a ψ fb = contr' {A = fiber (w .fst) a} (w .snd .equiv-proof a) ψ fb
+
+{-# BUILTIN EQUIVPROOF EquivProof #-}
+
 
 transp-equiv : ∀ {ℓ} {A B : Set ℓ} → (e : A ≃ B) → ∀ x → transp (\ i → equivToPath e i) x ≡ (e .fst x)
 transp-equiv {A = A} {B = B} e x = trans (transp-refl {B = B} _)
                                   (trans (transp-refl {B = B} _)
                                          (transp-refl {B = B} _))
+module DerivedComp where
+  forward : (la : I → Level) (A : ∀ i → Set (la i)) (r : I) → A r → A i1
+  forward la A r x = primTransp (\ i → A (i ∨ r)) r x
+
+  comp : (la : I → Level) (A : ∀ i → Set (la i)) (φ : I) → (u : ∀ i → Partial (A i) φ) → (u0 : A i0 [ φ ↦ u i0 ]) → A i1
+  comp la A φ u u0 = primHComp (A i1) φ (\ i → \ { (φ = i1) → forward la A i (u i itIsOne) }) (forward la A i0 (ouc u0))
