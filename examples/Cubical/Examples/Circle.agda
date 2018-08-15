@@ -1,36 +1,24 @@
-{-# OPTIONS --cubical --rewriting #-}
+{-# OPTIONS --cubical #-}
 
 module Cubical.Examples.Circle where
 
 open import Cubical.FromStdLib
-open import Cubical.PathPrelude
+open import Cubical.PathPrelude hiding (trans)
 open import Cubical.Rewrite
 
 open import Cubical.Examples.Int
 
-postulate
-  S¹   : Set
+data S¹   : Set where
   base : S¹
   loop : base ≡ base
 
 module S¹Elim {ℓ} {P : S¹ → Set ℓ} (base* : P base)
     (loop* : PathP (λ i → P (loop i)) base* base*) where
-  postulate
     S¹-elim : ∀ x → P x
-    -- postulating the reductions from the cubicaltt paper
-    comp1 :              Rewrite (S¹-elim base)     base*
-    comp2 : ∀ i →        Rewrite (S¹-elim (loop i)) (loop* i)
-    comp3 : ∀ {φ u u0} → Rewrite (S¹-elim (unsafeComp (λ i → S¹) φ u u0))
-                           (unsafeComp (λ i → P (fill (λ i → S¹) φ u u0 i))
-                                       φ
-                                       (λ i → λ { (φ = i1) → S¹-elim (u i itIsOne) })
-                                       (S¹-elim u0))
+    S¹-elim base = base*
+    S¹-elim (loop i) = loop* i
 
 open S¹Elim public
-
-{-# REWRITE comp1 #-}
-{-# REWRITE comp2 #-}
-{-# REWRITE comp3 #-}
 
 
 helix : S¹ → Set
@@ -40,16 +28,19 @@ helix = S¹-elim Int sucPathℤ
 π¹S¹ = base ≡ base
 
 coerce : ∀ {ℓ} {A B : Set ℓ} → A ≡ B → A → B
-coerce p a = primComp (λ i → p i) i0 (λ _ → empty) a
+coerce p a = primTransp (λ i → p i) i0 a
 
 winding : base ≡ base → Int
 winding p = coerce (λ i → helix (p i)) (pos zero)
 
 
-
 natLoop : ℕ → base ≡ base
 natLoop zero = refl
-natLoop (suc n) = trans (natLoop n) loop
+natLoop (suc n) = htrans (natLoop n) loop
+  where
+    htrans : ∀ {l} {A : Set l} {x y z : A} → x ≡ y → y ≡ z → x ≡ z
+    htrans {A = A} {x = x} p q i = primHComp A _ (λ { j (i = i0) → x
+                                                ; j (i = i1) → q j }) (p i)
 
 intLoop : Int → base ≡ base
 intLoop (pos n) = natLoop n
