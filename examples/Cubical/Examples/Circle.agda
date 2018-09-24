@@ -86,13 +86,35 @@ test-winding-neg = refl
 -- lemma (negsuc (suc n)) = {!!}
 
 
--- decode : (x : S¹) → helix x → base ≡ x
--- decode = S¹-elim
---            intLoop
---            (corFib1 helix (_≡_ base) intLoop intLoop loop {!!})
+decodeSquarePos : (n : ℕ) → I → I → S¹
+decodeSquarePos zero = λ i j → loop (i ∨ ~ j)
+decodeSquarePos (suc n) = λ i j →
+  fill (\ _ → S¹) _ (\ k → \ { (j = i0) → base ; (j = i1) → loop k } ) (natLoop n j) i
 
--- encode : ∀ x → base ≡ x → helix x
--- encode x p = coerce (λ i → helix (p i)) (pos zero)
+decodeSquareNeg : (n : ℕ) → I → I → S¹
+decodeSquareNeg n i j = primHComp S¹ _ (\ k → \ { (i = i1) → sym (natLoop n) j ; (j = i0) → base ; (j = i1) → loop (i ∨ ~ k) }) (sym (natLoop n) j)
+
+decodeSquare : (n : Int) → I → I → S¹
+decodeSquare (pos n) = decodeSquarePos n
+decodeSquare (negsuc n) = decodeSquareNeg (suc n)
+
+-- decodeSquare : (n : Z) -> Square S1 base1 base1 base1 base1
+--                                  (<_> base1)
+--                                  loop
+--                                  (loopIt (predZ n))
+--                                  (loopIt n) = split
+--   pos n -> decodeSquarePos n
+--   neg n -> decodeSquareNeg n
+
+decode : (x : S¹) → helix x → base ≡ x
+decode base = intLoop
+decode (loop i) = λ (y : sucPathℤ i) →
+   let foo : Int
+       foo = unglue {A = Int} {e = {!!}} y
+   in \ j → primHComp S¹ _ {!!} (decodeSquare foo i j )
+
+encode : ∀ x → base ≡ x → helix x
+encode x p = coerce (λ i → helix (p i)) (pos zero)
 
 -- encodeDecode : (x : S¹) (p : base ≡ x) → decode x (encode x p) ≡ p
 -- encodeDecode x p = coerce (\ i → decode (p i) (encode (p i) (\ j → p (i ∧ j))) ≡ (\ j → p (i ∧ j))) refl
