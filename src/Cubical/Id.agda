@@ -29,16 +29,20 @@ primitive
   primIdElim : ∀ {ℓ ℓ'} {A : Set ℓ}{x : A} (P : ∀ y → Id x y → Set ℓ') →
     (∀ φ (y : A [ φ ↦ (λ{_ → x}) ]) -- y : A [ φ ↦ x ]
     → (w : _ [ φ ↦ (λ { (φ = i1) → (λ i → x)}) ]) → P (ouc y) (conid φ (ouc w)))
-    → ∀ (y : A) (w : Id x y) → P y w
+    → ∀ {y : A} (w : Id x y) → P y w
 
-elimId = primIdElim
+elimId : ∀ {ℓ ℓ'} {A : Set ℓ}{x : A} (P : ∀ y → Id x y → Set ℓ') →
+    (∀ φ (y : A [ φ ↦ (λ{_ → x}) ]) -- y : A [ φ ↦ x ]
+    → (w : _ [ φ ↦ (λ { (φ = i1) → (λ i → x)}) ]) → P (ouc y) (conid φ (ouc w)))
+    → ∀ (y : A) (w : Id x y) → P y w
+elimId P h y w = primIdElim P h w
 
 module _ {ℓ ℓ'} {A : Set ℓ} {x : A} (P : ∀ y → Id x y → Set ℓ')
          (d : P x (conid' i1 {inc x} (inc (λ i → x)))) where
   myJ : ∀ y w → P y w
-  myJ = elimId _ (λ φ y w → primComp (λ i →
+  myJ = elimId P (λ φ y w → primComp (λ i →
     P (ouc w i) (conid' (φ ∨ ~ i) {inc (ouc w i)} (inc (λ j → ouc w (i ∧ j)))))
-    φ (λ i → λ { (φ = i1) → d}) d) where
+    φ (λ i → λ { (φ = i1) → d}) d)
 
   myJdef : myJ _ reflId ≡ d
   myJdef = refl
@@ -46,10 +50,10 @@ module _ {ℓ ℓ'} {A : Set ℓ} {x : A} (P : ∀ y → Id x y → Set ℓ')
 
 congI : ∀ {ℓ} {A B : Set ℓ} (f : A → B) (x y : A) → Id x y → Id (f x) (f y)
 congI f x = elimId (λ y _ → Id (f x) (f y))
-              (λ φ y w → conid φ (λ i → f (ouc w i)))
+                     (λ φ y w → conid φ (λ i → f (ouc w i)))
 
-transI : ∀ {ℓ} {A : Set ℓ} {x} (y : A) → Id x y → (z : A) → Id y z → Id x z
-transI {A = A} {x} = elimId _ λ φp y p → elimId _ λ φq z q →
+transI : ∀ {ℓ} {A : Set ℓ} x (y : A) → Id x y → (z : A) → Id y z → Id x z
+transI {A = A} x = elimId _ λ φp y p → elimId _ λ φq z q →
       primComp (λ i → Id x (ouc q i)) (φp ∨ φq)
                (λ i → λ { (φp = i1) → conid (φq ∨ ~ i) (λ k → ouc q (k ∧ i))
                         ; (φq = i1) → conid φp         (ouc p) })
@@ -61,10 +65,10 @@ module Test {ℓ} {A : Set ℓ} {x : A} φ {y : Sub A φ (λ{_ → x})}
   eq : Id x (ouc y)
   eq = (conid' φ {y} w)
 
-  testl : transI _ reflId _ eq ≡ eq
+  testl : transI _ _ reflId _ eq ≡ eq
   testl = refl
 
-  testr : transI _ eq _ reflId ≡ eq
+  testr : transI _ _ eq _ reflId ≡ eq
   testr = refl
 
 

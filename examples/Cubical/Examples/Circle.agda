@@ -39,7 +39,7 @@ natLoop zero = refl
 natLoop (suc n) = htrans (natLoop n) loop
   where
     htrans : ∀ {l} {A : Set l} {x y z : A} → x ≡ y → y ≡ z → x ≡ z
-    htrans {A = A} {x = x} p q i = primHComp A _ (λ { j (i = i0) → x
+    htrans {A = A} {x = x} p q i = primHComp (λ { j (i = i0) → x
                                                 ; j (i = i1) → q j }) (p i)
 
 intLoop : Int → base ≡ base
@@ -92,7 +92,7 @@ decodeSquarePos (suc n) = λ i j →
   fill (\ _ → S¹) _ (\ k → \ { (j = i0) → base ; (j = i1) → loop k } ) (natLoop n j) i
 
 decodeSquareNeg : (n : ℕ) → I → I → S¹
-decodeSquareNeg n i j = primHComp S¹ _ (\ k → \ { (i = i1) → sym (natLoop n) j ; (j = i0) → base ; (j = i1) → loop (i ∨ ~ k) }) (sym (natLoop n) j)
+decodeSquareNeg n i j = primHComp (\ k → \ { (i = i1) → sym (natLoop n) j ; (j = i0) → base ; (j = i1) → loop (i ∨ ~ k) }) (sym (natLoop n) j)
 
 decodeSquare : (n : Int) → I → I → S¹
 decodeSquare (pos n) = decodeSquarePos n
@@ -106,12 +106,12 @@ decodeSquare (negsuc n) = decodeSquareNeg (suc n)
 --   pos n -> decodeSquarePos n
 --   neg n -> decodeSquareNeg n
 
-decode : (x : S¹) → helix x → base ≡ x
-decode base = intLoop
-decode (loop i) = λ (y : sucPathℤ i) →
-   let foo : Int
-       foo = unglue {A = Int} {e = {!!}} y
-   in \ j → primHComp S¹ _ {!!} (decodeSquare foo i j )
+-- decode : (x : S¹) → helix x → base ≡ x
+-- decode base = intLoop
+-- decode (loop i) = λ (y : sucPathℤ i) →
+--    let foo : Int
+--        foo = unglue {A = Int} {e = {!!}} y
+--    in \ j → primHComp {!!} (decodeSquare foo i j )
 
 encode : ∀ x → base ≡ x → helix x
 encode x p = coerce (λ i → helix (p i)) (pos zero)
