@@ -438,3 +438,13 @@ module DerivedComp where
 
   comp : (la : I → Level) (A : ∀ i → Set (la i)) (φ : I) → (u : ∀ i → Partial (A i) φ) → (u0 : A i0 [ φ ↦ u i0 ]) → A i1
   comp la A φ u u0 = primHComp (\ i → \ { (φ = i1) → forward la A i (u i itIsOne) }) (forward la A i0 (ouc u0))
+
+
+Square : ∀ {ℓ} {A : Set ℓ} {a0 a1 b0 b1 : A}
+          (u : a0 ≡ a1) (v : b0 ≡ b1) (r0 : a0 ≡ b0) (r1 : a1 ≡ b1) → Set ℓ
+Square {A = A} u v r0 r1 = PathP (λ i → (u i ≡ v i)) r0 r1
+
+hfill : ∀ {ℓ} (A : Set ℓ) {φ : I}
+          (u : ∀ i → Partial A φ)
+          (u0 : A [ φ ↦ u i0 ]) (i : I) → A
+hfill A {φ = φ} u u0 i = primHComp (λ j → \ { (φ = i1) → u (i ∧ j) itIsOne ; (i = i0) → ouc u0 }) (ouc u0)
