@@ -30,9 +30,9 @@ predSuc (pos (suc n))    = refl
 predSuc (negsuc zero)    = refl
 predSuc (negsuc (suc n)) = refl
 
+suc-equiv : Σ _ (isEquiv Int Int)
+suc-equiv .fst = sucℤ
+suc-equiv .snd = isoToEquiv sucℤ predℤ sucPred predSuc
+
 sucPathℤ : Int ≡ Int
 sucPathℤ = equivToPath suc-equiv
- where
-   suc-equiv : Σ _ (isEquiv Int Int)
-   suc-equiv .fst = sucℤ
-   suc-equiv .snd = isoToEquiv sucℤ predℤ sucPred predSuc

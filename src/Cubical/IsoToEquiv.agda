@@ -6,10 +6,6 @@ open import Cubical.Comp
 open import Cubical.FromStdLib
 open import Cubical.NType.Properties
 
-Square : ∀ {ℓ} {A : Set ℓ} {a0 a1 b0 b1 : A}
-          (u : a0 ≡ a1) (v : b0 ≡ b1) (r0 : a0 ≡ b0) (r1 : a1 ≡ b1) → Set ℓ
-Square {A = A} u v r0 r1 = PathP (λ i → (u i ≡ v i)) r0 r1
-
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
          (s : (y : B) → (f (g y)) ≡ y) (t : (x : A) → (g (f x)) ≡ x) where
 

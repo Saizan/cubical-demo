@@ -313,15 +313,15 @@ pathToEquiv P = pathToEquiv' (\ i → P i)
 
 module GluePrims where
   primitive
-    primGlue    : ∀ {ℓ ℓ'} (A : Set ℓ) (φ : I)
+    primGlue    : ∀ {ℓ ℓ'} (A : Set ℓ) {φ : I}
       → (T : Partial (Set ℓ') φ) → (e : PartialP φ (λ o → T o ≃ A))
       → Set ℓ'
     prim^glue   : ∀ {ℓ ℓ'} {A : Set ℓ} {φ : I}
       → {T : Partial (Set ℓ') φ} → {e : PartialP φ (λ o → T o ≃ A)}
-      → PartialP φ T → A → primGlue A φ T e
+      → PartialP φ T → A → primGlue A T e
     prim^unglue : ∀ {ℓ ℓ'} {A : Set ℓ} {φ : I}
       → {T : Partial (Set ℓ') φ} → {e : PartialP φ (λ o → T o ≃ A)}
-      → primGlue A φ T e → A
+      → primGlue A T e → A
 
 open GluePrims public renaming (prim^glue to glue ; prim^unglue to unglue)
 
@@ -331,7 +331,7 @@ unsafeGlue = Unsafe''.prim^glue Set
 
 Glue : ∀ {ℓ ℓ'} (A : Set ℓ) → (φ : I) → (T : Partial (Set ℓ') φ)
   (f : (PartialP φ (λ o → T o ≃ A))) → Set ℓ'
-Glue A φ T f = primGlue A φ T f
+Glue A φ T f = primGlue A T f
 
 equivToPath : ∀ {ℓ} {A B : Set ℓ} → A ≃ B → A ≡ B
 equivToPath {_} {A} {B} f i = Glue B (~ i ∨ i)
@@ -410,7 +410,7 @@ compGlue : {ℓ ℓ' : I → Level} (A : ∀ i → Set (ℓ i)) (φ : I → I)
            (T : ∀ i → Partial (Set (ℓ' i)) (φ i))
            (e : ∀ i → PartialP (φ i) λ o → (T i o) ≃ (A i)) →
            let B : ∀ i → Set (ℓ' i)
-               B = λ i → primGlue (A i) (φ i) (T i) (e i)
+               B = λ i → primGlue (A i) (T i) (e i)
            in  (ψ : I) (b : ∀ i → Partial (B i) ψ) (b0 : B i0) → B i1
 compGlue A φ T e ψ b b0 =
   CompGlue.Local.b1 A φ T e ψ b b0
@@ -419,7 +419,7 @@ compGlue A φ T e ψ b b0 =
 
 
 contr' : ∀ {ℓ} {A : Set ℓ} → isContr A → (φ : I) → (u : Partial A φ) → A
-contr' {A = A} (c , p) φ u = primHComp A φ (λ i o → p (u o) i) c
+contr' {A = A} (c , p) φ u = primHComp (λ i o → p (u o) i) c
 
 EquivProof : ∀ {la lt} (T : Set la) (A : Set lt) → (w : T ≃ A) → (a : A)
             → ∀ ψ → (Partial (fiber (w .fst) a) ψ) → fiber (w .fst) a
@@ -437,4 +437,14 @@ module DerivedComp where
   forward la A r x = primTransp (\ i → A (i ∨ r)) r x
 
   comp : (la : I → Level) (A : ∀ i → Set (la i)) (φ : I) → (u : ∀ i → Partial (A i) φ) → (u0 : A i0 [ φ ↦ u i0 ]) → A i1
-  comp la A φ u u0 = primHComp (A i1) φ (\ i → \ { (φ = i1) → forward la A i (u i itIsOne) }) (forward la A i0 (ouc u0))
+  comp la A φ u u0 = primHComp (\ i → \ { (φ = i1) → forward la A i (u i itIsOne) }) (forward la A i0 (ouc u0))
+
+
+Square : ∀ {ℓ} {A : Set ℓ} {a0 a1 b0 b1 : A}
+          (u : a0 ≡ a1) (v : b0 ≡ b1) (r0 : a0 ≡ b0) (r1 : a1 ≡ b1) → Set ℓ
+Square {A = A} u v r0 r1 = PathP (λ i → (u i ≡ v i)) r0 r1
+
+hfill : ∀ {ℓ} (A : Set ℓ) {φ : I}
+          (u : ∀ i → Partial A φ)
+          (u0 : A [ φ ↦ u i0 ]) (i : I) → A
+hfill A {φ = φ} u u0 i = primHComp (λ j → \ { (φ = i1) → u (i ∧ j) itIsOne ; (i = i0) → ouc u0 }) (ouc u0)

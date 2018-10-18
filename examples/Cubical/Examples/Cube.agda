@@ -175,14 +175,14 @@ module _ {ℓ} {A : Set ℓ} {φ : I} {T : Partial (Set ℓ) φ}
     unglue {A = A} {φ = φ} {T = T} {e} (unsafeGlue t a) ≡ a
   test-Glue-β _ _ = refl
 
-  test-Glue-η : (b : primGlue A φ T e) →
+  test-Glue-η : (b : primGlue A T e) →
     (glue {φ = φ} (λ{ (φ = i1) → b }) (unglue {φ = φ} b)) ≡ b
   test-Glue-η b = refl
 
 module _ {ℓ} {A : Set ℓ} (let φ = i1) {T : Partial (Set ℓ) φ}
              {e : PartialP φ (λ o → T o ≃ A)}
               where
-  test-unglue-0 : (b : primGlue A φ T e) →
+  test-unglue-0 : (b : primGlue A T e) →
     unglue {A = A} {φ = φ} {T = T} {e} b ≡ e itIsOne .fst b
   test-unglue-0 _ = refl
 
