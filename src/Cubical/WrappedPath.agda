@@ -156,17 +156,17 @@ module _ {ℓ} (A : Set ℓ) where
   isSet   = (x y : A) → (p q : x ≡ y) → p ≡ q
 
 module _ {ℓ} {A : Set ℓ} where
-  contr : isContr A → (φ : I) → (u : Partial A φ) → A
+  contr : isContr A → (φ : I) → (u : Partial φ A) → A
   contr (c , p) φ u = primComp (λ _ → A) φ (λ i o → p (u o) .at i) c
 
-  lemContr : (contr1 : ∀ φ → Partial A φ → A)
+  lemContr : (contr1 : ∀ φ → Partial φ A → A)
              → (contr2 : ∀ u → u ≡ (contr1 i1 λ { _ → u})) → isContr A
   lemContr contr1 contr2 = x , (λ y → let module M = Aux y in
       trans (contr2 x) (trans (λ { .at i → M.v i }) (sym (contr2 y))))
     where x = contr1 i0 empty
           module Aux (y : A) (i : I) where
             φ = ~ i ∨ i
-            u : Partial A φ
+            u : Partial φ A
             u = λ { (i = i0) → x ; (i = i1) → y }
             v = contr1 φ u
 
@@ -207,7 +207,7 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
   infix 4 _≃_
   _≃_ = Σ _ isEquiv
 
-  module _ (f : _≃_) (φ : I) (t : Partial A φ) (a : B {- [ φ ↦ f t ] -})
+  module _ (f : _≃_) (φ : I) (t : Partial φ A) (a : B {- [ φ ↦ f t ] -})
            (p : PartialP φ (λ o → a ≡ fst f (t o))) where
     equiv : fiber (fst f) a -- [ φ ↦ (t , λ j → a) ]
     equiv = contr ((snd f) a) φ (λ o → t o , (λ { .at i → p o .at i}))

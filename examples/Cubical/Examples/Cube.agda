@@ -56,32 +56,32 @@ J-comp : ∀ {ℓ ℓ'} {A : Set ℓ} {x : A} {P : ∀ y → Id x y → Set ℓ'
          (d : P x reflId) → J P d reflId ≡ d
 J-comp _ = refl
 
-outPartial : ∀ {ℓ} {A : Set ℓ} → Partial A i1 → A
+outPartial : ∀ {ℓ} {A : Set ℓ} → Partial i1 A → A
 outPartial = λ f → f itIsOne
 
-inPartial : ∀ {ℓ} {A : Set ℓ} → A → Partial A i1
+inPartial : ∀ {ℓ} {A : Set ℓ} → A → Partial i1 A
 inPartial a = λ _ → a
 
 module _ {ℓ ℓ'} {A : I → Set ℓ} {B : ∀ i → A i → Set ℓ'}
          (let ℓ = _ ; C : I → Set ℓ ; C i = (x : A i) → B i x) where
-  compPi : (φ : I) → (∀ i → Partial (C i) φ) → (a : C i0) → C i1
+  compPi : (φ : I) → (∀ i → Partial φ (C i)) → (a : C i0) → C i1
   compPi φ u a x1 = unsafeComp
       (λ i → B i (v i)) φ (λ i o → u i o (v i)) (a (v i0)) where
     v : (i : I) → A i
     v i = unsafeComp (λ j → A (i ∨ (~ j))) i (λ j → p[_] {A = A} x1 _ (~ j) ) x1
-    f : ∀ i → (a : A i) → Partial (B i a) φ
+    f : ∀ i → (a : A i) → Partial φ (B i a)
     f i a = λ { (φ = i1) → u i itIsOne a  }
 
 
-  compPi' : (φ : I) → (∀ i → Partial (C i) φ) → (a : C i0) → C i1
+  compPi' : (φ : I) → (∀ i → Partial φ (C i)) → (a : C i0) → C i1
   compPi' φ u a = unsafeComp C φ u a
 
-  test-compPi : (φ : I) → (u : ∀ i → Partial (C i) φ) → (a : C i0) →
+  test-compPi : (φ : I) → (u : ∀ i → Partial φ (C i)) → (a : C i0) →
                   compPi φ u a ≡ compPi' φ u a
   test-compPi = λ φ p p0 → refl
 
 module _ {ℓ} {A : I → Set ℓ} (u v : ∀ i → A i) (φ : I)
-         (let C = λ (i : I) → u i ≡ v i) (p : ∀ i → Partial (C i) φ) where
+         (let C = λ (i : I) → u i ≡ v i) (p : ∀ i → Partial φ (C i)) where
   compPath : C i0 → C i1
   compPath p0 = λ j → unsafeComp A (φ ∨ (~ j ∨ j))
                         (λ i → [ φ   ↦ (λ o → (p i o) j) , (~ j ∨ j) ↦
@@ -98,7 +98,7 @@ module _ {ℓ} {A : I → Set ℓ} (u v : ∀ i → A i) (φ : I)
 
 module TestPathP {ℓ} {A : I → I → Set ℓ} (u : ∀ i → A i i0)(v : ∀ i → A i i1)
                   (φ : I) (let C = λ (i : I) → PathP (A i) (u i) (v i))
-                  (p : ∀ i → Partial (C i) φ) (p0 : C i0) where
+                  (p : ∀ i → Partial φ (C i)) (p0 : C i0) where
 
  compPathP : C i1
  compPathP = λ j → unsafeComp (λ i → A i j) (φ ∨ (~ j ∨ j))
@@ -128,7 +128,7 @@ module RecordComp where
   compR : ∀ {ℓ ℓ'} {A : I → Set ℓ} {B : ∀ i → A i → Set ℓ'}
                    {C : ∀ i → (x : A i) → B i x → Set ℓ} →
     (let ℓ = _ ; Z : I → Set ℓ ; Z i = R(A i)(B i)(C i))
-    (φ : I) → (∀ i → Partial (Z i) φ) → Z i0 → Z i1
+    (φ : I) → (∀ i → Partial φ (Z i)) → Z i0 → Z i1
   fst (compR {A = A} {B} φ w w0) =
     unsafeComp A φ (λ i →  (λ{ (φ = i1) → fst (w i itIsOne) }) ) (fst w0)
   snd (compR {A = A} {B} φ w w0) =
@@ -153,7 +153,7 @@ module RecordComp where
   module _ {ℓ ℓ'} {A : I → Set ℓ} {B : ∀ i → A i → Set ℓ'}
                   {C : ∀ i → (x : A i) → B i x → Set ℓ}
                   (let ℓ = _ ; Z : I → Set ℓ ; Z i = R(A i)(B i)(C i))
-                  (φ : I) (u : ∀ i → Partial (Z i) φ) (a : Z i0) where
+                  (φ : I) (u : ∀ i → Partial φ (Z i)) (a : Z i0) where
     test-compR-1 : fst (compR {A = A} {B} {C} φ u a) ≡ fst (unsafeComp Z φ u a)
     test-compR-1 = refl
 
@@ -168,7 +168,7 @@ module Univ (c : ∀ {ℓ} (A : Set ℓ) → isContr (Σ[ T ∈ _ ] T ≃ A)) wh
   univ {A = A} {B = B} eq i = let ((T , ev) , p) = c B
                                in fst (contrIsProp (c B)(A , eq)(B , idEquiv) i)
 
-module _ {ℓ} {A : Set ℓ} {φ : I} {T : Partial (Set ℓ) φ}
+module _ {ℓ} {A : Set ℓ} {φ : I} {T : Partial φ (Set ℓ)}
              {e : PartialP φ (λ o → T o ≃ A)}
              where
   test-Glue-β : (t : PartialP φ T) (a : A) →
@@ -179,7 +179,7 @@ module _ {ℓ} {A : Set ℓ} {φ : I} {T : Partial (Set ℓ) φ}
     (glue {φ = φ} (λ{ (φ = i1) → b }) (unglue {φ = φ} b)) ≡ b
   test-Glue-η b = refl
 
-module _ {ℓ} {A : Set ℓ} (let φ = i1) {T : Partial (Set ℓ) φ}
+module _ {ℓ} {A : Set ℓ} (let φ = i1) {T : Partial φ (Set ℓ)}
              {e : PartialP φ (λ o → T o ≃ A)}
               where
   test-unglue-0 : (b : primGlue A T e) →
@@ -213,7 +213,7 @@ module _ {ℓ} {A : Set ℓ} (w : Σ[ T ∈ Set ℓ ] T ≃ A) where
   bar : (b : A) → (v : Σ[ x ∈ T ] b ≡ fst (snd w) x) → I → I → A
   bar b v j k = (snd (snd (snd (snd w) .equiv-proof b) v j) k )
 
-unglueEquiv : ∀ {ℓ} (A : Set ℓ) (φ : I) (T : Partial (Set ℓ) φ)
+unglueEquiv : ∀ {ℓ} (A : Set ℓ) (φ : I) (T : Partial φ (Set ℓ))
   (f : PartialP φ λ o → (T o) ≃ A) → (Glue A φ T f) ≃ A
 unglueEquiv A φ T f = unglue {φ = φ} , (λ { .equiv-proof b →
   let u = (λ j → (λ{ (φ = i1) → snd (fst (snd (snd (w itIsOne)) .equiv-proof b)) j })) in
@@ -234,7 +234,7 @@ unglueEquiv A φ T f = unglue {φ = φ} , (λ { .equiv-proof b →
 EquivContr : ∀ {ℓ} (A : Set ℓ) → isContr (Σ[ T ∈ _ ] T ≃ A)
 EquivContr A = (A , idEquiv) , (λ w i →
   let φ = (~ i ∨ i)
-      Tf : Partial (Σ[ T ∈ _ ] T ≃ A) (~ i ∨ i)
+      Tf : Partial (~ i ∨ i) (Σ[ T ∈ _ ] T ≃ A)
       Tf = [ ~ i ↦ (λ{ (i = i0) → A , idEquiv }) , i ↦ (λ{ (i = i1) → w }) ]
    in Glue A φ (λ o → fst (Tf o)) (λ o → snd (Tf o))
      , unglueEquiv A φ (λ o → fst (Tf o)) (λ o → snd (Tf o)))

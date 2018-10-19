@@ -32,7 +32,7 @@ module TheCoEq {l} (A B : Set l) (f g : A → B) where
   coeq-path : ∀ x → coeq (f x) ≡ coeq (g x)
   coeq-path x = htrans (sym (push' (left x))) (push' (right x))
 
-  hfill : {φ : I} → (u : (i : I) → Partial CoEq φ) → (a0 : CoEq [ φ ↦ u i0 ])
+  hfill : {φ : I} → (u : (i : I) → Partial φ CoEq) → (a0 : CoEq [ φ ↦ u i0 ])
          → PathP (\ _ → CoEq) (ouc a0)
                    (primPushOutHComp _ (λ { i (φ = i1) → u i itIsOne }) a0)
 

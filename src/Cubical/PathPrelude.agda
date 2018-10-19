@@ -51,7 +51,7 @@ module _ {ℓ} {A : Set ℓ} where
   _∎ = _≡-qed
 
 fill : {ℓ : I → Level} → (A : (i : I) → Set (ℓ i)) → (φ : I) →
-  ((i : I) → Partial (A i) φ) → A i0 → (i : I) → A i
+  ((i : I) → Partial φ (A i)) → A i0 → (i : I) → A i
 fill A φ u a0 i = unsafeComp (λ j → A (i ∧ j)) (φ ∨ ~ i)
   (λ j → unsafePOr φ (~ i) (u (i ∧ j)) λ { (i = i0) → a0 }) a0
 
@@ -120,7 +120,7 @@ injective : ∀ {ℓa ℓb} → {A : Set ℓa} → {B : Set ℓb} → (f : A →
 injective {_} {_} {A} f = {a0 a1 : A} → f a0 ≡ f a1 → a0 ≡ a1
 
 module _ {ℓ} {A0 A1 : Set ℓ} (A : A0 ≡ A1) {φ : I} (a0 : A i0)
-         (p : Partial (Σ A1 λ y → PathP (λ i → A i) a0 y) φ) where
+         (p : Partial φ (Σ A1 λ y → PathP (λ i → A i) a0 y)) where
   -- primComp using only Path
   compP : A i1
   compP = primComp (λ i → A i) φ (λ i o → p o .snd i) a0
@@ -165,17 +165,17 @@ module _ {ℓa ℓb} {A : Set ℓa} {B : A → Set ℓb} where
   funExtImp p {x} = λ i → p x i
 
 module _ {ℓ} {A : Set ℓ} where
-  contr : isContr A → (φ : I) → (u : Partial A φ) → A
+  contr : isContr A → (φ : I) → (u : Partial φ A) → A
   contr (c , p) φ u = primComp (λ _ → A) φ (λ i o → p (u o) i) c
 
-  lemContr : (contr1 : ∀ φ → Partial A φ → A)
+  lemContr : (contr1 : ∀ φ → Partial φ A → A)
              → (contr2 : ∀ u → u ≡ (contr1 i1 λ { _ → u})) → isContr A
   lemContr contr1 contr2 = x , (λ y → let module M = Aux y in
       trans (contr2 x) (trans (λ i → M.v i) (sym (contr2 y))))
     where x = contr1 i0 empty
           module Aux (y : A) (i : I) where
             φ = ~ i ∨ i
-            u : Partial A φ
+            u : Partial φ A
             u = λ { (i = i0) → x ; (i = i1) → y }
             v = contr1 φ u
 
@@ -184,7 +184,7 @@ module _ {ℓ} {A : Set ℓ} where
     \ { (i = i0) → snd h a j; (i = i1) → snd h b j }) (fst h)
 
 module _ {ℓ ℓ' : I → Level} {T : ∀ i → Set (ℓ i)} {A : ∀ i → Set (ℓ' i)}
-         (f : ∀ i → T i → A i) (φ : I) (t : ∀ i → Partial (T i) φ)
+         (f : ∀ i → T i → A i) (φ : I) (t : ∀ i → Partial φ (T i))
          (t0 : T i0 {- [ φ ↦ t i0 ] -}) where
   private
     c1 c2 : A i1
@@ -193,7 +193,7 @@ module _ {ℓ ℓ' : I → Level} {T : ∀ i → Set (ℓ i)} {A : ∀ i → Set
 
     a0 = f i0 t0
 
-    a : ∀ i → Partial (A i) φ
+    a : ∀ i → Partial φ (A i)
     a i = (λ { (φ = i1) → f i ((t i) itIsOne)})
 
     u : ∀ i → A i
@@ -221,7 +221,7 @@ module _ {ℓ ℓ'} (A : Set ℓ) (B : Set ℓ') where
   infix 4 _≃_
   _≃_ = Σ _ isEquiv
 
-  module _ (f : _≃_) (φ : I) (t : Partial A φ) (a : B {- [ φ ↦ f t ] -})
+  module _ (f : _≃_) (φ : I) (t : Partial φ A) (a : B {- [ φ ↦ f t ] -})
            (p : PartialP φ (λ o → a ≡ fst f (t o))) where
     equiv : fiber (fst f) a -- [ φ ↦ (t , λ j → a) ]
     equiv = contr ((f .snd .equiv-proof) a) φ (λ o → t o , (λ i → p o i))
@@ -314,13 +314,13 @@ pathToEquiv P = pathToEquiv' (\ i → P i)
 module GluePrims where
   primitive
     primGlue    : ∀ {ℓ ℓ'} (A : Set ℓ) {φ : I}
-      → (T : Partial (Set ℓ') φ) → (e : PartialP φ (λ o → T o ≃ A))
+      → (T : Partial φ (Set ℓ')) → (e : PartialP φ (λ o → T o ≃ A))
       → Set ℓ'
     prim^glue   : ∀ {ℓ ℓ'} {A : Set ℓ} {φ : I}
-      → {T : Partial (Set ℓ') φ} → {e : PartialP φ (λ o → T o ≃ A)}
+      → {T : Partial φ (Set ℓ')} → {e : PartialP φ (λ o → T o ≃ A)}
       → PartialP φ T → A → primGlue A T e
     prim^unglue : ∀ {ℓ ℓ'} {A : Set ℓ} {φ : I}
-      → {T : Partial (Set ℓ') φ} → {e : PartialP φ (λ o → T o ≃ A)}
+      → {T : Partial φ (Set ℓ')} → {e : PartialP φ (λ o → T o ≃ A)}
       → primGlue A T e → A
 
 open GluePrims public renaming (prim^glue to glue ; prim^unglue to unglue)
@@ -329,7 +329,7 @@ module Unsafe'' (dummy : Set1) = GluePrims
 
 unsafeGlue = Unsafe''.prim^glue Set
 
-Glue : ∀ {ℓ ℓ'} (A : Set ℓ) → (φ : I) → (T : Partial (Set ℓ') φ)
+Glue : ∀ {ℓ ℓ'} (A : Set ℓ) → (φ : I) → (T : Partial φ (Set ℓ'))
   (f : (PartialP φ (λ o → T o ≃ A))) → Set ℓ'
 Glue A φ T f = primGlue A T f
 
@@ -347,7 +347,7 @@ module FaceForall (φ : I → I) where
     ∀v : ∀ i → IsOne (φ i) → IsOne ((δ ∨ (φ i0 ∧ ~ i)) ∨ (φ i1 ∧ i))
     ∀e : IsOne δ → ∀ i → IsOne (φ i)
 
-module _ {ℓ ℓ'} {A : Set ℓ} {φ : I} {T : Partial (Set ℓ') φ}
+module _ {ℓ ℓ'} {A : Set ℓ} {φ : I} {T : Partial φ (Set ℓ')}
            {f : (PartialP φ λ o → T o ≃ A)} where
   fwdGlueIso : PartialP φ (λ o → Glue A φ T f → T o)
   fwdGlueIso (φ = i1) = idFun _
@@ -360,15 +360,15 @@ module _ {ℓ ℓ'} {A : Set ℓ} {φ : I} {T : Partial (Set ℓ') φ}
   lemGlueIso _ (φ = i1) = refl
 
 module CompGlue {ℓ ℓ' : I → Level} (A : ∀ i → Set (ℓ i))
-                (φ : I → I) (T : ∀ i → Partial (Set (ℓ' i)) (φ i))
+                (φ : I → I) (T : ∀ i → Partial (φ i) (Set (ℓ' i)))
                 (f : ∀ i → PartialP (φ i) λ o → T i o ≃ A i)
                 where
   B : ∀ i → Set (ℓ' i)
   B = λ i → Glue (A i) (φ i) (T i) (f i)
 
-  module Local (ψ : I) (b : ∀ i → Partial (B i) ψ)
+  module Local (ψ : I) (b : ∀ i → Partial ψ (B i))
                (b0 : B i0 {- [ ψ ↦ b i0 ] -}) where
-    a : ∀ i → Partial (A i) ψ
+    a : ∀ i → Partial ψ (A i)
     a i = λ o → unglue {φ = φ i} (b i o)
 
     module Forall (δ : I) (∀e : IsOne δ → ∀ i → IsOne (φ i)) where
@@ -407,22 +407,22 @@ module CompGlue {ℓ ℓ' : I → Level} (A : ∀ i → Set (ℓ i))
     b1 = Forall.b1 (FaceForall.δ φ) (FaceForall.∀e φ)
 
 compGlue : {ℓ ℓ' : I → Level} (A : ∀ i → Set (ℓ i)) (φ : I → I)
-           (T : ∀ i → Partial (Set (ℓ' i)) (φ i))
+           (T : ∀ i → Partial (φ i) (Set (ℓ' i)))
            (e : ∀ i → PartialP (φ i) λ o → (T i o) ≃ (A i)) →
            let B : ∀ i → Set (ℓ' i)
                B = λ i → primGlue (A i) (T i) (e i)
-           in  (ψ : I) (b : ∀ i → Partial (B i) ψ) (b0 : B i0) → B i1
+           in  (ψ : I) (b : ∀ i → Partial ψ (B i)) (b0 : B i0) → B i1
 compGlue A φ T e ψ b b0 =
   CompGlue.Local.b1 A φ T e ψ b b0
 
 {-# BUILTIN COMPGLUE compGlue #-}
 
 
-contr' : ∀ {ℓ} {A : Set ℓ} → isContr A → (φ : I) → (u : Partial A φ) → A
+contr' : ∀ {ℓ} {A : Set ℓ} → isContr A → (φ : I) → (u : Partial φ A) → A
 contr' {A = A} (c , p) φ u = primHComp (λ i o → p (u o) i) c
 
 EquivProof : ∀ {la lt} (T : Set la) (A : Set lt) → (w : T ≃ A) → (a : A)
-            → ∀ ψ → (Partial (fiber (w .fst) a) ψ) → fiber (w .fst) a
+            → ∀ ψ → (Partial ψ (fiber (w .fst) a)) → fiber (w .fst) a
 EquivProof A B w a ψ fb = contr' {A = fiber (w .fst) a} (w .snd .equiv-proof a) ψ fb
 
 {-# BUILTIN EQUIVPROOF EquivProof #-}
@@ -436,7 +436,7 @@ module DerivedComp where
   forward : (la : I → Level) (A : ∀ i → Set (la i)) (r : I) → A r → A i1
   forward la A r x = primTransp (\ i → A (i ∨ r)) r x
 
-  comp : (la : I → Level) (A : ∀ i → Set (la i)) (φ : I) → (u : ∀ i → Partial (A i) φ) → (u0 : A i0 [ φ ↦ u i0 ]) → A i1
+  comp : (la : I → Level) (A : ∀ i → Set (la i)) (φ : I) → (u : ∀ i → Partial φ (A i)) → (u0 : A i0 [ φ ↦ u i0 ]) → A i1
   comp la A φ u u0 = primHComp (\ i → \ { (φ = i1) → forward la A i (u i itIsOne) }) (forward la A i0 (ouc u0))
 
 
@@ -445,6 +445,6 @@ Square : ∀ {ℓ} {A : Set ℓ} {a0 a1 b0 b1 : A}
 Square {A = A} u v r0 r1 = PathP (λ i → (u i ≡ v i)) r0 r1
 
 hfill : ∀ {ℓ} (A : Set ℓ) {φ : I}
-          (u : ∀ i → Partial A φ)
+          (u : ∀ i → Partial φ A)
           (u0 : A [ φ ↦ u i0 ]) (i : I) → A
 hfill A {φ = φ} u u0 i = primHComp (λ j → \ { (φ = i1) → u (i ∧ j) itIsOne ; (i = i0) → ouc u0 }) (ouc u0)

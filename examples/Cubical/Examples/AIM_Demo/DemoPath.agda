@@ -91,7 +91,7 @@ transp-coh A x i = primComp (\ j → A (i ∧ j)) (~ i) (\ { j (i = i0) → x })
 -- primComp : ∀ {a} (A : (i : I) → Set (a i)) (φ : I)
 --            → (u : ∀ i → Partial (A i) φ) → (a : A i0) → A i1
 
--- ("Partial A φ" is something like "(φ = i1) → A")
+-- ("Partial φ A" is something like "(φ = i1) → A")
 
 
 

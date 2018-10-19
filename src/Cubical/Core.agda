@@ -56,45 +56,42 @@ _[_≡_] = PathP
 
 -- * Types of partial elements, and their dependent version.
 
--- "Partial A φ" is a special version of "IsOne φ → A" with a more
+-- "Partial φ A" is a special version of "IsOne φ → A" with a more
 -- extensional judgmental equality.
 -- "PartialP φ A" allows "A" to be defined only on "φ".
 
--- Partial : ∀ {l} → Set l → I → Setω
+-- Partial : ∀ {l} → I → Set l → Setω
 -- PartialP : ∀ {l} → (φ : I) → Partial (Set l) φ → Setω
 
 -- Partial elements are introduced by pattern matching with (r = i0) or (r = i1) constraints, like so:
 
 private
-  sys : ∀ i → Partial Set₁ (i ∨ ~ i)
+  sys : ∀ i → Partial (i ∨ ~ i) Set₁
   sys i (i = i0) = Set
   sys i (i = i1) = Set → Set
 
 -- It also works with pattern matching lambdas. (TODO link pattern matching lambda docs)
-  sys' : ∀ i → Partial Set₁ (i ∨ ~ i)
+  sys' : ∀ i → Partial (i ∨ ~ i) Set₁
   sys' i = \ { (i = i0) → Set
              ; (i = i1) → Set → Set
              }
 
 -- When the cases overlap they must agree.
-  sys2 : ∀ i j → Partial Set₁ (i ∨ (i ∧ j))
+  sys2 : ∀ i j → Partial (i ∨ (i ∧ j)) Set₁
   sys2 i j = \ { (i = i1)          → Set
                ; (i = i1) (j = i1) → Set
                }
 
--- TODO recognize IsOne i0 as empty, then we can get rid of the empty system.
--- sys3 : Partial Set₁ i0
--- sys3 = \ { () }
+  sys3 : Partial i0 Set₁
+  sys3 = \ { () }
 
 
 
--- * The empty System
--- empty : ∀ {a} {A : Partial (Set a) i0} → PartialP i0 A
 
 
 -- * Composition operation according to [CCHM 18].
 -- When calling "comp A φ u a" Agda makes sure that "a" agrees with "u i0" on "φ".
--- comp : ∀ {l} (A : (i : I) → Set (l i)) (φ : I) (u : ∀ i → Partial (A i) φ) (a : A i0) → A i1
+-- comp : ∀ {l} (A : (i : I) → Set (l i)) (φ : I) (u : ∀ i → Partial φ (A i)) (a : A i0) → A i1
 
 
 -- * Generalized transport and homogeneous composition [CHM 18].
@@ -104,4 +101,4 @@ private
 -- transp : ∀ {l} (A : (i : I) → Set (l i)) (φ : I) (a : A i0) → A i1
 
 -- When calling "hcomp A φ u a" Agda makes sure that "a" agrees with "u i0" on "φ".
--- hcomp : ∀ {l} (A : Set l) (φ : I) (u : I → Partial A φ) (a : A) → A
+-- hcomp : ∀ {l} {A : Set l} {φ : I} (u : I → Partial φ A) (a : A) → A

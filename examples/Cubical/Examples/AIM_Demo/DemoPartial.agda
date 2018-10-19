@@ -6,12 +6,12 @@ open import Cubical.PathPrelude hiding (trans)
 
 
 
--- "Partial A φ"  is a special version of "(φ = i1) → A"
+-- "Partial φ A"  is a special version of "(φ = i1) → A"
 
-const : ∀ {A : Set} → A → ∀ (φ : I) → Partial A φ
+const : ∀ {A : Set} → A → ∀ (φ : I) → Partial φ A
 const b φ (φ = i1) = b
 
-myempty : ∀ {A : Set} → Partial A i0
+myempty : ∀ {A : Set} → Partial i0 A
 myempty = empty
 
 
@@ -22,25 +22,25 @@ endpoints {A} {B} x y i (i = i1) = x
 endpoints {A} {B} x y i (i = i0) = y
 
 
-endpoints-must-match' : ∀ {A : Set} → A → A → ∀ i (j : I) → Partial A i
+endpoints-must-match' : ∀ {A : Set} → A → A → ∀ i (j : I) → Partial i A
 endpoints-must-match' {A} x y i j _ = y
 
 
-endpoints-must-match : ∀ {A : Set} → A → A → ∀ i j → Partial A (i ∨ j)
+endpoints-must-match : ∀ {A : Set} → A → A → ∀ i j → Partial (i ∨ j) A
 endpoints-must-match {A} x y i j (i = i1) = x
 endpoints-must-match {A} x y i j (j = i1) = x
 
 
-foo : ∀ i → Partial Bool (i ∨ ~ i)
+foo : ∀ i → Partial (i ∨ ~ i) Bool
 foo i (i = i1) = true
 foo i (i = i0) = false
 
-bar : ∀ i → Partial Bool (i ∨ ~ i)
+bar : ∀ i → Partial (i ∨ ~ i) Bool
 bar i (i = i0) = false
 bar i (i = i1) = true
 
 
-test-foo-bar : ∀ i → (P : Partial Bool (i ∨ ~ i) → Set) → P (foo i) → P (bar i)
+test-foo-bar : ∀ i → (P : Partial (i ∨ ~ i) Bool → Set) → P (foo i) → P (bar i)
 test-foo-bar i P pfoo = pfoo
 
 
