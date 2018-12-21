@@ -8,11 +8,7 @@ open import Cubical.Primitives
 
 -- Path {a} {A} x y ~~ {f : I → A | f i0 = x, f i1 = y}
 refl : ∀ {a} {A : Set a} {x : A} → Path x x
-refl {x = x} = \ i → x
-
-
-toLine : ∀ {a} {A : Set a}{x y : A} → Path x y → I → A
-toLine p = \ i → p i
+refl {x = x} = λ _ → x
 
 
 
@@ -32,7 +28,10 @@ toLine p = \ i → p i
 sym : ∀ {a} {A : Set a} → {x y : A} → Path x y → Path y x
 sym p = λ i → p (~ i)
 
+-- p i0 = x
+-- p i1 = y
 
+-- p (~ i0) = p i1 = y
 
 -- _≡_ = Path
 
@@ -56,7 +55,8 @@ eta-expand : ∀ {a} {A : Set a} {x y : A} → (p : Path x y) -> Path x y
 eta-expand p = λ z → p z
 
 
-eta-eq : ∀ {a} {A : Set a} {x y : A} → (p : Path x y) -> Path p (eta-expand p)
+eta-eq : ∀ {a} {A : Set a} {x y : A} → (p : Path x y)
+         -> Path p (eta-expand p)
 eta-eq p = refl
 
 
@@ -68,8 +68,8 @@ eta-eq p = refl
 
 
 fun-ext : ∀ {a b} {A : Set a} {B : A → Set b} → {f g : (x : A) → B x}
-          → (∀ x → Path (f x) (g x)) → Path f g
-fun-ext p = λ i → \ x → p x i
+          → (∀ x → Path {A = B x} (f x) (g x)) → Path f g
+fun-ext p = λ i → λ x → p x i
 
 --  p x i0 = f x
 --  p x i1 = g x
@@ -79,12 +79,21 @@ fun-ext p = λ i → \ x → p x i
 
 
 
+
+
 transp : ∀ {l} (A : I → Set l) → A i0 → A i1
 transp A a = primComp A i0 (\ _ → empty) a
 
--- ((i : I) → A i)
-transp-coh : ∀ {l} → (A : I → Set l) → (x : A i0) → PathP A x (transp A x)
-transp-coh A x i = primComp (\ j → A (i ∧ j)) (~ i) (\ { j (i = i0) → x }) x
+
+
+
+pathJ : ∀ {a}{b}{A : Set a}{x : A}(P : ∀ y → Path x y → Set b)
+        → P x refl →
+        ∀ y (p : Path x y) → P y p
+pathJ P d _ p =  transp (λ i → P (p i) (\ j → p (i ∧ j))) d
+
+
+
 
 
 
@@ -94,22 +103,69 @@ transp-coh A x i = primComp (\ j → A (i ∧ j)) (~ i) (\ { j (i = i0) → x })
 -- ("Partial φ A" is something like "(φ = i1) → A")
 
 
+{-
+Example:  i : 𝕀 ⊢ primComp A (i ∨ ~ i) u a
 
-pathJ : ∀ {a}{b}{A : Set a}{x : A}(P : ∀ y → Path x y → Set b) → P x refl →
-        ∀ y (p : Path x y) → P y p
-pathJ P d _ p = primComp (λ i → P (p i) (\ j → p (i ∧ j))) i0 (\ _ → empty) d
+          ^
+        j |
+          --->
+           i
 
+
+
+                   primComp A (i ∨ ~ i) u a
+   (u 1)(i = 0) -----------------------------> (u 1)(i = 1)
+                ^                            |
+                |                            |
+                |                            |
+                |                            |
+   (u j)(i = 0) |                            | (u j)(i = 1)
+                |                            |
+                |                            |
+                |                            |
+              a -----------------------------> a
+                               a
+
+
+
+-}
+
+
+
+
+{-
+
+
+ primComp (\ _ -> A) i1 (\ j _ → p j) x
+               ^
+               |
+               | p j
+               |
+               x
+
+-}
 
 test-primComp : ∀ {a} (A : Set a) {x y : A} (p : Path x y)
                 → primComp (\ _ → A) i1 (\ j _ → p j) x ≡ y
 test-primComp A p = refl
 
+
+
+
+
+
+
+transp-coh : ∀ {l} → (A : I → Set l) → (x : A i0) → PathP A x (transp A x)
+transp-coh A x i = primComp (\ j → A (i ∧ j)) (~ i) (\ { j (i = i0) → x }) x
+
+
+
+
+
 pathJprop : ∀ {a}{p}{A : Set a}{x : A}(P : ∀ y → Path x y → Set p)
-            → (d : P x ((\ i -> x))) →
-            pathJ P d _ refl ≡ d
-pathJprop {x = x} P d = \ i → primComp (λ _ → P x refl) i (\ { j (i = i1) → d }) d
-
-
+            → (d : P x refl)
+            → pathJ P d _ refl ≡ d
+pathJprop {x = x} P d = sym (transp-coh (λ i → P x refl) d)
 
 
 

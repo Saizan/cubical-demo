@@ -36,9 +36,8 @@ lemEqv u v p i .isEqv = (lemPropF {B = isEquiv _ _} propIsEquiv p) {u .isEqv} {v
 
 [idtoeqv]refl=id : ∀ {ℓ} {A : Set ℓ} → idtoeqv {A = A} refl ≡ idEquiv
 [idtoeqv]refl=id {A = A} = lemEqv _ _ ((funExt (λ z →
-  trans (trans (trans (let A' = (λ _ → A)
-                           r  = (transp A' (transp A' (transp A' z)))
-                        in transp-refl r) (transp-refl _)) (transp-refl _)) (transp-refl z))) )
+          trans (transp-refl _) (trans (primTransp-refl _) (trans (primTransp-refl _) (trans (primTransp-refl _) (trans (primTransp-refl _) ((primTransp-refl _))))))
+                        )) )
 
 
 module UAEquiv
@@ -51,8 +50,7 @@ module UAEquiv
 
   lemma' : {A B : Set ℓ} (e : A ≃ B) → eqv e ≡ coe (λ i → A → ua e i) (idFun _)
   lemma' e = trans (sym (uaβ e)) (funExt λ z →
-    let p : _ ≡ _
-        p = sym (trans (transp-refl _) (transp-refl _)) in λ i → coe (ua e) (p i))
+           cong (transp (λ i → ua e i)) (sym (trans (primTransp-refl _) (primTransp-refl _))))
 
   [ua∘idtoeqv]refl≡refl : {A : Set ℓ} → (ua {A = A} {B = A} (idtoeqv {A = A} refl)) ≡ refl
   [ua∘idtoeqv]refl≡refl {A = A} = trans (λ i → ua {A = A} {B = A} ([idtoeqv]refl=id i)) uaid=id
@@ -63,7 +61,7 @@ module UAEquiv
   univEquiv {A} {B} =
     let P = \ y z → ua {A = A} {B = y} (coe (λ i → A ≃ z i) idEquiv) ≡ z in
     isoToEquiv idtoeqv (ua {A = A} {B = B})
-                            (λ y → lemEqv _ _ (sym (lemma' y)))
+                            (λ y → lemEqv _ _ (trans (cong (\ x → primHComp (\ i → empty) x) (primTransp-refl _)) (sym (lemma' y)) ))
                             (pathJ P [ua∘idtoeqv]refl≡refl _)
 
 
@@ -74,8 +72,8 @@ uaid=id : ∀ {ℓ} {A : Set ℓ} → (ua idEquiv) ≡ (λ i → A)
 uaid=id {A = A} = λ j → λ i → Glue A ((~ i ∨ i) ∨ j) (λ _ → A) (λ _ → idEquiv .eqv , idEquiv .isEqv)
 
 uaβ : ∀ {ℓ} {A B : Set ℓ} → (e : A ≃ B) → coe (ua e) ≡ eqv e
-uaβ e = funExt (λ x → let p = _ in trans (transp-refl _) (trans (transp-refl _) (trans (transp-refl _)
-                    (λ i → (eqv e) (transp-refl p i)))))
+uaβ e = funExt (λ x →  let p = _ in trans (\ i → hfill _ (\ _ → empty) (inc p) (~ i)) (trans (transp-refl _) (trans (transp-refl _)
+                    (cong (eqv e) (primTransp-refl _)))) )
 
 univalence : ∀ {ℓ} {A B : Set ℓ} → (A ≡ B) ≃ (A ≃ B)
 univalence .eqv = idtoeqv
@@ -90,7 +88,7 @@ module _ where
     P = \ y z → ua {A = A} {B = y} (coe (λ i → A ≃ z i) idEquiv) ≡ z
 
   univSection : ∀ {ℓ} → {A B : Set ℓ} → section {_} {_} {A ≡ B} {A ≃ B} idtoeqv ua
-  univSection {_} {A} {B} = (λ y → lemEqv _ _ (sym (lemma' y)))
+  univSection {_} {A} {B} = (λ y → lemEqv _ _ (trans (cong (λ x → primHComp (λ _ → empty) x) (primTransp-refl _)) (sym (lemma' y)) ))
 
 
 

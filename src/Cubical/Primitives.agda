@@ -14,11 +14,5 @@ module Postulates where
   Path = _≡_
 
 open Postulates public renaming
-  ( primPFrom1 to p[_]
-  ; primIMin       to _∧_   ; primIMax       to _∨_  ; primINeg   to ~_
+  ( primIMin       to _∧_   ; primIMax       to _∨_  ; primINeg   to ~_
   ; isOneEmpty     to empty ; primIdJ        to J    ; primSubOut to ouc )
-
-
-module Unsafe' (dummy : Set₁) = Postulates
-unsafeComp = Unsafe'.primComp Set
-unsafePOr  = Unsafe'.primPOr  Set

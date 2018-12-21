@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical #-}
+{-# OPTIONS --cubical --guardedness #-}
 
 module Cubical.Examples.Stream where
 
@@ -69,13 +69,13 @@ module Equality≅Bisimulation where
   cast : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → x ≈ y
   cast {A} {x} {y} p = transp (λ i → x ≈ p i) refl≈
 
-  fillId : ∀ {A : Set} ({x} y : A) (q : x ≡ y) →
-    (λ i → fill (λ i → A) i (λ i' → (λ _ → q i')) x i) ≡ q
-  fillId {A}{x} = pathJ _ (λ j i → fill (λ _ → A) (i ∨ ~ i) (λ _ _ → x) x (~ j))
+  misib-refl : ∀ {A : Set} {x : Stream A} → misib {x = x} refl ≡ refl≈
+  ≈head (misib-refl i) = refl
+  ≈tail (misib-refl i) = misib-refl i
+
 
   misibTransp : ∀ {A : Set} {x y : Stream A} (p : x ≡ y) → cast p ≡ misib p
-  ≈head (misibTransp p i) = fillId _ (λ i → head (p i)) i
-  ≈tail (misibTransp p i) = misibTransp (λ i → tail (p i)) i
+  misibTransp p = pathJ (\ _ p → cast p ≡ misib p) (trans (transp-refl refl≈) (sym misib-refl)) _ p
 
 
 

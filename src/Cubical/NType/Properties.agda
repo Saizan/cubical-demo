@@ -35,8 +35,8 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : A → Set ℓ'} where
 lemSigP : ∀ {ℓ ℓ'} {A : Set ℓ} {B : (i : I) → A → Set ℓ'}
         (pB : ∀ i → (x : A) → isProp (B i x))
         (u : Σ A (B i0)) (v : Σ A (B i1)) (p : (fst u) ≡ (fst v)) → PathP (\ i → Σ A (B i)) u v
-lemSigP {B = B} pB u v p i = (p i) , lemPropF (pB i) p {b0 = fill (\ j → B j (fst u)) i0 (\ _ → empty) (snd u) i}
-                                                       {b1 = fill (\ j → B (~ j) (fst v)) i0 (\ _ → empty) (snd v) (~ i)} i
+lemSigP {B = B} pB u v p i = (p i) , lemPropF (pB i) p {b0 = fill (\ j → B j (fst u)) i0 (\ _ → empty) (inc (snd u)) i}
+                                                       {b1 = fill (\ j → B (~ j) (fst v)) i0 (\ _ → empty) (inc (snd v)) (~ i)} i
 
 module _ {ℓ} {A : Set ℓ} where
   propSet : isProp A → isSet A
@@ -138,9 +138,9 @@ module _ {ℓ ℓ'} {A : Set ℓ} where
 
 
 propHasLevel : ∀ {ℓ} {A : Set ℓ} n → isProp (HasLevel n A)
-propHasLevel ⟨-2⟩ = propIsContr
-propHasLevel (S ⟨-2⟩) = lemProp λ p → piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propSet p _ _
-propHasLevel (S m@(S n)) = piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propHasLevel m
+propHasLevel ⟨-2⟩ =  propIsContr
+propHasLevel (S ⟨-2⟩) x y a b c q = (lemProp λ p → piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propSet p _ _) x y a b c q
+propHasLevel (S m@(S n)) =  piPresNType ⟨-1⟩ \ x → piPresNType ⟨-1⟩ \ y → propHasLevel m
 
 
 module _ {ℓ : Level} {A : Set ℓ} where

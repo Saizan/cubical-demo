@@ -21,15 +21,15 @@ module _ {a p q} {A : Set a} (P : A → Set p) (Q : A → Set q)
   fibers-total {xv} = h , isoToEquiv h g h-g g-h
    where
     h : ∀ {xv} → fiber total (xv) → fiber (f (xv .fst)) (xv .snd)
-    h {xv} (p , eq) = pathJ (\ xv eq → fiber (f (xv .fst)) (xv .snd)) ((p .snd) , refl) xv (sym eq)
+    h {xv} (p , eq) = pathJ (\ xv eq → fiber (f (xv .fst)) (xv .snd)) ((p .snd) , refl) xv (eq)
     g : ∀ {xv} → fiber (f (xv .fst)) (xv .snd) → fiber total xv
     g {xv} (p , eq) = ((xv .fst) , p) , (\ i → _ , eq i)
     h-g : ∀ {xv} y → h {xv} (g {xv} y) ≡ y
-    h-g {x , v} (p , eq) = pathJ (λ _ eq₁ → h (g (p , sym eq₁)) ≡ (p , sym eq₁)) (pathJprop (λ xv₁ eq₁ → fiber (f (xv₁ .fst)) (xv₁ .snd)) ((p , refl))) v (sym eq)
+    h-g {x , v} (p , eq) = pathJ (λ _ eq₁ → h (g (p , eq₁)) ≡ (p , eq₁)) (pathJprop (λ xv₁ eq₁ → fiber (f (xv₁ .fst)) (xv₁ .snd)) ((p , refl))) v (eq)
     g-h : ∀ {xv} y → g {xv} (h {xv} y) ≡ y
-    g-h {xv} ((a , p) , eq) = pathJ (λ _ eq₁ → g (h ((a , p) , sym eq₁)) ≡ ((a , p) , sym eq₁)) ((cong g (pathJprop (λ xv₁ eq₁ → fiber (f (xv₁ .fst)) (xv₁ .snd)) (p , refl)))
+    g-h {xv} ((a , p) , eq) = pathJ (λ _ eq₁ → g (h ((a , p) , eq₁)) ≡ ((a , p) , eq₁)) ((cong g (pathJprop (λ xv₁ eq₁ → fiber (f (xv₁ .fst)) (xv₁ .snd)) (p , refl)))
                                     )
-                                (xv .fst , xv .snd) (sym eq)
+                                (xv .fst , xv .snd) (eq)
   -- half of Thm 4.7.7
   fiberEquiv : ([tf] : isEquiv (Σ A P) (Σ A Q) total)
                → ∀ x → isEquiv (P x) (Q x) (f x)

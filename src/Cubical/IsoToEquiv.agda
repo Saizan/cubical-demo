@@ -10,17 +10,17 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
          (s : (y : B) → (f (g y)) ≡ y) (t : (x : A) → (g (f x)) ≡ x) where
 
   private
-    module _ (y : B) (x0 x1 : A) (p0 : y ≡ (f x0)) (p1 : y ≡ (f x1)) where
+    module _ (y : B) (x0 x1 : A) (p0 : (f x0) ≡ y) (p1 : (f x1) ≡ y) where
 
       fill0 : ∀ (_ _ : I) → A
       fill0 i j = fill (λ _ → A) (λ k → λ { (i = i1) → t x0 k
                                           ; (i = i0) → g y })
-                                 (inc (g (p0 i))) j
+                                 (inc (g (p0 (~ i)))) j
 
       fill1 : ∀ (_ _ : I) → A
       fill1 i j = fill (λ _ → A) (λ k → λ { (i = i1) → t x1 k
                                           ; (i = i0) → g y })
-                                 (inc (g (p1 i))) j
+                                 (inc (g (p1 (~ i)))) j
 
       fill2 : ∀ (_ _ : I) → A
       fill2 i j = fill (λ _ → A) (λ k → λ { (i = i1) → fill1 k i1
@@ -36,12 +36,12 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
                                        ; (j = i0) → g y })
                               (inc (fill2 i j))
 
-      sq1 : Square {A = B} (λ _ → y) (λ i → f (p i)) p0 p1
+      sq1 : Square {A = B} (λ i → f (p i)) (λ _ → y) p0 p1
       sq1 i j = comp (λ _ → B) (λ k → λ { (i = i1) → s (p1 j) k
                                         ; (i = i0) → s (p0 j) k
-                                        ; (j = i1) → s (f (p i)) k
-                                        ; (j = i0) → s y k })
-                               (inc (f (sq i j)))
+                                        ; (j = i0) → s (f (p i)) k
+                                        ; (j = i1) → s y k })
+                               (inc (f (sq i (~ j))))
 
       lemIso : _≡_ {A = fiber f y} (x0 , p0) (x1 , p1)
       lemIso i .fst = p i
@@ -49,8 +49,8 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (f : A → B) (g : B → A)
 
   isoToEquiv : isEquiv A B f
   isoToEquiv .equiv-proof y .fst .fst = g y
-  isoToEquiv .equiv-proof y .fst .snd i = s y (~ i)
-  isoToEquiv .equiv-proof y .snd z = lemIso y (g y) (fst z) (λ i → s y (~ i)) (snd z)
+  isoToEquiv .equiv-proof y .fst .snd i = s y i
+  isoToEquiv .equiv-proof y .snd z = lemIso y (g y) (fst z) (λ i → s y i) (snd z)
 
 
 module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (w : A ≃ B) where
@@ -61,7 +61,7 @@ module _ {ℓ ℓ'} {A : Set ℓ} {B : Set ℓ'} (w : A ≃ B) where
   secEq x = λ i → fst (snd (snd w .equiv-proof (fst w x)) (x , (λ j → fst w x)) i)
 
   retEq : (y : B) → fst w (invEq y) ≡ y
-  retEq y = λ i → snd (fst (snd w .equiv-proof y)) (~ i)
+  retEq y = sym λ i → snd (fst (snd w .equiv-proof y)) (~ i)
 
 isoToPath : ∀ {ℓ} {A B : Set ℓ} (f : A → B) (g : B → A)
   (s : (y : B) → f (g y) ≡ y) (t : (x : A) → g (f x) ≡ x) → A ≡ B

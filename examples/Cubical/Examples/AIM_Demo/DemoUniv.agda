@@ -13,8 +13,8 @@ notpath : Path Bool Bool
 notpath = ua {A = Bool} {B = Bool} notEquiv
 
 test : Bool
-test = primComp (\ i → ua {A = Bool} {B = Bool} notEquiv i)
-                i0 (\ _ → empty) true
+test = transp (\ i → ua {A = Bool} {B = Bool} notEquiv i)
+              true
 
 test-is-false : test ≡ false
 test-is-false = refl
@@ -33,7 +33,7 @@ trues : List Bool
 trues = true ∷ true ∷ []
 
 falses : List Bool
-falses = primComp (\ i → ListNot i) i0 (\ _ → empty) trues
+falses = primComp (\ i → List (notpath i)) i0 (\ _ → empty) trues
 
 test-falses : falses ≡ false ∷ false ∷ []
 test-falses = refl
@@ -47,8 +47,6 @@ test-trues2 = refl
 trues3 : List Bool
 trues3 = transp (\ i → let p = trans ListNot ListNot in
                          trans p p i)
-                  -- i0
-                  -- (\ _ → empty)
                   trues
 
 

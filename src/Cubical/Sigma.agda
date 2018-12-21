@@ -283,7 +283,7 @@ sigPresNType {ℓb = ℓb} {A = A} {B} {S (S n)} ntA a→ntB (a₁ , b₁) (a₂
     prev : HasLevel (S n) V
     prev = sigPresNType {n = S n} t u
     equivl : V ≃ ((a₁ , b₁) ≡ (a₂ , b₂))
-    equivl = pathToEquiv (sym (lemPathSig (a₁ , b₁) (a₂ , b₂)))
+    equivl = pathToEquiv (\ i → sym (lemPathSig (a₁ , b₁) (a₂ , b₂)) i)
   in equivPreservesNType {n = S n} equivl prev
 
 module _ {ℓa ℓb : Level} {A : Set ℓa} {B : A → Set ℓb} where

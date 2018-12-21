@@ -25,12 +25,6 @@ conid' : ∀ {ℓ} {A : Set ℓ} {x : A} φ {y : A [ φ ↦ (λ { _ → x}) ]}
            → (w : Sub (x ≡ ouc y) _ λ { (φ = i1) → (λ _ → x)}) → Id x (ouc y)
 conid' φ {y} w = conid φ (λ i → ouc w i)
 
-primitive
-  primIdElim : ∀ {ℓ ℓ'} {A : Set ℓ}{x : A} (P : ∀ y → Id x y → Set ℓ') →
-    (∀ φ (y : A [ φ ↦ (λ{_ → x}) ]) -- y : A [ φ ↦ x ]
-    → (w : _ [ φ ↦ (λ { (φ = i1) → (λ i → x)}) ]) → P (ouc y) (conid φ (ouc w)))
-    → ∀ {y : A} (w : Id x y) → P y w
-
 elimId : ∀ {ℓ ℓ'} {A : Set ℓ}{x : A} (P : ∀ y → Id x y → Set ℓ') →
     (∀ φ (y : A [ φ ↦ (λ{_ → x}) ]) -- y : A [ φ ↦ x ]
     → (w : _ [ φ ↦ (λ { (φ = i1) → (λ i → x)}) ]) → P (ouc y) (conid φ (ouc w)))

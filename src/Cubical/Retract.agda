@@ -46,15 +46,13 @@ module _ {ℓa ℓb : Level} (A : Set ℓa) (B : Set ℓb) where
 
 module _ {ℓa ℓb : Level} {A : Set ℓa} {B : Set ℓb} where
   fromEquiv : A ≃ B → IsRetract A B
-  fromEquiv (f , eqv-f) = f , a , r
+  fromEquiv (f , eqv-f) = f , a , eq
     where
       module _ (b : B) where
         fbr : fiber f b
         fbr = fst (eqv-f .equiv-proof b)
         a : A
         a = fst fbr
-        eq : b ≡ f a
-        eq = snd fbr
         -- aka `retract f g`
-        r : f a ≡ b
-        r = sym eq
+        eq : f a ≡ b
+        eq = snd fbr
